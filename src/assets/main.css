@@ -1,0 +1,33 @@
+@import './base.css';
+@import './margins-paddings.css';
+@import './buttons.css';
+
+#app {
+  font-weight: normal;
+  background-color: white;
+  color: #37352F;
+}
+
+input {
+  border: solid 1px #c2c2c2;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+
+
+.hide {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D3D1CB;
+}
+
+::-webkit-scrollbar-track {
+  background: #EDECE9;
+}

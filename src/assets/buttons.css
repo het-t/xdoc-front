@@ -1,0 +1,28 @@
+/* buttons */
+.button {
+    padding: 8px;
+    text-transform: capitalize;
+    border: solid 1px #e7eaec;
+    border-radius: 4px;
+}
+.button:focus {
+    outline-color: #9e9e9e;
+}
+.green {
+    background-color: rgb(27, 175, 131);
+    color:white;
+}
+.green:hover, .green:focus {
+    background-color: rgb(22, 152, 113);
+}
+.red {
+    background-color: red;
+    color: white;
+}
+.neutral {
+    color: #676a6c;
+    background-color: white;
+}
+.neutral:focus, .neutral:hover {
+    border: solid 1px #d2d2d2;
+}

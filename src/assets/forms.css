@@ -1,0 +1,17 @@
+form {
+    display: grid;
+    text-align: left;
+}
+input {
+    /* border-right: none !important;
+    border-left: none !important;
+    border-top: none !important; */
+    border-radius: 0 !important;
+}
+input:focus {
+    outline: none;
+    box-shadow: 0 0 5px grey;
+}
+label {
+    text-transform: capitalize;
+}
