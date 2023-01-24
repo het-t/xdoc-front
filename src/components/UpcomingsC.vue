@@ -1,62 +1,82 @@
 <template>
-    <div>
-        <table>
-            <!--allow use to add new fields in view-->
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Patient</th>
-                    <th>Age</th>
-                    <!-- <th></th>
-                    <th></th> -->
-                </tr>
-            </thead>
+    <!-- <div class="w"> -->
+        <table-main>
+            <template #thead>
+                <th>#</th>
+                <th>Record</th>
+                <th>User</th>
+                <th></th>
+            </template>
 
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>John Doe</td>
-                    <td>19</td>
-                </tr>
+            <template #tbody>
+                <tr v-for="(record) in records" :key="record.id">
+                    <td>{{ record.id }}</td>
+                    <td v-if="record != ''">
+                        <template v-for="(value, field, index) in treatRecord(record.record)">
+                            <p v-if="index < 3" :key="record.id+index">
+                                {{ field }} :  {{ value }}
+                            </p>
+                        </template>
 
-                <tr>
-                    <td>1</td>
-                    <td>John Doe</td>
-                    <td>19</td>
+                        <p v-if="record.record != null && showMore(record.record) == true" class="more">...</p>
+                    </td>
+                    <td>{{ record.username }}</td>
+                    <td>
+                        <div class="flex">
+                            <font-awesome-icon @click="edit(record.id)" icon="fa-solid fa-square-pen" class="fa-icon"></font-awesome-icon>
+                            <font-awesome-icon icon="fa-solid fa-trash" class="fa-icon"></font-awesome-icon>
+                        </div>
+                    </td>
                 </tr>
-
-                <tr>
-                    <td>1</td>
-                    <td>John Doe</td>
-                    <td>19</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            </template>
+        </table-main>
+    <!-- </div> -->
 </template>
 
 <script>
+import TableMain from './TableMain.vue'
+import { records } from '@/api'
 export default {
-    name: 'UpcomingsC'
+    components: { TableMain },
+    name: 'UpcomingsC',
+    data() {
+        return {
+            records: [],
+        }
+    },
+    methods: {
+        edit(recordId) {
+            this.$store.dispatch('records/fetchBaseRecords', recordId)
+            this.$router.push({name: 'records-create'})
+        },
+        treatRecord(recordObj) {
+            const record = JSON.parse(JSON.stringify(recordObj))
+            if (record == null) return {}
+
+            return record
+        },
+        showMore(recordObj) {
+            if (Object.keys(JSON.parse(JSON.stringify(recordObj)))?.length > 3) return true
+            return false
+        }
+    },
+    mounted() {
+        records.get({
+            from: 0,
+            to: 100
+        })
+        .then(res => {
+            this.records = res.data
+        })
+    }
 }
 </script>
 
 <style scoped>
-    th, td {
-        border: solid 1px #e9e9e7;
-        padding: 12px;
-    }
-    table {
-        border-top: solid 1px #e9e9e7;
-        border-bottom: solid 1px #e9e9e7;
-        border-collapse: collapse;
-    }
-    tr > td:first-child,
-    tr > th:first-child {
-        border-left: none;
-    }
-    tr > td:last-child,
-    tr > th:last-child {
-        border-right: none;
-    }
+td {
+    vertical-align: text-top;
+}
+table {
+    height: fit-content;
+}
 </style>

@@ -34,7 +34,7 @@ export default {
     .icon {
         height: 24px;
         padding: 4px;
-        border: solid 1px whitesmoke;
+        border: solid 1px white;
         color: #31334a;
     }
     .links {
@@ -52,8 +52,7 @@ export default {
         left: 0;
         gap: 12px;
         justify-content: space-between;   
-        /* border-bottom: solid 1px #c2c2c2;      */
-        box-shadow: rgb(233 233 231) 0px -1px 0px inset;
+        box-shadow: #e9e9e7 0px -1px 0px inset;
     }
     
     /* use query to hide icons when screen size is big */

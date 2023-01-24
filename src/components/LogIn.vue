@@ -24,20 +24,14 @@ import axios from 'axios'
         },
         methods: {
             login() {
-                axios.post('/api/login', {
+                axios.post('api/', {
                     email: this.email,
                     password: this.pwd
                 }, {
                     withCredentials: true,
                 })
-                .then((results) => {
-                    if (results?.data?.login == 1) {
-                        this.$router.push('u/')
-                    }
-                    else {
-                        this.$router.push('login')
-                    }
-                })
+                .then(() => this.$router.push('u/'))
+                .catch(() => this.$router.push('/'))
             },
             clear() {
                 this.email = ''
@@ -46,15 +40,24 @@ import axios from 'axios'
         },
         mounted() {
             this.$refs['focus'].focus()
+
+            axios.get('api/', {
+                withCredentials: true
+            })
+            .then(res => {
+                console.log(res)
+            })
         }
     }
 
 </script>
 
 <style scoped>
-
-input {
+input, button {
     width: 100%;
+}
+button {
+    border-radius: 18px;
 }
 .login {
     height: 100vh;
@@ -74,12 +77,5 @@ input {
     margin-bottom: 32px;
     margin-top: 0;
 } */
-button {
-    width: 100%;
-}
-input:focus {
-    outline: none !important;
-    /* border: solid 1px #9e9e9e; */
-    box-shadow: 0 0 3px #9e9e9e;
-}
+
 </style>

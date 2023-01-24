@@ -2,23 +2,56 @@ import { createApp } from 'vue'
 
 import App from './App.vue'
 import router from './router'
+import store from './stores'
 
 import './assets/main.css'
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faFileMedical, faGear, faUser, faFileArrowDown } from "@fortawesome/free-solid-svg-icons";
+import {
+    faDownload,
+    faPlus,
+    faTag,
+    faUser, 
+    faChartPie,
+    faEnvelope,
+
+    faFileMedical, 
+    faGear, 
+    faFileArrowDown,
+    faChevronDown,
+    faChevronUp,
+    faSquarePen,
+    faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+    faIdBadge,
+    faComments
+} from "@fortawesome/free-regular-svg-icons"
 
 library.add(
+    faDownload,
+    faPlus,
+    faTag,
+    faUser,
+    faIdBadge,
+    faChartPie,
+    faEnvelope,
+    faComments,
+
     faFileMedical,
     faGear,
-    faUser,
-    faFileArrowDown
+    faFileArrowDown,
+    faChevronUp,
+    faChevronDown,
+    faSquarePen,
+    faTrash
 );
 
 
 const app = createApp(App)
 
 app.use(router)
+app.use(store)
 app.component("font-awesome-icon", FontAwesomeIcon)
 app.mount('#app')

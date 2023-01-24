@@ -1,26 +1,81 @@
 @import './base.css';
 @import './margins-paddings.css';
 @import './buttons.css';
+@import './forms.css';
 
 #app {
   font-weight: normal;
-  background-color: white;
-  color: #37352F;
+  /* background-color: #fff; */
+  color: #19171199;
+  min-width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-input {
-  border: solid 1px #c2c2c2;
-  padding: 8px;
-  border-radius: 4px;
+
+a {
+  text-decoration: none;
+  color: #19171199;
+  font-weight: 500;
 }
 
+.router-link-active, 
+.router-link-exact-active 
+.headings {
+  color: #37352f;
+}
+.router-link-active, .router-link-exact-active {
+  background-color: rgba(0, 0, 0, 0.04);
+}
 
 
 .hide {
   display: none;
 }
 
+
+.flex {
+  display: flex;
+}
+/* .flex-vertical {
+  flex-direction: column;
+}
+.flex-horizontal {
+  flex-direction: row;
+} */
+
+
+
+.pointer {
+  cursor: pointer;
+}
+
+
+
+
+/* ********************* */
+/* setting style */
+.setting-labels {
+  font-size: 36px;
+  text-transform: capitalize;
+  font-weight: 500;
+  color: rgb(55, 53, 47) !important;
+  margin-bottom: 16px;
+}
+.setting-grid {
+  display: grid;
+  grid-template-columns: 150px auto;
+}
+.setting-list {
+  margin-top: 64px;
+}
+/* ********************* */
+
+
+
+
 ::-webkit-scrollbar {
+  width: 8px;
   background: transparent;
 }
 
