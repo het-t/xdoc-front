@@ -1,7 +1,6 @@
 <template>
     <div class="flex-setting">
-        <div style="width: 40%;">
-            <span class="setting-labels">Create</span>
+        <div style="width: 40%; margin-top: 36px;">
             <users-create></users-create>
         </div>
 

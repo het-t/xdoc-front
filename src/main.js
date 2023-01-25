@@ -4,6 +4,8 @@ import App from './App.vue'
 import router from './router'
 import store from './stores'
 
+import Toaster from "@meforma/vue-toaster";
+
 import './assets/main.css'
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -53,5 +55,8 @@ const app = createApp(App)
 
 app.use(router)
 app.use(store)
+app.use(Toaster, {
+    position: 'top-right'
+})
 app.component("font-awesome-icon", FontAwesomeIcon)
 app.mount('#app')

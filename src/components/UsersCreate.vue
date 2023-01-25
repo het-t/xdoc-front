@@ -47,9 +47,3 @@ import { users } from '@/api';
         }
     }
 </script>
-
-<style scoped>
-  button {
-    min-width: 56px;
-  }
-</style>

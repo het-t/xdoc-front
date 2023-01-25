@@ -2,7 +2,12 @@
     <div style="height: 100vh;" class="flex">
         <div id="menu">
             <div id="hero">
+                <span id="logo">XDOC.</span>
+            </div>
 
+            <div id="dp-container" class="mt16">
+                <img id="dp" src="../../public/logo.svg" alt="">
+                <p id="uername">Dr. John Doe</p>
             </div>
 
             <div class="flex-vertical">
@@ -18,6 +23,20 @@
                     <font-awesome-icon icon="fa-solid fa-plus" class="menu-icon"/>
                     Create New
                 </router-link>
+
+
+                <!-- Tools Menu-->
+                <h3 class="pl8 pr16 mt16 mb8 menu-label">Tools</h3>
+
+                <a href="#">
+                    <font-awesome-icon icon="fa-solid fa-chart-pie" class="menu-icon"/>
+                    Charts
+                </a>
+
+                <a href="#">
+                    <font-awesome-icon icon="fa-solid fa-envelope" class="menu-icon"/>
+                    Messager
+                </a>
 
 
                 <!-- setting menu -->
@@ -39,26 +58,10 @@
                 </a>
 
 
-
-                <!-- Tools Menu-->
-                <h3 class="pl8 pr16 mt16 mb8 menu-label">Tools</h3>
-
-                <a href="#">
-                    <font-awesome-icon icon="fa-solid fa-chart-pie" class="menu-icon"/>
-                    Charts
-                </a>
-
-                <a href="#">
-                    <font-awesome-icon icon="fa-solid fa-envelope" class="menu-icon"/>
-                    Messager
-                </a>
-
-
-
                 <!-- Support menu -->
                 <!-- <h3 class="pl8 pr16 mt16 mb8 menu-label">Support</h3> -->
 
-                <a href="#" class="mt16">
+                <a href="#" class="mt8">
                     <font-awesome-icon icon="fa-regular fa-comments" class="menu-icon"/>
                     Contact Us
                 </a>
@@ -92,11 +95,7 @@ export default {
     .menu-label {
         color: #bbb;
     }
-    .flex-vertical {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-    }
+
     .flex-vertical a {
         padding: 3px 8px;
         margin: 0 8px;
@@ -106,20 +105,49 @@ export default {
         background-color: rgba(0, 0, 0, 0.08);
     }
     #menu {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
         width: 200px;
         height: 100vh;
-        overflow-y: scroll;
-        scroll-behavior: scroll;
-        scroll-behavior: smooth;
         background-color: rgb(251, 251, 250) !important;
         position: fixed;
         padding-bottom: 32px;
         box-shadow: rgb(0 0 0 / 2%) -1px 0px 0px 0px inset;
+        overflow: hidden;
+        /* overflow-y: scroll;
+        scroll-behavior: smooth;     */
+    }
+    .flex-vertical {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        overflow-y: auto;
+        border-top: solid 2px whitesmoke;
     }
     #hero {
-        height: 250px;
+        width: 200px;
+        text-align: center;
+    }
+    #logo {
+        font-size: 54px;
+        font-weight: 500;
+        color: #37352f;
     }
     .flex {
         gap: 16px;
+    }
+
+    #dp-container {
+        text-align: center;
+    }
+    #dp {
+        height: 100px;
+        border-radius: 100%;
+    }
+    #uername {
+        padding: 4px;
+        background-color: rgba(0, 0, 0, 0.04);
     }
 </style>
