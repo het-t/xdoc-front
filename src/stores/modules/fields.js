@@ -3,6 +3,7 @@ import { fields } from "@/api"
 const state = {
     count: '',
     list: {},
+    types: [],
     paginationKey: 0,
 }
 
@@ -13,6 +14,9 @@ const getters = {
     },
     getPaginationKey: (state) => {
         return state.paginationKey
+    },
+    getTypes(state) {
+        return state.types
     }
 }
 
@@ -23,6 +27,9 @@ const mutations = {
     setList(state, {from, to, list}) {
         const path = from + '_' + to
         state.list[path] = list
+    },
+    setTypes(state, types) {
+        state.types = types
     },
     refetch(state) {
         state.list = {}
@@ -44,6 +51,10 @@ const actions = {
             to,
             list: res.data
         }))
+    },
+    getTypes(context) {
+        return fields.getTypes()
+        .then(res => context.commit('setTypes', res.data))
     }
 }
 

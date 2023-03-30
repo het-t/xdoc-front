@@ -1,0 +1,9 @@
+tr {
+    border-radius: 3px;
+}
+.tr-right-clicked {
+    background-color: rgba(35, 131, 226, 0.14);
+}
+.cursor-ptr {
+    cursor: pointer;
+}

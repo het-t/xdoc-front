@@ -1,17 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainView from '../views/MainView.vue'
 import RecordsView from '../views/RecordView.vue'
+import * as bc from './breadcrumbs.js'
 
 const recordsRoutes = [
   {
-    path: 'list',
+    path: 'upcomings',
     name: 'records-upcomings',
-    component: () => import('../components/UpcomingsC.vue')
+    component: () => import('../components/UpcomingsC.vue'),
+    meta: {
+      heroTitle: 'Records',
+      bc: bc.upcomingsList,
+      action: true,
+      actionRouteName: 'records-create'
+    }
   },
   {
     path: 'create',
     name: 'records-create',
-    component: () => import('../components/RecordCreate.vue')
+    component: () => import('../components/RecordCreate.vue'),
+    meta: {
+      heroTitle: 'Records',
+      bc: bc.recordCreate
+    }
   },
 ]
 
@@ -19,7 +30,29 @@ const usersSetting = [
   {
     path: 'users',
     name: 'users-setting',
-    component: () => import('../views/UsersSettingView.vue')
+    component: () => import('../views/UsersSettingView.vue'),
+    children: [
+      {
+        path: '',
+        name: 'user-list',
+        component: () => import('../components/UsersList.vue'),
+        meta: {
+          heroTitle: 'Users',
+          bc: bc.userList,
+          action: true,
+          actionRouteName: 'user-create'
+        }
+      },
+      {
+        path: 'create',
+        name: 'user-create',
+        component: () => import('../components/UsersCreate.vue'),
+        meta: {
+          heroTitle: 'Users',
+          bc: bc.userCreate
+        }
+      }
+    ]
   }
 ]
 
@@ -27,8 +60,30 @@ const fieldsSetting = [
   {
     path: 'fields',
     name: 'fields-setting',
-    component: () => import('../views/FieldsSettingView.vue')
-  }
+    component: () => import('../views/FieldsSettingView.vue'),
+    children: [
+      {
+        path: ':blockId',
+        name: 'field-list',
+        component: () => import('../components/BlockRender.vue'),
+        meta: {
+          heroTitle: 'Fields',
+          bc: bc.fieldList,
+          action: true,
+          actionRouteName: 'field-create'
+        }
+      },
+      {
+        path: 'create',
+        name: 'field-create',
+        component: () => import('../components/FieldsCreate.vue'),
+        meta: {
+          heroTitle: 'Fields',
+          bc: bc.fieldCreate
+        }
+      }
+    ]
+  },
 ]
 
 const userRoutes = [

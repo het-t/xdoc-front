@@ -1,26 +1,18 @@
-import store from '@/store'
 import swal from 'sweetalert'
 
-export default function useDeleteSwal({text, mutationFn, mutationArgs, promise}) {
+export default function useDeleteSwal({text, mutationFn, promise, context}) {
     swal({
         icon: 'warning',
-        title: 'Alert',
-        text: `Do you really want to delete "${text}"`,
-        buttons: true,
-        dangerMode: true
+        text: `Do you want to delete ${text}`,
+        buttons: true
     })
-    .then(value => {
+    .then((value) => {
         if (value == null) throw null
-        return promise()
+        else return promise()
     })
     .then(() => {
-        store.commit(mutationFn, mutationArgs)
-        return swal({
-            title: "Success",
-            text: `Deleted "${text}"`,
-            icon: "success",
-            button: 'ok'
-        })
+        context.$toast.success('Deleted')
+        context.$store.dispatch(mutationFn, {from:0, to:100})
     })
     .catch(err => {
         if (err != null) return swal("Oops!", `We can't perform this action right now please try again\n\n details: ${err}`)

@@ -1,21 +1,35 @@
 <template>
-    <table>
-        <thead>
-            <tr>
-                <slot name="thead"></slot>
-            </tr>
-        </thead>
+    <div style="display: flex;">
+        <table>
+            <thead>
+                <tr>
+                    <slot name="thead"></slot>
+                </tr>
+            </thead>
 
-        <tbody>
-            <slot name="tbody"></slot>
-        </tbody>
-    </table>
+            <tbody>
+                <slot name="tbody"></slot>
+            </tbody>
+        </table>
+
+        <table-side-menu v-bind="$attrs" @click-outside="$emit('sideMenuHide')" @sideMenuHide="$emit('sideMenuHide')" v-show="showSideMenu">
+            <template v-for="(_, name) in $slots" #[name]="slotProps">
+                <slot :name="name" v-bind="slotProps || {}"></slot>
+            </template>
+        </table-side-menu>
+    </div>
 </template>
 
 <script>
-    export default {
-        name: 'TableMain'
-    }
+import TableSideMenu from './TableSideMenu.vue'
+
+export default {
+    components: { TableSideMenu },
+    props: {
+        showSideMenu: Boolean
+    },
+    name: 'TableMain'
+}
 </script>
 
 <style>
@@ -26,13 +40,17 @@
         border-bottom: solid 1px #e9e9e7;
         border-collapse: collapse;
         text-align: left;
+
     }
     th, td {
         border: solid 1px #e9e9e7;
+    }
+    th {
         padding: 8px;
     }
     td {
         color: #37352f;
+        padding: 6px;
     }
     tr > td:first-child,
     tr > th:first-child {

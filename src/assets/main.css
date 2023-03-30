@@ -2,6 +2,7 @@
 @import './margins-paddings.css';
 @import './buttons.css';
 @import './forms.css';
+@import './tables.css';
 
 #app {
   font-weight: normal;
@@ -37,7 +38,10 @@ a {
 .flex {
   display: flex;
 }
-
+.flex-btn {
+  display: flex;
+  gap: 8px;
+}
 
 
 .pointer {
@@ -62,6 +66,23 @@ a {
 }
 .setting-list {
   margin-top: 64px;
+  overflow: auto;
+}
+
+.flex-setting {
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+.setting-list {
+  overflow: auto;
+}
+.flex-setting input,
+.flex-setting select {
+  max-width: 250px !important;
 }
 /* ********************* */
 
@@ -70,6 +91,7 @@ a {
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
   background: transparent;
 }
 
@@ -79,4 +101,14 @@ a {
 
 ::-webkit-scrollbar-track {
   background: #EDECE9;
+}
+
+@media screen and (max-width: 768px) {
+  .setting-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  .setting-grid input {
+    width: 100% !important;
+  }
 }

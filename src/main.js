@@ -8,6 +8,11 @@ import Toaster from "@meforma/vue-toaster";
 
 import './assets/main.css'
 
+// global methods
+import openMenu from './helpers/globals/BaseMenuOpen.js'
+import closeMenu from './helpers/globals/BaseMenuClose.js'
+// 
+
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -17,6 +22,10 @@ import {
     faUser, 
     faChartPie,
     faEnvelope,
+    faBars,
+    faAnglesLeft,
+    faPencil,
+    faUniversalAccess,
 
     faFileMedical, 
     faGear, 
@@ -28,7 +37,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
     faIdBadge,
-    faComments
+    faComments,
+    faPenToSquare,
+    faTrashCan,
+    faEye,
+    faEyeSlash
 } from "@fortawesome/free-regular-svg-icons"
 
 library.add(
@@ -40,19 +53,30 @@ library.add(
     faChartPie,
     faEnvelope,
     faComments,
+    faBars,
+    faAnglesLeft,
+    faTrashCan,
+    faPenToSquare,
+    faPencil,
+    faEye,
+    faEyeSlash,
+    faUniversalAccess,
 
+    
     faFileMedical,
     faGear,
     faFileArrowDown,
     faChevronUp,
     faChevronDown,
     faSquarePen,
-    faTrash
+    faTrash,
 );
 
 
 const app = createApp(App)
 
+app.config.globalProperties.openMenu = openMenu
+app.config.globalProperties.closeMenu = closeMenu
 app.use(router)
 app.use(store)
 app.use(Toaster, {

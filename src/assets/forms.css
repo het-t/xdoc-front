@@ -10,11 +10,6 @@ input, select, textarea {
     color: rgb(55, 53, 47);
 }
 
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    box-shadow: 0 0 2px #37352f;
-}
-
 label {
     text-transform: capitalize;
 }

@@ -2,14 +2,14 @@ import {users} from '@/api'
 
 const state = {
     count: '',
-    list: {},
+    list: [],
     paginationKey: 0
 }
 
 const getters = {
-    getList: (state) => ({from, to}) => {
-        const path = from + "_" + to
-        return state.list[path]
+    getList (state) {
+        // const path = from + "_" + to
+        return state.list
     },
     getPaginationKey: (state) => {
         return state.paginationKey
@@ -20,9 +20,9 @@ const mutations = {
     setCount(state, count) {
         state.count = count
     },
-    setList(state, {from, to, list}) {
-        const path = from + '_' + to
-        state.list[path] = list
+    setList(state, {list}) {
+        // const path = from + '_' + to
+        state.list = list
     },
     refetch(state) {
         state.list = {}

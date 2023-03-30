@@ -1,5 +1,5 @@
 <template>
-  <div id="records-view" style="width: calc(100vw - 300px);" class="flex">
+  <div id="records-view" style="width: 100%;" class="flex pr16 pl16">
     <router-view></router-view>
   </div>
 </template>

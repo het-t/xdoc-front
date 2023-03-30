@@ -1,34 +1,27 @@
 <template>
-  <div class="flex" :key="key" style="width: 100%;">
-    <form @submit.prevent="saveRecord()" ref="record" style="padding-right: 50px;" class="overflow-scroll" :class="getBaseRecords(getRootRecordId) == undefined ? 'new-record' : ''">
+  <div class="flex pr16 pl16" :key="key" style="width: 100%; height: 100%; overflow-y: auto;">
+    <form @submit.prevent="saveRecord()" ref="record" class="overflow-scroll pr8" :class="getRootRecordId == '' ? 'new-record' : ''">
       <div v-for="field in fields" :key="field.id" class="grid mt8">
         <label :for="field.id" class="floating-label">
           {{ field.name }}
         </label>
 
-        <input v-if="field.typeId == 1" type="text" :id="field.id" :name="field.name" class="floating-input">
-        <textarea v-else-if="field.typeId == 2" :name="field.name" :id="field.id" cols="30" rows="5"></textarea>
-        <textarea v-else-if="field.typeId == 3" :name="field.name" :id="field.id" cols="30" rows="15"></textarea>
+        <input v-if="field.typeId == 1 || field.typeId == 4 || field.typeId == 5" :type="field.meta.type" :id="field.id" :name="field.id" :title="field.description" class="floating-input">
+        <textarea v-else-if="field.typeId == 3" :name="field.id" :id="field.id" :title="field.description" cols="30" rows="15"></textarea>
       </div>
 
-      <button :disabled="disable" type="submit" class="button green mt8">save</button>
-      <button :disabled="disable" class="button neutral mt8 ml8">cancel</button>
+      <div class="grid mt16">
+        <div></div>
+
+        <div>
+          <button :disabled="disable" type="submit" class="button green">save</button>
+          <button :disabled="disable" class="button neutral ml8">cancel</button>
+        </div>
+      </div>
     </form>
 
-    <div v-if=" getBaseRecords(getRootRecordId) !== undefined " class="mr8 overflow-scroll" style="padding: 0 50px;">
-      <div v-for="(recordObj, index) of JSON.parse(getBaseRecords(getRootRecordId))" :key="index" class="mt32">
-        <div class="mb16">
-          {{ `#${recordObj.id}` }} {{ recordObj.username }}
-        </div>
-
-        <div v-for='(fieldValue, fieldName) in recordObj.record' :key="fieldName+'_'+index" class="grid mt8">
-          <label>
-            {{ fieldName }}
-          </label>
-
-          <input disabled type="text" :value="fieldValue">
-        </div>
-      </div>
+    <div v-if="getRootRecordId !== ''" class="pr8 overflow-scroll flex-upcomings">
+      <record-render v-for="(baseRecord) of getBaseRecordsIds(getRootRecordId)" :recordId="baseRecord.id" :key="baseRecord.id"></record-render>
     </div>
   </div>
 </template>
@@ -36,7 +29,9 @@
 <script>
 import { records } from '@/api'
 import { mapGetters } from 'vuex'
+import RecordRender from './RecordRender.vue'
 export default {
+  components: { RecordRender },
   name: 'RecordCreate',
   data() {
     return {
@@ -53,7 +48,7 @@ export default {
     },
     ...mapGetters('records', [
       'getRootRecordId',
-      'getBaseRecords'
+      'getBaseRecordsIds'
     ])
   },
   methods: {
@@ -71,7 +66,7 @@ export default {
         parentRecordId: this.getRootRecordId
       })
       .then((res) => {
-        this.$toast.info(`created record #${res.data.recordId}`)
+        this.$toast.success(`created record #${res.data.recordId}`)
 
         if (this.getRootRecordId) {
           this.$router.push({name: 'records-upcomings'})
@@ -85,6 +80,9 @@ export default {
           this.key = !this.key
         }
       })
+      .catch(() => {
+        this.$toast.error("Oops, Error occured during action...")
+      })
       .finally(() => this.disable = false)
     }
   }
@@ -97,22 +95,34 @@ export default {
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(150px, 25%) minmax(300px, 100%);
+  grid-template-columns: 150px minmax(300px, 100%);
 }
+
 .flex {
   display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-.flex-items {
-  min-width: calc(50% - 6px);
-  max-width: 50%;
-  border: solid 1px #e9e9e7;
+  flex-wrap: wrap-reverse;
+  column-gap: 16px;
+  row-gap: 32px;
+  justify-content: space-around;
 }
 .overflow-scroll {
-  overflow-y: auto;
+  flex-grow: 1;
+  overflow-y: scroll;
+  max-height: calc(100vh - 70px);
+}
+.flex-upcomings {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
 .new-record {
-  width: 75%;
+  display: flex;
+  flex-direction: column;
+}
+.new-record input,
+.new-record textarea,
+.new-record select {
+  max-width: 50%;
+  min-width: 300px;
 }
 </style>
