@@ -26,3 +26,8 @@ export const users = {
 export const Block = {
     get: (args) => makeGetReq('/api/blocks/', args),
 }
+
+export const Pages = {
+    get: () => makeGetReq('/api/pages'),
+    create: () => makePostReq('/api/pages')
+}

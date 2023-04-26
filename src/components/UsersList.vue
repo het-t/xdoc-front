@@ -7,13 +7,27 @@
         </template>
 
         <template #tbody>
-            <tr @click.right.prevent="{openMenu($event, this, user.id); menu.username = user.firstName + ' ' +user.lastName}" v-for="(user, index) in users" :class="menu.id == user.id ? 'tr-right-clicked' : ''" :key="user.id" class="cursor-ptr">
+            <tr 
+                v-for="(user, index) in users" 
+                @click.right.prevent="{
+                    openMenu($event, this, user.id); 
+                    menu.username = user.firstName + ' ' +user.lastName
+                }" 
+                :class="menu.id == user.id ? 'tr-right-clicked' : ''" 
+                :key="user.id" 
+                class="cursor-ptr"
+            >
                 <td>{{ index + 1 }}</td>
                 <td>{{ user.firstName }} {{ user.lastName }}</td>
                 <td>{{ user.email }}</td>
             </tr>
 
-            <BaseMenu @click-outside="closeMenu(this, username)" v-if="menu.visibility == true" :posX="menu.posX" :posY="menu.posY">
+            <BaseMenu 
+                v-if="menu.visibility == true" 
+                @click-outside="closeMenu(this, username)" 
+                :posX="menu.posX" 
+                :posY="menu.posY"
+            >
                 <template v-slot:menu-actions>
                     <div class="menu-action">
                         <div class="action-parent mrl6">
@@ -23,7 +37,11 @@
                             Edit
                         </div>
                     </div>
-                    <div @click="del(menu.id, menu.username)" class="menu-action">
+
+                    <div 
+                        @click="del(menu.id, menu.username)" 
+                        class="menu-action"
+                    >
                         <div class="action-parent mrl6">
                             <font-awesome-icon :icon="['far', 'trash-can']" class="action-pic"></font-awesome-icon>
                         </div>

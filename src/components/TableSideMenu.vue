@@ -2,7 +2,10 @@
     <div class="table-side-menu">
 
         <div class="title">
-            <div @click.prevent="$emit('sideMenuHide')" class="back">
+            <div 
+                @click.prevent="$emit('sideMenuHide')" 
+                class="back"
+            >
                 <font-awesome-icon :icon="['fas', 'plus']" style="transform: rotate(45deg);" class="icon"></font-awesome-icon>
             </div>
             <span style="font-weight: 600;">

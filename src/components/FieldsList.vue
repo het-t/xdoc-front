@@ -1,7 +1,10 @@
 <template>
     <table-main 
         :showSideMenu=showSideMenu
-        :sideMenuForEntity="{'type': 'field', 'id': menu.meta.id}" 
+        :sideMenuForEntity="{
+            'type': 'field', 
+            'id': menu.meta.id
+        }" 
         @sideMenuHide="showSideMenu = false" 
     >
         <template #thead>       
@@ -12,16 +15,38 @@
         </template>
 
         <template #tbody>
-            <tr @click.right.prevent="openMenu($event, this,{id: field.id, fieldName: field.name})" v-for="(field, index) in fields" :class="menu.meta.id == field.id ? 'tr-right-clicked' : ''" :key="field.id" class="cursor-ptr">
+            <tr 
+                @click.right.prevent="openMenu($event, this,{
+                    id: field.id, 
+                    fieldName: field.name
+                })" 
+                v-for="(field, index) in fields" 
+                :class="menu.meta.id == field.id ? 'tr-right-clicked' : ''" 
+                :key="field.id" 
+                class="cursor-ptr"
+            >
                 <td>{{ index + 1 }}</td>
                 <td>{{ field.name }}</td>
                 <td>{{ field.typeDes }}</td>
                 <td>{{ field.description }}</td>
             </tr>
 
-            <BaseMenu @click-outside="closeMenu(this, {id: '', fieldName: ''}) " v-if="menu.visibility == true" :posX="menu.posX" :posY="menu.posY">
+            <BaseMenu 
+                @click-outside="closeMenu(this, {
+                    id: '', 
+                    fieldName: ''
+                })"
+                v-if="menu.visibility == true" 
+                :posX="menu.posX" 
+                :posY="menu.posY"
+            >
                 <template v-slot:menu-actions>
-                    <div @click.prevent="showSideMenu = true; closeMenu(this)" class="menu-action">
+                    <div 
+                        @click.prevent="
+                            showSideMenu = true; 
+                            closeMenu(this)
+                        " 
+                        class="menu-action">
                         <div class="action-parent mrl6">
                             <font-awesome-icon :icon="['far', 'pen-to-square']" class="action-pic"></font-awesome-icon>
                         </div>
@@ -29,7 +54,10 @@
                             Edit
                         </div>
                     </div>
-                    <div @click="del(menu.meta.id, menu.meta.fieldName)" class="menu-action">
+                    <div 
+                        @click="del(menu.meta.id, menu.meta.fieldName)" 
+                        class="menu-action"
+                    >
                         <div class="action-parent mrl6">
                             <font-awesome-icon :icon="['far', 'trash-can']" class="action-pic"></font-awesome-icon>
                         </div>
