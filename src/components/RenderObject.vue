@@ -4,13 +4,11 @@
             v-if="blockDataRaw.object === 'block'"
             :blockDataRaw="blockDataRaw"
         ></RenderBlock>
-        <!-- :blockId="blockId.toString()" -->
 
         <RenderPage
             v-else-if="blockDataRaw.object === 'page'"
             :pageDataRaw="blockDataRaw"
         ></RenderPage>
-        <!-- :pageId="blockId.toString()" -->
 </div>
 </template>
 
@@ -24,28 +22,26 @@ import { onBeforeRouteUpdate, useRoute } from 'vue-router';
     let blockDataRaw = ref({})
 
     let blockId = ref(0)
-    provide('blockId', blockId.toString())
+    provide('blockId', blockId)
 
-    function getBlockData() {
-        console.log(`rendring object with id ${blockId.value}`)
+    function getBlockData(blockIdArg) {
         Block.get({
-            id: blockId.value,
+            id: blockIdArg,
         })
         .then(res => {
             blockDataRaw.value = res.data
+            blockId.value = blockIdArg
         })
     }
 
     let route = useRoute()
 
     onMounted(() => {
-        blockId.value = route.params.blockId
-        getBlockData()
+        getBlockData(route.params.blockId)
     }) 
 
     onBeforeRouteUpdate((to, from, next) => {
-        blockId.value = to.params.blockId
-        getBlockData()
+        getBlockData(to.params.blockId)
 
         next()
     })

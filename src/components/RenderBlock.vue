@@ -12,7 +12,7 @@
             :blockId="blockId"
         ></BlockRenderCheckboxes>
 
-        <div v-if="blockDataRaw.children[0] !== null">
+        <div style="margin-left: 12px;" v-if="blockDataRaw.children[0] !== null">
             <RenderBlock v-for="block in childBlocksData" :key="block.id"
                 :blockDataRaw="block"
                 :blockId="block.id.toString()"
@@ -30,11 +30,10 @@ import BlockRenderCheckboxes from './BlockRenderCheckboxes.vue';
 
 const props = defineProps({
     blockDataRaw: Object,
-    // blockId: String
+    blockId: String
 })
 
 let blockId = ref(0)
-blockId.value = inject("blockId")
 
 let blockType = ref(0)
 let childBlocksData = ref(0)
@@ -42,7 +41,6 @@ let childBlocksData = ref(0)
 function getChildBlocksData() {
     let childBlockIds = props.blockDataRaw.children
 
-    childBlocksData.value = []
     if (childBlockIds[0] === null) childBlocksData.value = []
     else {
         const promises = childBlockIds.map(blockId => {
@@ -61,6 +59,15 @@ function getChildBlocksData() {
 }
 
 onMounted(() => {
+    if (props.blockId) {
+        console.log("props => ", props.blockId)
+        blockId.value = props.blockId
+    }
+    else {
+        blockId.value = inject("blockId")
+        console.log("inject => ", blockId.value)
+    }
+
     blockType.value = props.blockDataRaw.type
     getChildBlocksData()    
 })

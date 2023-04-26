@@ -11,23 +11,36 @@
 
 <script setup>
 
-import { ref, defineProps, onMounted } from 'vue';
+import { ref, defineProps, onMounted, inject, watch } from 'vue';
 import { Block } from '@/api';
 import RenderBlock from './RenderBlock.vue';
 
 const props = defineProps({
     pageDataRaw: Object,
-    pageId: String
 })
 
 let childBlocksData = ref(0)
 let pageBlockId = ref(0)
+let pageId = inject("blockId")
+
+watch(pageId, (newVal, oldVal) => {
+    if (newVal !== oldVal) getChildBlocksData()
+})
+
+//make a function which can fetch data of page and its properties
+
+onMounted(() => {
+    pageBlockId.value = pageId
+    getChildBlocksData()
+})
 
 function getChildBlocksData() {
     let childBlockIds = props.pageDataRaw.children
 
-    childBlocksData.value = []
-    if (childBlockIds[0] === null) childBlocksData.value = []
+    console.log("render page => ", childBlockIds)
+    if (childBlockIds[0] === null) {
+        childBlocksData.value = []
+    }
     else {
         const promises = childBlockIds.map(blockId => {
             return Block.get({id: blockId})
@@ -40,16 +53,7 @@ function getChildBlocksData() {
         Promise.all(promises)
         .then((blocks) => {
             childBlocksData.value = blocks
-            pageBlockId.value = props.pageId
         })
     }
 }
-
-//make a function which can fetch data of page and its properties
-
-onMounted(() => {
-    pageBlockId.value = props.pageId
-    getChildBlocksData()
-})
-
 </script>
