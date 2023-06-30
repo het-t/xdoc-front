@@ -1,74 +1,115 @@
 <template>
-    <div>
-        <BlockRenderHeadings 
-            v-if="blockType === 'heading_1' || blockType === 'heading_2' || blockType === 'heading_3'"
-            :blockDataRaw="blockDataRaw"
-            :blockId="blockId"
-        ></BlockRenderHeadings>
+    <BlockRenderHeadings 
+        v-if="
+            state.blockType === 'heading_1' 
+            || state.blockType === 'heading_2' 
+            || state.blockType === 'heading_3'
+        "
+        :blockDataRaw="blockDataRaw"
+        :blockId="props.blockId"
+        @keyup="propogateKeyUp"
+    >
+    </BlockRenderHeadings>
 
-        <BlockRenderCheckboxes
-            v-else-if="blockType === 'checkbox'"
-            :blockDataRaw="blockDataRaw"
-            :blockId="blockId"
-        ></BlockRenderCheckboxes>
+    <BlockRenderCheckboxes
+        v-else-if="state.blockType === 'checkbox'"
+        :blockDataRaw="blockDataRaw"
+        :blockId="props.blockId"
+        @keyup="propogateKeyUp"
+    ></BlockRenderCheckboxes>
 
-        <div style="margin-left: 12px;" v-if="blockDataRaw.children[0] !== null">
-            <RenderBlock v-for="block in childBlocksData" :key="block.id"
-                :blockDataRaw="block"
-                :blockId="block.id.toString()"
-            ></RenderBlock>
-        </div>
-    </div>
+    <BlockRenderParagraph
+        v-else-if="state.blockType === 'paragraph'"
+        :blockDataRaw="blockDataRaw"
+        @keyup="propogateKeyUp($event)"
+    ></BlockRenderParagraph>
+
+    <template
+        v-if="childBlocksInStore?.length && childBlocksInStore?.[0] !== null"
+        style="margin-left: 12px;"
+    >
+        <RenderBlock v-for="block in childBlocksInStore"
+            :treeId="props.treeId"
+            :blockDataRaw="getBlockDataFromStore(block.id)"
+            :blockId="getBlockDataFromStore(block.id).id.toString()"
+            @propogateKeyUp="propogateKeyUp($event)"
+            :key="block.id"
+        ></RenderBlock>
+    </template>
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, inject } from 'vue';
-import { Block } from '@/api'
+import { defineProps, defineEmits, onMounted, reactive, computed } from 'vue';
+import RenderBlock from './RenderBlock.vue';
 import BlockRenderHeadings from './BlockRenderHeadings.vue';
-import RenderBlock from './RenderBlock.vue'
 import BlockRenderCheckboxes from './BlockRenderCheckboxes.vue';
+import BlockRenderParagraph from './BlockRenderParagraph.vue';
+import { useStore } from 'vuex';
+
+const emits = defineEmits([
+    'propogateKeyUp'
+])
 
 const props = defineProps({
     blockDataRaw: Object,
-    blockId: String
+    blockId: String,
+    treeId: String
 })
 
-let blockId = ref(0)
+const state = reactive({
+    blockType: 0,
+    childBlocksData: 0
+})
 
-let blockType = ref(0)
-let childBlocksData = ref(0)
+const store = useStore()
+
+const childBlocksInStore = computed(() => store.getters['trees/getNode'](props.treeId, props.blockId).children)
 
 function getChildBlocksData() {
-    let childBlockIds = props.blockDataRaw.children
+    let childBlocksIds = props.blockDataRaw.children
 
-    if (childBlockIds[0] === null) childBlocksData.value = []
-    else {
-        const promises = childBlockIds.map(blockId => {
-            return Block.get({id: blockId})
-            .then((res) => {
-                return res.data
+    new Promise((resolve, reject) => {
+        if (childBlocksIds[0] === null) {
+            resolve()
+        }
+        else {
+            Promise.all([
+                ...childBlocksIds.map(blockId => {
+                    return store.dispatch('blocks/fetchBlockData', {
+                        blockId
+                    })
+                })
+            ])
+            .then(() => {
+                resolve()
             })
-            .catch(err => console.log(err))
-        })
+            .catch(() => reject())
+        }
+    })
+    .then(() => {
+        for(let i = 0; i!==childBlocksIds.length; i++) {
+            store.dispatch('trees/addChild', {
+                treeId: props.treeId,
+                parentBlockId: props.blockId,
+                childBlockId: childBlocksIds[i]
+            })
+        }
+    })
+}
 
-        Promise.all(promises)
-        .then((blocks) => {
-            childBlocksData.value = blocks
-        })
-    }
+    
+//handles key up events for `slash` to allow user to append block
+function propogateKeyUp(e, defaultBlockName = 'paragraph') {
+    e.defaultBlockName = defaultBlockName
+    emits('propogateKeyUp', e)
+}
+
+function getBlockDataFromStore(blockId) {
+    return store.getters['blocks/getBlockData'](blockId)
 }
 
 onMounted(() => {
-    if (props.blockId) {
-        console.log("props => ", props.blockId)
-        blockId.value = props.blockId
-    }
-    else {
-        blockId.value = inject("blockId")
-        console.log("inject => ", blockId.value)
-    }
-
-    blockType.value = props.blockDataRaw.type
+    state.blockType = props.blockDataRaw.type
     getChildBlocksData()    
 })
 </script>

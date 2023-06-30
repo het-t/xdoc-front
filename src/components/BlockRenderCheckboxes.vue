@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div :data-block-id="props.blockId">
         <input type="checkbox" :checked="checked">
         
         <BlockRenderRichText v-if="content !== ''"
-            :richText="content"
+            :richText="content.rich_text"
             :blockId="blockId"
         ></BlockRenderRichText>
     </div>

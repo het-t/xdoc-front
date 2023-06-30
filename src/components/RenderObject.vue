@@ -1,49 +1,53 @@
 <template>
-    <div>
-        <RenderBlock 
-            v-if="blockDataRaw.object === 'block'"
-            :blockDataRaw="blockDataRaw"
-        ></RenderBlock>
+    <RenderBlock 
+        v-if="blockDataRaw?.object === 'block'"
+        :blockDataRaw="blockDataRaw"
+    ></RenderBlock>
 
-        <RenderPage
-            v-else-if="blockDataRaw.object === 'page'"
-            :pageDataRaw="blockDataRaw"
-        ></RenderPage>
-</div>
+    <RenderPage
+        v-else-if="blockDataRaw?.object === 'page'"
+        :pageDataRaw="blockDataRaw"
+    ></RenderPage>
 </template>
 
 <script setup>
-import { onMounted, ref, provide } from 'vue';
+import { onMounted, ref, provide, computed } from 'vue';
 import RenderBlock from './RenderBlock.vue'
 import RenderPage from './RenderPage.vue'
-import { Block } from '@/api';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
-    let blockDataRaw = ref({})
+let blockId = ref('')
+provide('blockId', blockId)
 
-    let blockId = ref(0)
-    provide('blockId', blockId)
+const store = useStore()
 
-    function getBlockData(blockIdArg) {
-        Block.get({
-            id: blockIdArg,
-        })
-        .then(res => {
-            blockDataRaw.value = res.data
-            blockId.value = blockIdArg
-        })
-    }
+const blockDataRaw = computed(() => {
+    return store.getters['blocks/getBlockData'](blockId.value)
+})
 
-    let route = useRoute()
+//fetches data of block
+function getBlockData(blockIdArg) {
+    return store.dispatch('blocks/fetchBlockData', {
+        blockId: blockIdArg
+    })
+    .then(() => {
+        blockId.value = blockIdArg
+    })
+}
 
-    onMounted(() => {
-        getBlockData(route.params.blockId)
-    }) 
+// 
+let route = useRoute()
 
-    onBeforeRouteUpdate((to, from, next) => {
-        getBlockData(to.params.blockId)
+onMounted(() => {
+    getBlockData(route.params.blockId)
+}) 
 
+onBeforeRouteUpdate((to, from, next) => {
+    getBlockData(to.params.blockId)
+    .then(() => {
+        blockId.value = to.params.blockId
         next()
     })
-
+})
 </script>

@@ -1,51 +1,51 @@
 <template>
-    <div>
-        <h1 
-            v-if="headingType === 'heading_1'"
-            style="font-weight: 600;"
-        >
-            <BlockRenderRichText 
-                :richText="heading"
-                :blockId="blockId"
-            ></BlockRenderRichText>
-        </h1>
-
-        <h2 
-            v-else-if="headingType === 'heading_2'"
-            style="font-weight: 500 !important;"
-        >
-            <BlockRenderRichText 
-                :richText="heading"
-                :blockId="blockId"    
-            ></BlockRenderRichText>
-        </h2>
-
-        <h3 
-            v-else-if="headingType === 'heading_3'"
-            style="font-weight: 400;"    
-        >
-            <BlockRenderRichText 
-                :richText="heading"
-                :blockId="blockId"
-            ></BlockRenderRichText>
-        </h3>
+    <div 
+        @input="textChange"
+        :style="getStyleFromHeadingType"
+        :data-block-id="props.blockId"
+        contenteditable="true"
+    >
+        <BlockRenderRichText 
+            v-if="headingType"
+            :richText="heading.rich_text"
+            :blockId="blockId"
+        ></BlockRenderRichText>
     </div>
 </template>
 
 <script setup>
 import { defineProps, onMounted, ref } from 'vue';
 import BlockRenderRichText from './BlockRenderRichText.vue';
+import { Block } from '@/api';
 
     const props = defineProps({
         blockDataRaw: Object,
         blockId: String
     })
-    
+
     let heading = ref('')
     let headingType = ref('')
-
+    let blockDataRawLocal = ''
+        
     onMounted(() => {
-        headingType.value = props.blockDataRaw.type 
-        heading.value = props.blockDataRaw[headingType.value]
+        blockDataRawLocal = props.blockDataRaw
+        headingType.value = blockDataRawLocal.type 
+        heading.value = blockDataRawLocal[headingType.value]
     })
+
+    function textChange(e) {
+        blockDataRawLocal[headingType.value].rich_text.content = e.target.innerText
+        Block.edit()
+    }
+
+    function getStyleFromHeadingType() {
+        switch(headingType.value) {
+            case 'heading_1': 
+                return 'font-weight: 600';
+            case 'heading_2':
+                return 'font-weight: 500';
+            case 'heading_3':
+                return 'font-weight: 400'; 
+        }
+    }
 </script>

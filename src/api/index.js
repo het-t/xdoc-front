@@ -1,6 +1,7 @@
 import makeDeleteReq from "./makeDeleteReq";
 import makeGetReq from "./makeGetReq";
 import makePostReq from "./makePostReq";
+import makePatchReq from "./makePatchReq"
 
 export const fields = {
     get: (args) => makeGetReq('/api/fields/', args),
@@ -25,6 +26,7 @@ export const users = {
 
 export const Block = {
     get: (args) => makeGetReq('/api/blocks/', args),
+    edit: (args) => makePatchReq('/api/blocks/', args)
 }
 
 export const Pages = {

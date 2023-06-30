@@ -1,9 +1,9 @@
 <template>
-    <span
+    <div
         :style="annotations"
     >
         {{ text }}
-    </span>
+    </div>
 </template>
 
 <script setup>
@@ -18,9 +18,9 @@ import { ref, defineProps, onMounted } from "vue"
     let annotations = ref({})
     
     onMounted(() => {
-        text.value = props.richText.rich_text.content
+        text.value = props.richText.content
 
-        const {bold, underline, strikethrough, italic, color} = props.richText.rich_text.annotations
+        const {bold, underline, strikethrough, italic, color} = props.richText.annotations
         
         let style = ''
         if(bold === true) style += 'font-weight: bold; '
