@@ -1,31 +1,63 @@
 <template>
     <div
-        :data-block-id="props.blockDataRaw.id"      
+        :data-block-id="props.blockId"      
         contenteditable="true"
-        style="display: flex;"
+        placeholder='Press "/" for commands'
     >
-        <template v-for="(richText, index) in content?.rich_text" :key="index">
-            <BlockRenderRichText
-                :richText="richText"
-                :blockId="props.blockDataRaw.id.toString()"
-                data-contenteditable-leaf="true"
-            ></BlockRenderRichText>
+        <div v-if="blockDataInStore?.length" 
+            style="display: flex; min-height: 1em;"
+        >
+            <template v-for="(richText, index) in blockDataInStore" :key="index">
+                <BlockRenderRichText
+                    :richText="richText"
+                    :blockId="props.blockId.toString()"
+                    data-contenteditable-leaf="true"
+                ></BlockRenderRichText>
+            </template>
+        </div>
+
+        <template
+            v-if="childBlocksInStore?.length && childBlocksInStore?.[0] !== null"
+        >
+            <RenderBlock v-for="block in childBlocksInStore"
+                :treeId="props.treeId"
+                :blockId="block.id.toString()"
+                @propogateKeyUp="propogateKeyUp($event)"
+                :key="block.id"
+                style="margin-left: 12px;"
+            ></RenderBlock>
         </template>
     </div>
 </template>
 
 <script setup>
-import { onMounted, defineProps, ref } from 'vue'
+import { defineProps, computed, defineEmits } from 'vue'
+import { useStore } from 'vuex'
 import BlockRenderRichText from './BlockRenderRichText.vue'
+import RenderBlock from './RenderBlock.vue'
 
 const props = defineProps({
-    blockDataRaw: Object,
+    treeId: String,
+    blockId: String,
 })
 
-let content = ref('')
+const emits = defineEmits([
+    'propogateKeyUp'
+])
 
-onMounted(() => {
-    content.value = props.blockDataRaw['paragraph']
-})
+const store = useStore()
+const blockDataInStore = computed(() => store.getters['blocks/getBlockData'](props.blockId).paragraph.rich_text)
+const childBlocksInStore = computed(() => store.getters['trees/getNode'](props.treeId, props.blockId).children)
 
+//handles key up events for `slash` to allow user to append block
+function propogateKeyUp(e, defaultBlockId = "1") {
+    if (['Enter', '/', 'Backspace', 'Escape'].includes(e.key)) {
+        if (e.key === 'Enter') {            
+            if (!e.__customEventData) e.__customEventData = {}
+            e.__customEventData.defaultBlockId = defaultBlockId
+        }
+
+        emits('propogateKeyUp', e)
+    }
+}
 </script>

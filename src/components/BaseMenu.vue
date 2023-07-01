@@ -1,6 +1,7 @@
 <template>
     <div
-        style="border-radius: 4px; background: white; position: relative; max-width: calc(100vw - 24px); box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: hidden;"
+        style="border-radius: 4px; background: white; position: absolute; max-width: calc(100vw - 24px); box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: hidden;"
+        :style="'top: calc(' + props.pos.y + 'px ' + props.pos.spaceAdjustment + 'em); left: ' + props.pos.x + 'px;'"
     >
         <div
             style="display: flex; flex-direction: column; width: 324px; min-width: 180px; max-width: calc(100vw - 24px); height: 100%; max-height: 40vh;"
@@ -34,17 +35,20 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue';
-import Paragraph from '@/models/blocks/Paragraph';
+import { defineEmits, defineProps } from 'vue';
+
+const props = defineProps({
+    pos: Object
+})
 
 const emits = defineEmits([
     'handleSelection'
 ])
 
 const allBlocks = [
-    { label: 'Paragraph', id: 1 },
-    { label: 'Checkbox', id: 2 },
-    { label: 'List', id: 3 },
+    { label: 'Paragraph', id: '1' },
+    { label: 'Checkbox', id: '2' },
+    { label: 'List', id: '3' },
 ]
 
 function possibleBlocks(filter) {
@@ -54,21 +58,9 @@ function possibleBlocks(filter) {
     return allBlocks.filter((block) => block.label.toLowerCase().includes(filter))
 }
 
-function handleBlockSelection(createBlockWithId) {
-    let childBlockData;
-
-    switch(createBlockWithId) {
-        case 1: {
-            childBlockData = new Paragraph({})
-            break
-        }
-        // case 2: {
-        //     childBlockData = new 
-        // }
-    }
-
+function handleBlockSelection(selectedBlockTypeId) {
     emits('handleSelection', {
-        blockData: childBlockData
+        selectedBlockTypeId
     })
 }
 </script>

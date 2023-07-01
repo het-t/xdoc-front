@@ -1,19 +1,29 @@
 import { Block } from '@/api';
 
 const state = {
+    focusBlockId: '',
     blocks: {}
 }
 
 const getters = {
+    getFocusBlockId(state) {
+        return state.focuseBlockId
+    },
     getBlockData: (state) => (blockId) => {
         return state.blocks[blockId]
     }
 }
 
 const mutations = {
+    setFocusBlockId(state, blockId) {
+        state.focusBlockId = blockId
+    },
     setBlockData(state, {data}) {
         state.blocks[data.id] = data
-    }
+    },
+    // removeCommandFromBlock(state, {blockId, length}) {
+    //     state.blocks[blockId]
+    // }
 }
 
 const actions = {

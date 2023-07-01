@@ -17,7 +17,7 @@ const getters = {
 
             while(searchQueue.length !== 0) {
                 const key = searchQueue.pop()
-        
+
                 if (key?.id == blockIdToFind) {
                     if (cb !== undefined) {
                         cb(key)
@@ -44,7 +44,7 @@ const mutations = {
 }
 
 const actions = {
-    addChild({getters}, {treeId, parentBlockId, childBlockId}) {
+    addChild({getters, commit}, {treeId, parentBlockId, childBlockId, setFocusOnCreatedBlock = false}) {
         getters['getNode'](treeId, parentBlockId, function(key) {
             if (childBlockId !== null) {
                 key.children.push({
@@ -53,6 +53,10 @@ const actions = {
                 })
             }
         })
+
+        if (setFocusOnCreatedBlock === true) {
+            commit('blocks/setFocusBlockId', childBlockId, {root: true})
+        }
     }
 }
 

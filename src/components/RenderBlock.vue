@@ -5,42 +5,29 @@
             || state.blockType === 'heading_2' 
             || state.blockType === 'heading_3'
         "
-        :blockDataRaw="blockDataRaw"
+        :treeId="props.treeId"
         :blockId="props.blockId"
-        @keyup="propogateKeyUp"
+        @keydown="propogateKeyUp"
     >
     </BlockRenderHeadings>
 
     <BlockRenderCheckboxes
         v-else-if="state.blockType === 'checkbox'"
-        :blockDataRaw="blockDataRaw"
+        :treeId="props.treeId"
         :blockId="props.blockId"
-        @keyup="propogateKeyUp"
+        @keydown="propogateKeyUp"
     ></BlockRenderCheckboxes>
 
     <BlockRenderParagraph
         v-else-if="state.blockType === 'paragraph'"
-        :blockDataRaw="blockDataRaw"
-        @keyup="propogateKeyUp($event)"
+        :treeId="props.treeId"
+        :blockId="props.blockId"
+        @keydown="propogateKeyUp($event)"
     ></BlockRenderParagraph>
-
-    <template
-        v-if="childBlocksInStore?.length && childBlocksInStore?.[0] !== null"
-        style="margin-left: 12px;"
-    >
-        <RenderBlock v-for="block in childBlocksInStore"
-            :treeId="props.treeId"
-            :blockDataRaw="getBlockDataFromStore(block.id)"
-            :blockId="getBlockDataFromStore(block.id).id.toString()"
-            @propogateKeyUp="propogateKeyUp($event)"
-            :key="block.id"
-        ></RenderBlock>
-    </template>
 </template>
 
 <script setup>
 import { defineProps, defineEmits, onMounted, reactive, computed } from 'vue';
-import RenderBlock from './RenderBlock.vue';
 import BlockRenderHeadings from './BlockRenderHeadings.vue';
 import BlockRenderCheckboxes from './BlockRenderCheckboxes.vue';
 import BlockRenderParagraph from './BlockRenderParagraph.vue';
@@ -51,22 +38,25 @@ const emits = defineEmits([
 ])
 
 const props = defineProps({
-    blockDataRaw: Object,
     blockId: String,
     treeId: String
 })
 
 const state = reactive({
     blockType: 0,
-    childBlocksData: 0
 })
 
 const store = useStore()
 
-const childBlocksInStore = computed(() => store.getters['trees/getNode'](props.treeId, props.blockId).children)
+const blockDataInStore = computed(() => store.getters['blocks/getBlockData'](props.blockId))
+
+onMounted(() => {
+    state.blockType = blockDataInStore.value.type
+    getChildBlocksData()    
+})
 
 function getChildBlocksData() {
-    let childBlocksIds = props.blockDataRaw.children
+    let childBlocksIds = blockDataInStore.value.children
 
     new Promise((resolve, reject) => {
         if (childBlocksIds[0] === null) {
@@ -99,17 +89,14 @@ function getChildBlocksData() {
 
     
 //handles key up events for `slash` to allow user to append block
-function propogateKeyUp(e, defaultBlockName = 'paragraph') {
-    e.defaultBlockName = defaultBlockName
-    emits('propogateKeyUp', e)
-}
+function propogateKeyUp(e, defaultBlockId = "1") {
+    if (['Enter', '/', 'Backspace', 'Escape'].includes(e.key)) {
+        if (e.key === 'Enter') {
+            if (!e.__customEventData) e.__customEventData = {}
+            e.__customEventData.defaultBlockId = defaultBlockId
+        }
 
-function getBlockDataFromStore(blockId) {
-    return store.getters['blocks/getBlockData'](blockId)
+        emits('propogateKeyUp', e)
+    }
 }
-
-onMounted(() => {
-    state.blockType = props.blockDataRaw.type
-    getChildBlocksData()    
-})
 </script>
