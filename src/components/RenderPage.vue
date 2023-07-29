@@ -1,42 +1,15 @@
-<template>
-    <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
-        <template v-for="block in childBlocksInStore" :key="block.id">
-            <RenderBlock
-                :treeId="pageId"
-                :blockId="block.id.toString()"
-                @propogateKeyUp="handleKeyUp"
-            ></RenderBlock>
-        </template>
-    </template>
-
-
-    <div 
-        v-else
-        contenteditable="true"
-        placeholder='Press "/" for commands'
-        @keydown="handleKeyUp"
-    >
-    </div>
-
-    <BaseMenu
-        v-show="state.menuVisibility"
-        :pos="state.menuPos"
-        @handleSelection="appendNewBlock($event.selectedBlockTypeId)"
-    ></BaseMenu>
-</template>
-
 <script setup>
-
 import { onMounted, inject, watch, reactive, defineProps, computed } from 'vue';
 import RenderBlock from './RenderBlock.vue';
 import BaseMenu from './BaseMenu.vue';
 import { useStore } from 'vuex';
 import Paragraph from '@/models/blocks/Paragraph';
 
-const state = reactive({
+const keyDownState = reactive({
+    key: '',
+    blockId: '',
+    block: '',
     menuVisibility: false,
-    menuOpenForBlockId: '',
-    menuOpenForEle: '',
     menuPos: {x: '', y: '', spaceAdjustment: ''}
 })
 
@@ -100,117 +73,142 @@ function getChildBlocksData() {
     })
 }
 
-function setMenuPosition(target, fromStart = true) {
-    const selection = window.getSelection();
-    
+function handleKeyDownSlash(fromStart = true) {
     let y;
+    const selection = window.getSelection()
     if (selection.rangeCount !== 0) {
       const range = selection.getRangeAt(0).cloneRange();
       range.collapse(fromStart);
       const rect = range.getClientRects()[0];
       if (rect) {
-        state.menuPos.spaceAdjustment = "+ 1.5"
-        state.menuPos.x = rect.left;
+        keyDownState.menuPos.spaceAdjustment = "+ 1.5"
+        keyDownState.menuPos.x = rect.left;
         y = rect.top;
       }
     }
 
-    const keyPressPosition = target.getBoundingClientRect().bottom;
+    const keyPressPosition = keyDownState.block.getBoundingClientRect().bottom;
     const menuHeight = 100;
     const viewportHeight = window.innerHeight;
 
     if (viewportHeight - keyPressPosition < menuHeight + 100) {
-        state.menuPos.spaceAdjustment = "- 0.5"
+        keyDownState.menuPos.spaceAdjustment = "- 0.5"
         y -= menuHeight
     }
 
-    state.menuPos.y = y
+    keyDownState.menuPos.y = y
+    keyDownState.menuVisibility = true
 }
 
-//handles key up events for `slash` to allow user to append block
-let slashPressed = false
-// let keystrokeSeq = ""
-function handleKeyUp(e) {
-    // if (slashPressed === true) {
-    //     keystrokeSeq += e.key
-    // }
-
-    switch(e.key) {
-        case 'Enter': {      
-            e.preventDefault();
-            
-            if (slashPressed === false) {
-                appendNewBlock(e.__customEventData.defaultBlockId)
-            }
-            else {
-                // store.commit('blocks/removeCommandFromBlock', {
-                //     blockId: state.menuOpenForBlockId,
-                //     length: keystrokeSeq + 1 //+1 for slash
-                // })
-                // keystrokeSeq = ""
-                
-                console.log("creating slected block")
-            }
-            break
-        }
-        case '/': {
-            setMenuPosition(e.target)
-            slashPressed = true
-            state.menuVisibility = true
-            state.menuOpenForEle = e.target
-            state.menuOpenForBlockId = e.target.getAttribute('data-block-id')
-            break
-        }
-        case 'Escape': {
-            slashPressed = false
-            state.menuVisibility = false
-            state.menuOpenForEle = ''
-            state.menuOpenForBlockId = ''
-            break
-        }
-        case 'Backspace': {
-            if (slashPressed === false) {
-                console.log("check if block has content if not delete the entire block")
-            }
-            break
-        }
-        default: {
-            slashPressed = false
-            state.menuOpenForBlockId = ''
-            state.menuOpenForEle = ''
-            state.menuVisibility = false
-        }
-    }
+function handleKeyDownEnter() {
+    appendNewBlock('paragraph')
 }
 
 //append block to parentBlock
-function appendNewBlock(selectedBlockTypeId) {
+function appendNewBlock(selectedBlockType) {
+    const enterKeyDownAtBlockId = keyDownState.blockId
+    
+    keyDownState.block = keyDownState.block
+    .parentNode
+    .closest('[contenteditable="true"]:not([data-contenteditable-leaf="true"])')
+
+    keyDownState.blockId = keyDownState.block
+    .getAttribute('data-block-id')
+
     let blockData;
-    switch(selectedBlockTypeId) {
-        case "1": {
+    switch(selectedBlockType) {
+        case "paragraph": {
             blockData = new Paragraph({})
+            break
         }
-        // case "2": {
+        // case "checkbox": {
         //     blockData = new CheckBox({})
+        //     break
         // }
-        // case "3": {
+        // case "list": {
         //     blockData = new List({})
+        //     break
         // }
     }
-    store.dispatch('trees/addChild', {
+
+    store.dispatch('trees/addNewChild', {
         treeId: pageId.value,
-        parentBlockId: state.menuOpenForBlockId,
+        parentBlockId: keyDownState.blockId,
         childBlockId: blockData.id,
+        additionalData: {
+            appendBelow: enterKeyDownAtBlockId
+        },
         setFocusOnCreatedBlock: true
     })
 
     store.commit('blocks/setBlockData', {
-        data: blockData
+        data: blockData,
     })
     
-    state.menuVisibility = false
-    slashPressed = false
-    state.menuOpenForBlockId = ''
-    state.menuOpenForEle = ''
+    keyDownState.menuVisibility = false
+    keyDownState.blockId = ''
+    keyDownState.block = ''
 }
+
+function handleKeyDown(e) {
+    if (e.code === 'Slash' || e.code === 'Enter') {
+        const selection = window.getSelection();    
+
+        keyDownState.block = selection
+        .focusNode
+        .parentNode
+        .closest('[contenteditable="true"]')
+
+        keyDownState.blockId = keyDownState.block
+        .getAttribute('data-block-id')
+    }
+
+    if (e.ctrlKey === false) {
+        if (e.code === 'Slash' && e.shiftKey === false) { 
+            keyDownState.key = 'Slash'
+            handleKeyDownSlash()
+        }
+        else if (e.code === 'Enter' && e.shiftKey === false) {
+            e.preventDefault()
+            keyDownState.menuVisibility = false
+            keyDownState.key = 'Enter'
+            handleKeyDownEnter()
+        }
+    }
+} 
 </script>
+
+<template>
+    <div 
+        contenteditable="true"
+        data-contenteditable-root="true" 
+        :data-block-id="pageId"
+        @keydown="handleKeyDown"
+    >
+        <main>
+            <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
+                <template v-for="block in childBlocksInStore" :key="block.id">
+                    <RenderBlock
+                        :treeId="pageId"
+                        :blockId="block.id.toString()"
+                    ></RenderBlock>
+                </template>
+            </template>
+
+
+            <div 
+                v-else
+                contenteditable="true"
+                placeholder='Press "/" for commands'
+            >
+            </div>
+
+            <BaseMenu
+                v-show="keyDownState.menuVisibility"
+                :pos="keyDownState.menuPos"
+                @handleSelection="appendNewBlock"
+            ></BaseMenu>
+        </main>
+    </div>
+        
+</template>

@@ -8,7 +8,8 @@ const getters = {
         return state.list[treeId]
     },
 
-    //depth-first-search to find the specific block takes cb and args(eval) to perform operation on found block
+    //depth-first-search to find the specific block 
+    //takes cb and args(eval) to perform operation on found block
     getNode: (state) => (treeId, blockIdToFind, cb = undefined) => {
         let searchQueue = []
 
@@ -44,7 +45,7 @@ const mutations = {
 }
 
 const actions = {
-    addChild({getters, commit}, {treeId, parentBlockId, childBlockId, setFocusOnCreatedBlock = false}) {
+    addChild({getters}, {treeId, parentBlockId, childBlockId}) {
         getters['getNode'](treeId, parentBlockId, function(key) {
             if (childBlockId !== null) {
                 key.children.push({
@@ -53,9 +54,29 @@ const actions = {
                 })
             }
         })
+    },
+    addNewChild({getters, commit}, {treeId, parentBlockId, childBlockId, additionalData = undefined, setFocusOnCreatedBlock = false}) {
+        const block = getters['getNode'](treeId, parentBlockId)
 
+        let index
+        if (block.children.length) {
+            if (additionalData.appendBelow) {
+                index = block.children.findIndex((block) => {
+                    return block.id == additionalData.appendBelow
+                })
+            }
+        }
+        else index = block.children.length
+
+        block.children.splice(index + 1, 0, {
+            id: childBlockId,
+            children: []
+        })
+        
         if (setFocusOnCreatedBlock === true) {
-            commit('blocks/setFocusBlockId', childBlockId, {root: true})
+            commit('blocks/setFocusBlockId', childBlockId, {
+                root: true
+            })
         }
     }
 }
