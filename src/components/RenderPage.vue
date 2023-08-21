@@ -19,7 +19,6 @@ const props = defineProps({
     pageDataRaw: Object
 })
 
-
 const store = useStore()
 
 watch(pageId, (newVal, oldVal) => {

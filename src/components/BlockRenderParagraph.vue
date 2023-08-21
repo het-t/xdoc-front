@@ -22,9 +22,9 @@ const childBlocksInStore = computed(() =>
 <template>
     <div
         :data-block-id="props.blockId"      
-        placeholder='Press "/" for commands'
         contenteditable="true"
-        class="xdoc-selectable"
+        class="xdoc-paragraph xdoc-selectable"
+        placeholder='Press "/" for commands'
     >
         <div v-if="blockDataInStore?.length" 
             style="display: flex; flex-direction: column; min-height: 1em;"

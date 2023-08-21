@@ -1,28 +1,34 @@
-<template>
-    <div :data-block-id="props.blockId">
-        <input type="checkbox" :checked="checked">
-        
-        <BlockRenderRichText v-if="content !== ''"
-            :richText="content.rich_text"
-            :blockId="blockId"
-        ></BlockRenderRichText>
-    </div>
-</template>
-
 <script setup>
-import { ref, defineProps, onMounted } from 'vue';
+import { defineProps, computed } from 'vue';
+import { useStore } from 'vuex';
 import BlockRenderRichText from './BlockRenderRichText.vue';
 
     const props = defineProps({
-        blockDataRaw: Object,
+        treeId: String,
         blockId: String
     })
 
-    let content = ref('')
-    let checked = ref(false)
-
-    onMounted(() => {
-        content.value = props.blockDataRaw['checkbox']
-        checked.value = props.blockDataRaw['checkbox'].checked
-    })
+    const store = useStore()
+    const blockDataInStore = computed(() => 
+        store.getters['blocks/getBlockData'](props.blockId).checkbox
+    )
 </script>
+
+<template>
+    <div 
+        :data-block-id="props.blockId"
+        contenteditable="true"
+        class="xdoc-checkbox xdoc-selectable"
+    >
+        <div style="display: flex;">
+            <input type="checkbox" :checked="blockDataInStore.checked">
+
+            <BlockRenderRichText 
+                v-if="blockDataInStore.rich_text.content !== ''" 
+                :richText="blockDataInStore.rich_text" 
+                :blockId="blockId"
+                data-contenteditable-leaf="true"
+            ></BlockRenderRichText>
+        </div>
+    </div>
+</template>

@@ -6,7 +6,7 @@ import store from './stores'
 
 import Toaster from "@meforma/vue-toaster";
 
-import './assets/main.css'
+import './assets/index.css'
 
 // global methods
 import openMenu from './helpers/globals/BaseMenuOpen.js'
@@ -15,61 +15,19 @@ import closeMenu from './helpers/globals/BaseMenuClose.js'
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import {
-    faDownload,
-    faPlus,
-    faTag,
-    faUser, 
-    faChartPie,
-    faEnvelope,
-    faBars,
-    faAnglesLeft,
-    faPencil,
-    faUniversalAccess,
-
-    faFileMedical, 
-    faGear, 
-    faFileArrowDown,
-    faChevronDown,
-    faChevronUp,
-    faSquarePen,
-    faTrash,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-    faIdBadge,
-    faComments,
-    faPenToSquare,
-    faTrashCan,
-    faEye,
-    faEyeSlash
-} from "@fortawesome/free-regular-svg-icons"
+import { faBell, faStar, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faBars, faCirclePlus, faGear, faShare, faAnglesRight, faAnglesLeft } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
-    faDownload,
-    faPlus,
-    faTag,
+    faBell,
     faUser,
-    faIdBadge,
-    faChartPie,
-    faEnvelope,
-    faComments,
     faBars,
-    faAnglesLeft,
-    faTrashCan,
-    faPenToSquare,
-    faPencil,
-    faEye,
-    faEyeSlash,
-    faUniversalAccess,
-
-    
-    faFileMedical,
+    faCirclePlus,
     faGear,
-    faFileArrowDown,
-    faChevronUp,
-    faChevronDown,
-    faSquarePen,
-    faTrash,
+    faStar,
+    faShare,
+    faAnglesRight,
+    faAnglesLeft
 );
 
 

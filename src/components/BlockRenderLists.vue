@@ -1,29 +1,32 @@
+<script setup>
+import { defineProps, computed } from 'vue'
+import { useStore } from 'vuex'
+import BlockRenderRichText from './BlockRenderRichText.vue'
+
+const props = defineProps({
+    treeId: String,
+    blockId: String,
+})
+
+const store = useStore()
+
+const blockDataInStore = computed(() => 
+    store.getters['blocks/getBlockData'](props.blockId).list
+)
+</script>
+
 <template>
     <div
-        :data-block-id="props.blockDataRaw.id"      
+        :data-block-id="props.blockId"      
         contenteditable="true"
+        class="xdoc-list xdoc-selectable"
     >
-        <template v-for="(richText, index) in content?.rich_text" :key="index">
+        <template v-for="(richText, index) in blockDataInStore" :key="index">
             <BlockRenderRichText
                 :richText="richText"
-                :blockId="props.blockDataRaw.id.toString()"
+                :blockId="blockId"
+                data-contenteditable-leaf="true"
             ></BlockRenderRichText>
         </template>
     </div>
 </template>
-
-<script setup>
-import { onMounted, defineProps, ref } from 'vue'
-import BlockRenderRichText from './BlockRenderRichText.vue'
-
-const props = defineProps({
-    blockDataRaw: Object,
-})
-
-let content = ref('')
-
-onMounted(() => {
-    content.value = props.blockDataRaw['paragraph']
-})
-
-</script>

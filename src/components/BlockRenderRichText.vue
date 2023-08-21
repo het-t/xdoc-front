@@ -1,12 +1,3 @@
-<template>
-    <div
-        :style="annotations"
-        @mouseup="getTextSelectionFromMouse"
-    >
-        {{ text }}
-    </div>
-</template>
-
 <script setup>
 import { ref, defineProps, onMounted } from "vue"
 
@@ -60,3 +51,12 @@ function getTextSelectionFromMouse() {
 
 
 </script>
+
+<template>
+    <div
+        :style="annotations"
+        @mouseup="getTextSelectionFromMouse"
+    >
+        {{ text }}
+    </div>
+</template>

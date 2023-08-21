@@ -21,9 +21,6 @@ const mutations = {
     setBlockData(state, {data}) {
         state.blocks[data.id] = data
     },
-    // removeCommandFromBlock(state, {blockId, length}) {
-    //     state.blocks[blockId]
-    // }
 }
 
 const actions = {
