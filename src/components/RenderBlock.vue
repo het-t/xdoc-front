@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, onMounted, reactive, computed } from 'vue';
+import { defineProps, onMounted, computed } from 'vue';
 import BlockRenderHeadings from './BlockRenderHeadings.vue';
 import BlockRenderCheckboxes from './BlockRenderCheckboxes.vue';
 import BlockRenderParagraph from './BlockRenderParagraph.vue';
@@ -10,48 +10,35 @@ const props = defineProps({
     treeId: String
 })
 
-const state = reactive({
-    blockType: 0,
-})
-
 const store = useStore()
 
-const blockDataInStore = computed(() => store.getters['blocks/getBlockData'](props.blockId))
-
-onMounted(() => {
-    state.blockType = blockDataInStore.value.type
-    getChildBlocksData()    
+const blockDataInStore = computed(function () {
+    return store.getters['blocks/getBlockData'](props.blockId)
 })
 
-function getChildBlocksData() {
-    let childBlocksIds = blockDataInStore.value.children
+const blockChildrenInStore = computed(function () {
+    return store.getters['trees/getNode'](props.treeId, props.blockId)?.children
+})
 
-    new Promise((resolve, reject) => {
-        if (childBlocksIds[0] === null) {
-            resolve()
-        }
-        else {
-            Promise.all([
-                ...childBlocksIds.map(blockId => {
-                    return store.dispatch('blocks/fetchBlockData', {
-                        blockId
-                    })
-                })
-            ])
-            .then(() => {
-                resolve()
-            })
-            .catch(() => reject())
-        }
+onMounted(() => {
+    fetchBlockData()
+})
+
+function fetchBlockData () {
+    store.dispatch('blocks/fetchBlockData', {
+        blockId: props.blockId
     })
-    .then(() => {
-        for(let i = 0; i!==childBlocksIds.length; i++) {
+    .then((block) => {
+        for (let i = 0; i!==block.children.length; i++) {
             store.dispatch('trees/addChild', {
                 treeId: props.treeId,
                 parentBlockId: props.blockId,
-                childBlockId: childBlocksIds[i]
+                childBlockId: block.children[i]
             })
         }
+    })
+    .catch((err) => {
+        console.log(err)
     })
 }
 </script>
@@ -59,9 +46,9 @@ function getChildBlocksData() {
 <template>
     <BlockRenderHeadings 
         v-if="
-            state.blockType === 'heading_1' 
-            || state.blockType === 'heading_2' 
-            || state.blockType === 'heading_3'
+            blockDataInStore?.type === 'heading_1' 
+            || blockDataInStore?.type === 'heading_2' 
+            || blockDataInStore?.type === 'heading_3'
         "
         :treeId="props.treeId"
         :blockId="props.blockId"
@@ -69,13 +56,23 @@ function getChildBlocksData() {
     </BlockRenderHeadings>
 
     <BlockRenderCheckboxes
-        v-else-if="state.blockType === 'checkbox'"
+        v-else-if="blockDataInStore?.type === 'checkbox'"
         :treeId="props.treeId"
         :blockId="props.blockId"
-    ></BlockRenderCheckboxes>
+    >
+        <template #children>
+            <RenderBlock
+                v-for="block in blockChildrenInStore"
+                :blockId="block.id"
+                :treeId="props.treeId"
+                :key="block.id"
+                style="margin-left: 32px;"
+            ></RenderBlock>
+        </template>
+    </BlockRenderCheckboxes>
 
     <BlockRenderParagraph
-        v-else-if="state.blockType === 'paragraph'"
+        v-else-if="blockDataInStore?.type === 'paragraph'"
         :treeId="props.treeId"
         :blockId="props.blockId"
         class="xdoc-rich-text"

@@ -6,8 +6,8 @@
             class="menu-page-partial-parent"
         >
             <div @click="$router.push({
-                    name: 'render-object', 
-                    params: { blockId: page.id }
+                    name: 'render-page', 
+                    params: { pageId: page.id }
                 })" 
                 style="font-weight: 500; font-size: 14px; min-height: 21px;"
             >

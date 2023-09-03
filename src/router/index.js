@@ -9,15 +9,9 @@ const router = createRouter({
       component: () => import('../components/LogIn.vue')
     },
     {
-      path: '/u',
-      name: 'home',
-      children: [
-        {
-          path: ':blockId',
-          name: 'render-object',
-          component: () => import('../components/RenderObject.vue')
-        },
-      ]
+      path: '/:pageId',
+      name: 'render-page',
+      component: () => import('../components/RenderPage.vue')
     }
   ]
 })

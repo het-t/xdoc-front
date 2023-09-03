@@ -5,9 +5,10 @@ import trees from "./modules/trees";
 const state = {
     path: [],
     menuLeft: 'full',
+    overlayRequesterBlockId: '',
+    overlayRequestReason: '',
     overlayVisibility: false,
-    overlayComponent: '',
-    overlayComponentProps: {}
+    overlayPropertyValue: ''
 }
 
 const getters = {
@@ -20,11 +21,14 @@ const getters = {
     getOverlayVisibility(state) {
         return state.overlayVisibility
     },
-    getOverlayComponent(state) {
-        return state.overlayComponent
+    getOverlayPropertyValue(state) {
+        return state.overlayPropertyValue
     },
-    getOverlayComponentProps(state) {
-        return state.overlayComponentProps
+    getOverlayRequestData(state) {
+        return {
+            requesterBlockId: state.overlayRequesterBlockId,
+            reason: state.overlayRequestReason
+        }
     }
 }
 
@@ -39,11 +43,12 @@ const mutations = {
     setOverlayVisibility(state, value) {
         state.overlayVisibility = value
     },
-    setOverlayComponent(state, value) {
-        state.overlayComponent = value
+    setOverlayPropertyValue(state, value) {
+        state.overlayPropertyValue = value
     },
-    setOverlayComponentProps(state, value) {
-        state.overlayComponentProps = value
+    setOverlayRequestData(state, {requesterBlockId, reason}) {
+        state.overlayRequesterBlockId = requesterBlockId
+        state.overlayRequestReason = reason
     }
 }
 export default createStore({

@@ -33,11 +33,12 @@ const actions = {
                 commit('setBlockData', {
                     data: res.data
                 })
-                resolve()
+
+                resolve(res.data)
             })
             .catch(() => reject())
         })
-    }
+    },
 }
 export default {
     namespaced: true,

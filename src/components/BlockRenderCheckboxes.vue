@@ -30,5 +30,7 @@ import BlockRenderRichText from './BlockRenderRichText.vue';
                 data-contenteditable-leaf="true"
             ></BlockRenderRichText>
         </div>
+
+        <slot name="children"></slot>
     </div>
 </template>

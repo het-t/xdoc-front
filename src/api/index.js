@@ -26,7 +26,7 @@ export const users = {
 
 export const Block = {
     get: (args) => makeGetReq('/api/blocks/', args),
-    edit: (args) => makePatchReq('/api/blocks/', args)
+    edit: (args) => makePatchReq('/api/blocks/', args),
 }
 
 export const Pages = {

@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, inject, watch, reactive, defineProps, computed } from 'vue';
+import { onMounted, reactive, computed, ref, nextTick} from 'vue';
 import RenderBlock from './RenderBlock.vue';
 import BaseMenu from './BaseMenu.vue';
 import { useStore } from 'vuex';
 import Paragraph from '@/models/blocks/Paragraph';
+import { useRoute } from 'vue-router';
 
 const keyDownState = reactive({
     key: '',
@@ -13,62 +14,64 @@ const keyDownState = reactive({
     menuPos: {x: '', y: '', spaceAdjustment: ''}
 })
 
-let pageId = inject("blockId")
-
-const props = defineProps({
-    pageDataRaw: Object
-})
-
-const store = useStore()
-
-watch(pageId, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-        store.commit('trees/setNewTree', {
-            treeId: pageId.value
-        })
-        getChildBlocksData()
+const state = reactive({
+    overlay: {
+        propertyId: '',
+        height: 0,
+        width: 0,
+        top: 0,
+        left: 0,
+        blockId: '',
+        visibility: false
     }
 })
 
-onMounted(() => {
-    store.commit('trees/setNewTree', {
-        treeId: pageId.value
-    })
-    getChildBlocksData()
+const store = useStore()
+const route = useRoute()
+
+const overlayItem = ref('')
+
+const pageId = computed(function () {
+    return route.params.pageId
 })
 
-const childBlocksInStore = computed(() => store.getters['trees/getNode'](pageId.value, pageId.value).children)
+onMounted(() => {
+    fetchPageData()
+})
 
-// getting data of children blocks if any
-function getChildBlocksData() {
-    const childBlocksIds = props.pageDataRaw.children
+const pageDataInStore = computed(function () {
+    return store.getters['blocks/getBlockData'](pageId.value)
+})
 
-    new Promise((resolve, reject) => {
-        if (childBlocksIds[0] === null) {
-            resolve()
-        }
-        else {
-            Promise.all([
-                ...childBlocksIds.map(blockId => {
-                    return store.dispatch('blocks/fetchBlockData', {
-                        blockId
-                    })
-                })
-            ])
-            .then(() => {
-                resolve()
-            })
-            .catch(() => reject())
-        }
+const childBlocksInStore = computed(function () {
+    return store.getters['trees/getNode'](pageId.value, pageId.value)?.children
+})
+
+const overlayRequestInfoInStore = computed(function () {
+    return store.getters['getOverlayRequestData']
+})
+
+function fetchPageData() {
+    store.dispatch('blocks/fetchBlockData', {
+        blockId: pageId.value
     })
-    .then(() => {
-        for(let i = 0; i!==childBlocksIds.length; i++) {
+    .then((page) => {
+        store.commit('trees/setNewTreeIfNotInStore', {
+            treeId: pageId.value
+        })
+        return page
+    })
+    .then((page) => {
+        for (let i = 0; i!==page.children.length; i++) {
             store.dispatch('trees/addChild', {
                 treeId: pageId.value,
                 parentBlockId: pageId.value,
-                childBlockId: childBlocksIds[i]
+                childBlockId: page.children[i]
             })
         }
+    })
+    .catch((err) => {
+        console.log(err)
     })
 }
 
@@ -175,39 +178,147 @@ function handleKeyDown(e) {
         }
     }
 } 
+
+function handleClickOnPropertyValue(e, propertyValue) {
+    document.body.style.position = 'fixed'
+
+    const {x, y, height, width} = e.currentTarget.getBoundingClientRect()
+
+    state.overlay.left = x
+    state.overlay.top = y
+    state.overlay.height = height
+    state.overlay.width = width
+    store.commit('setOverlayVisibility', true)
+    store.commit('setOverlayPropertyValue', propertyValue)
+
+    store.commit('setOverlayRequestData', {
+        requesterBlockId: pageId.value,
+        reason: 'page_property'
+    })
+
+    state.overlay.visibility = true
+
+    nextTick(() => {
+        const range = document.createRange();
+        range.selectNodeContents(overlayItem.value);
+        range.collapse(false);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        overlayItem.value.focus()
+    })
+}
 </script>
 
 <template>
-    <div 
-        contenteditable="true"
+    <div
         data-contenteditable-root="true" 
-        :data-block-id="pageId"
-        @keydown="handleKeyDown"
+        contenteditable="true"
+        style="display: flex; flex-direction: column;"
     >
-        <main>
-            <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
-                <template v-for="block in childBlocksInStore" :key="block.id">
-                    <RenderBlock
-                        :treeId="pageId"
-                        :blockId="block.id.toString()"
-                    ></RenderBlock>
-                </template>
-            </template>
+        <!-- page-information -->
+        <div
+            style="display: flex; width: 100%; flex-shrink: 0; min-width: 0; max-width: 100%; width: 900px;"
+        >
+            <div style="width: 100%;">
+                <!-- page-title -->
+                <div style="font-weight: 700; width: 100%;">
+                    <h1 style="font-weight: inherit;">
+                        First Page
+                    </h1>
+                </div>
 
+                <!-- page-properties -->
+                <div 
+                    role="table" 
+                    aria-label="Page properties" 
+                    style="margin: 0;"
+                >
+                    <div 
+                        contenteditable="false"
+                        style="display: flex; flex-direction: column;"
+                        v-if="pageDataInStore?.properties"
+                    >
+                        <div 
+                            v-for="(property) in pageDataInStore.properties"
+                            :key="property.id"
+                            role="row" 
+                            style="display: flex; width: 100%; align-items: center;"
+                        >
+                            <div
+                                style="display: flex; height: 34px; width: 160px; align-items: center; flex: 0 0 auto;"
+                            >
+                                {{ property.name }}
+                            </div>
 
-            <div 
-                v-else
-                contenteditable="true"
-                placeholder='Press "/" for commands'
-            >
+                            <div
+                                role="cell"
+                                style="display: flex; margin-left: 4px; height: 100%; width: 100%; flex-auto: 1 1 auto; flex-direction: column; min-width: 0;"
+                            >
+                                <div 
+                                    role="button"
+
+                                    @click.stop="handleClickOnPropertyValue($event, property[property.name].plain_text)"
+                                >
+                                    {{ property[property.name].plain_text === '' ? 'Empty' : property[property.name].plain_text }}
+                                </div>
+
+                            </div>
+                        </div>    
+
+                        <!-- overlay handling -->
+                        <Teleport to="#overlay">
+
+                            <!-- page-property overlay -->
+                            <div
+                                v-if="overlayRequestInfoInStore?.requesterBlockId === pageId && overlayRequestInfoInStore?.reason === 'page_property'"
+                                :style="`top: ${state.overlay.top}px; left: ${state.overlay.left-9}px; width: ${state.overlay.width}px; min-height: ${state.overlay.height}px`" 
+                                style="border-radius: 3px; padding: 6px 9px; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; background-color: #fff; position: absolute;"
+                                contenteditable="true"
+                                ref="overlayItem"
+                            >
+                                {{ store.getters['getOverlayPropertyValue'] }}
+                            </div>
+                        </Teleport>
+                    </div>
+                    
+                </div>
             </div>
+        </div>    
 
-            <BaseMenu
-                v-show="keyDownState.menuVisibility"
-                :pos="keyDownState.menuPos"
-                @handleSelection="appendNewBlock"
-            ></BaseMenu>
-        </main>
+        <!-- page-content as blocks -->
+        <div 
+            contenteditable="true"
+            :data-block-id="pageId"
+            @keydown="handleKeyDown"
+            style="width: 100%; height: fit-content;"
+        >
+            <main>
+                <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
+                    <template v-for="block in childBlocksInStore" :key="block.id">
+                        <RenderBlock
+                            :treeId="pageId"
+                            :blockId="block.id.toString()"
+                        ></RenderBlock>
+                    </template>
+                </template>
+    
+    
+                <div 
+                    v-else
+                    contenteditable="true"
+                    placeholder='Press "/" for commands'
+                >
+                </div>
+    
+                <BaseMenu
+                    v-show="keyDownState.menuVisibility"
+                    :pos="keyDownState.menuPos"
+                    @handleSelection="appendNewBlock"
+                ></BaseMenu>
+            </main>
+        </div>
     </div>
         
 </template>

@@ -36,10 +36,12 @@ const getters = {
 
 const mutations = {    
     //creates new tree
-    setNewTree(state, {treeId}) {
-        state.list[treeId] = {
-            id: treeId,
-            children: []
+    setNewTreeIfNotInStore (state, {treeId}) {
+        if (!state.list[treeId]) {
+            state.list[treeId] = {
+                id: treeId,
+                children: []
+            }
         }
     }
 }
