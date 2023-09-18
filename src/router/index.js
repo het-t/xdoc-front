@@ -6,13 +6,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'main',
-      component: () => import('../components/LogIn.vue')
+      component: () => import('../components/LogIn.vue'),
     },
     {
       path: '/:pageId',
       name: 'render-page',
       component: () => import('../components/RenderPage.vue')
-    }
+    },
   ]
 })
 export default router

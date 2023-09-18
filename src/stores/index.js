@@ -5,10 +5,8 @@ import trees from "./modules/trees";
 const state = {
     path: [],
     menuLeft: 'full',
-    overlayRequesterBlockId: '',
-    overlayRequestReason: '',
-    overlayVisibility: false,
-    overlayPropertyValue: ''
+
+    overlayComponentsList: [],
 }
 
 const getters = {
@@ -18,37 +16,21 @@ const getters = {
     getMenuState(state) {
         return state.menuLeft
     },
-    getOverlayVisibility(state) {
-        return state.overlayVisibility
-    },
-    getOverlayPropertyValue(state) {
-        return state.overlayPropertyValue
-    },
-    getOverlayRequestData(state) {
-        return {
-            requesterBlockId: state.overlayRequesterBlockId,
-            reason: state.overlayRequestReason
-        }
+    getOverlayComponentsList(state) {
+        return state.overlayComponentsList;
     }
 }
 
 const mutations = {
     setNewEntryInPath(state, {index, value}) {
-        if (index === 0) state.path = []
-        state.path.push(value)
+        if (index === 0) state.path = [];
+        state.path.push(value);
     }, 
     setMenuState(state, value) {
-        state.menuLeft = value
+        state.menuLeft = value;
     },
-    setOverlayVisibility(state, value) {
-        state.overlayVisibility = value
-    },
-    setOverlayPropertyValue(state, value) {
-        state.overlayPropertyValue = value
-    },
-    setOverlayRequestData(state, {requesterBlockId, reason}) {
-        state.overlayRequesterBlockId = requesterBlockId
-        state.overlayRequestReason = reason
+    setOverlayComponentsList(state, {name, data}) {
+        state.overlayComponentsList.push({name, data});
     }
 }
 export default createStore({

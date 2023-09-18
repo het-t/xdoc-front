@@ -61,13 +61,13 @@ function fetchBlockData () {
         :blockId="props.blockId"
     >
         <template #children>
-            <RenderBlock
+            <BlockRender
                 v-for="block in blockChildrenInStore"
                 :blockId="block.id"
                 :treeId="props.treeId"
                 :key="block.id"
                 style="margin-left: 32px;"
-            ></RenderBlock>
+            ></BlockRender>
         </template>
     </BlockRenderCheckboxes>
 

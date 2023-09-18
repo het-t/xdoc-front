@@ -2,7 +2,7 @@
 import { defineProps, computed } from 'vue'
 import { useStore } from 'vuex'
 import BlockRenderRichText from './BlockRenderRichText.vue'
-import RenderBlock from './RenderBlock.vue'
+import BlockRender from './BlockRender.vue'
 
 const props = defineProps({
     treeId: String,
@@ -41,12 +41,12 @@ const childBlocksInStore = computed(() =>
         <template
             v-if="childBlocksInStore?.length && childBlocksInStore?.[0] !== null"
         >
-            <RenderBlock v-for="block in childBlocksInStore"
+            <BlockRender v-for="block in childBlocksInStore"
                 :treeId="props.treeId"
                 :blockId="block.id.toString()"
                 :key="block.id"
                 style="margin-left: 12px;"
-            ></RenderBlock>
+            ></BlockRender>
         </template>
     </div>
 </template>

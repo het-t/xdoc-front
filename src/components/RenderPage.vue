@@ -1,9 +1,8 @@
 <script setup>
 import { onMounted, reactive, computed, ref, nextTick} from 'vue';
-import RenderBlock from './RenderBlock.vue';
+import BlockRender from './BlockRender.vue';
 import BaseMenu from './BaseMenu.vue';
 import { useStore } from 'vuex';
-import Paragraph from '@/models/blocks/Paragraph';
 import { useRoute } from 'vue-router';
 
 const keyDownState = reactive({
@@ -28,7 +27,6 @@ const state = reactive({
 
 const store = useStore()
 const route = useRoute()
-
 const overlayItem = ref('')
 
 const pageId = computed(function () {
@@ -120,7 +118,7 @@ function appendNewBlock(selectedBlockType) {
     let blockData;
     switch(selectedBlockType) {
         case "paragraph": {
-            blockData = new Paragraph({})
+            // blockData = new Paragraph({})
             break
         }
         // case "checkbox": {
@@ -219,7 +217,7 @@ function handleClickOnPropertyValue(e, propertyValue) {
     >
         <!-- page-information -->
         <div
-            style="display: flex; width: 100%; flex-shrink: 0; min-width: 0; max-width: 100%; width: 900px;"
+            style="display: flex; width: 100%; flex-shrink: 1; min-width: 0; width: 900px; max-width: 100%;"
         >
             <div style="width: 100%;">
                 <!-- page-title -->
@@ -297,10 +295,10 @@ function handleClickOnPropertyValue(e, propertyValue) {
             <main>
                 <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
                     <template v-for="block in childBlocksInStore" :key="block.id">
-                        <RenderBlock
+                        <BlockRender
                             :treeId="pageId"
                             :blockId="block.id.toString()"
-                        ></RenderBlock>
+                        ></BlockRender>
                     </template>
                 </template>
     

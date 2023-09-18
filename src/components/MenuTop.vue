@@ -1,7 +1,52 @@
 <template>
-    <div
-        id="menu-top"
+    <header
+        style="max-width: 100vw; z-index: 100; background: white; user-select: none;"
     >
+        <div class="notion-topbar"
+            style="width: 100%; max-width: 100vw; height: 45px; opacity: 1; transition: opacity 700ms ease 0s, color 700ms ease 0s; position: relative;"
+        >
+            <div style="display: flex; justify-content: space-between; align-items: center; overflow: hidden; height: 45px; padding-left: 12px; padding-right: 10px;">
+                <div v-show="getMenuState !== 'full'">
+                    <div
+                        style="flex-shrink: 0; width: 48px; height: 48px; margin: -12px -6px -12px -12px; padding: 12px;"
+                    >
+                        <div
+                            style="position: relative;"
+                        >
+                            <div style="position: absolute; top: 0; left: 0; will-change: opacity; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"
+                            :style="`opacity: ${1-state.opacity}`">
+                                <div
+                                    style="position: relative; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 3px;" 
+                                >
+                                    <font-awesome-icon
+                                        :icon="['fas', 'angles-right']"
+                                        class="icon icon-2 ptr hvr-bg"
+                                        id="open-menu"
+                                        style="width: 32px !important;"
+                                        @click.prevent.stop="store.commit('setMenuState', 'full')"
+                                    />
+                                </div>
+                            </div>
+
+                            <div style="position: absolute; top: 0; left: 0; will-change: opacity; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;" :style="`opacity: ${state.opacity};`">
+                                <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 3px;"
+                                    @mouseover="state.opacity = 0"
+                                    @mouseleave="state.opacity = 1"
+                                >
+                                    <font-awesome-icon
+                                        :icon="['fas', 'bars']"
+                                        class="icon icon-2 ptr hvr-bg"
+                                        id="bars-menu"
+                                        style="width: 32px !important;"
+                                        @click.prevent.stop="store.commit('setMenuState', 'full')"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     
         <!-- right part -->
         <div
@@ -38,36 +83,18 @@
                 :icon="['fas', 'gear']"
             />
         </div>
-
-        <!-- left part -->
-        <div
-            id="left"
-            v-show="getMenuState !== 'full'"
-        >
-            <font-awesome-icon
-                :icon="['fas', 'bars']"
-                class="icon icon-2 ptr hvr-bg"
-                id="bars-menu"
-                style="width: 32px !important;"
-                @click.prevent.stop="store.commit('setMenuState', 'full')"
-            />
-
-            <font-awesome-icon
-                :icon="['fas', 'angles-right']"
-                class="icon icon-2 ptr hvr-bg"
-                id="open-menu"
-                style="width: 32px !important;"
-                @click.prevent.stop="store.commit('setMenuState', 'full')"
-            />
-        </div>
-    </div>
+    </header>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore()
+
+const state = reactive({
+    opacity: 1
+})
 
 const getMenuState = computed(function () {
     return store.getters['getMenuState']
@@ -75,7 +102,7 @@ const getMenuState = computed(function () {
 </script>
 
 <style>
-#menu-top {
+/* #menu-top {
     height: 45px;
     display: flex;
     flex-direction: row-reverse;
@@ -83,8 +110,8 @@ const getMenuState = computed(function () {
     align-items: center;
     color: var(--primary-black-color);
     padding: 0 12px;
-}
-#left {
+} */
+/* #left {
     width: 266px;
     padding: 0 6px 1px 0;
     display: flex;
@@ -95,8 +122,8 @@ const getMenuState = computed(function () {
     padding: 6px;
     display: flex;
     gap: 3px;
-}
-#open-menu {
+} */
+/* #open-menu {
     opacity: 0;;
 }
 #left:hover #open-menu {
@@ -107,10 +134,5 @@ const getMenuState = computed(function () {
 }
 #bars-menu, #open-menu {
     transition: all 300ms;
-}
-#open-menu {
-    position: relative;
-    left: -42px;
-    top: 0;
-}
+} */
 </style>

@@ -13,7 +13,7 @@
 
                     </div>
 
-                    <div :style="getMenuState !== 'full' ? 'display: block;' : 'display: none;'" style="position: absolute; height: 100%; inset: 0; background-color: white; box-shadow: rgba(0, 0, 0, 0.024) -1px 0px 0px 0px inset;"></div>
+                    <div :style="getMenuState !== 'full' ? 'display: block;' : 'display: none;'" style="position: absolute; height: 100%; inset: 0; background-color: white;"></div>
 
                     <div style="display: flex; flex-direction: column; position: relative; height: 100%; overflow: hidden;">
                         <!-- space info -->
@@ -41,6 +41,7 @@
                             <!-- settings -->
                             <div
                                 class="button-wrapper hvr-bg ptr"
+                                @click.prevent.stop="openSettings"
                             >
                                 <div
                                     class="button-icon"
@@ -59,7 +60,7 @@
                             <!-- new page -->
                             <div
                                 class="button-wrapper hvr-bg ptr"
-                                @click.prevent.stop="addNewPage"
+                                @click.prevent.stop="newPage"
                             >
                                 <div
                                     class="button-icon"
@@ -103,7 +104,8 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed } from "vue";
-import Page from '@/models/blocks/Page.js'
+import Page from "../models/Page.js";
+import Transaction from "../models/Transaction.js";
 
 const store = useStore()
 
@@ -111,14 +113,44 @@ const getMenuState = computed(function () {
     return store.getters['getMenuState']
 })
 
-function addNewPage() {    
-    const page = new Page({})
-    console.log(page)
-    store.commit('setOverlayComponentProps', page)
-    store.commit('blocks/setBlockData', {data: page})
-    store.commit('trees/setNewTree', {treeId: page.id})
-    store.commit('setOverlayVisibility', true)
-    store.commit('setOverlayComponent', 'page')
+function newPage() {   
+    const page = new Page({
+        parentTable: "workspace",
+        parentId: 'defautl-space-id',
+        spaceId: "default-space-id"
+    });
+
+    const createPageTransaction = new Transaction({
+        spaceId: page.spaceId,
+        debug: "MenuLeft.vue -> newPage",
+    });
+
+    //Page - create
+    createPageTransaction.addOperation(
+        page.operationSetPage()
+    );
+
+    //Page - setting parent
+    createPageTransaction.addOperation(
+        page.operationSetParent()
+    )
+
+    //Transaction - save
+    createPageTransaction.save();
+
+    store.commit('setSidePeekData', {
+        visibility: true,
+        requesterBlockId: 'new-page-id',
+        peekMode: 'c'
+    })
+}
+
+function openSettings() {
+    store.commit('setOverlayRequestData', {
+        visibility: true,
+        requesterBlockId: null,
+        reason: 'settings'
+    })
 }
 </script>
 
@@ -163,6 +195,7 @@ function addNewPage() {
     position: relative;
     top: 0;
     left: 0;
+    z-index: 1;
 }
 #menu-left.translate-menu-left {
     width: 0;
@@ -188,9 +221,13 @@ function addNewPage() {
 #menu-left.translate-menu-left {
     width: 0;
 }
-.translate-menu-left-wrapper:hover > div:first-child{
+.translate-menu-left-wrapper:hover > div:first-child {
     box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
 }
+.translate-menu-left-wrapper:hover > div:nth-child(2) {
+    box-shadow: rgba(0, 0, 0, 0.024) -1px 0px 0px 0px inset;
+}
+
 .translate-menu-left-wrapper:hover > div {
     border-radius: 3px;
 }
