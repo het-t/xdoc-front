@@ -210,112 +210,114 @@ function handleClickOnPropertyValue(e, propertyValue) {
 </script>
 
 <template>
-    <div
-        data-contenteditable-root="true" 
-        contenteditable="true"
-        style="display: flex; flex-direction: column;"
-    >
-        <!-- page-information -->
+    <div class="xdoc-scroller vertical" style="z-index: 1; display: flex; flex-direction: column; flex-grow: 1; position: relative; align-items: center; margin-right: 0; margin-bottom: 0; overflow: hidden auto;">
         <div
-            style="display: flex; width: 100%; flex-shrink: 1; min-width: 0; width: 900px; max-width: 100%;"
+            data-contenteditable-root="true" 
+            contenteditable="true"
+            style="display: flex; flex-direction: column;"
         >
-            <div style="width: 100%;">
-                <!-- page-title -->
-                <div style="font-weight: 700; width: 100%;">
-                    <h1 style="font-weight: inherit;">
-                        First Page
-                    </h1>
-                </div>
-
-                <!-- page-properties -->
-                <div 
-                    role="table" 
-                    aria-label="Page properties" 
-                    style="margin: 0;"
-                >
+            <!-- page-information -->
+            <div
+                style="display: flex; width: 100%; flex-shrink: 1; min-width: 0; max-width: 100%;"
+            >
+                <div style="width: 100%;">
+                    <!-- page-title -->
+                    <div style="font-weight: 700; width: 100%;">
+                        <h1 style="font-weight: inherit;">
+                            First Page
+                        </h1>
+                    </div>
+    
+                    <!-- page-properties -->
                     <div 
-                        contenteditable="false"
-                        style="display: flex; flex-direction: column;"
-                        v-if="pageDataInStore?.properties"
+                        role="table" 
+                        aria-label="Page properties" 
+                        style="margin: 0;"
                     >
                         <div 
-                            v-for="(property) in pageDataInStore.properties"
-                            :key="property.id"
-                            role="row" 
-                            style="display: flex; width: 100%; align-items: center;"
+                            contenteditable="false"
+                            style="display: flex; flex-direction: column;"
+                            v-if="pageDataInStore?.properties"
                         >
-                            <div
-                                style="display: flex; height: 34px; width: 160px; align-items: center; flex: 0 0 auto;"
+                            <div 
+                                v-for="(property) in pageDataInStore.properties"
+                                :key="property.id"
+                                role="row" 
+                                style="display: flex; width: 100%; align-items: center;"
                             >
-                                {{ property.name }}
-                            </div>
-
-                            <div
-                                role="cell"
-                                style="display: flex; margin-left: 4px; height: 100%; width: 100%; flex-auto: 1 1 auto; flex-direction: column; min-width: 0;"
-                            >
-                                <div 
-                                    role="button"
-
-                                    @click.stop="handleClickOnPropertyValue($event, property[property.name].plain_text)"
+                                <div
+                                    style="display: flex; height: 34px; width: 160px; align-items: center; flex: 0 0 auto;"
                                 >
-                                    {{ property[property.name].plain_text === '' ? 'Empty' : property[property.name].plain_text }}
+                                    {{ property.name }}
                                 </div>
-
-                            </div>
-                        </div>    
-
-                        <!-- overlay handling -->
-                        <Teleport to="#overlay">
-
-                            <!-- page-property overlay -->
-                            <div
-                                v-if="overlayRequestInfoInStore?.requesterBlockId === pageId && overlayRequestInfoInStore?.reason === 'page_property'"
-                                :style="`top: ${state.overlay.top}px; left: ${state.overlay.left-9}px; width: ${state.overlay.width}px; min-height: ${state.overlay.height}px`" 
-                                style="border-radius: 3px; padding: 6px 9px; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; background-color: #fff; position: absolute;"
-                                contenteditable="true"
-                                ref="overlayItem"
-                            >
-                                {{ store.getters['getOverlayPropertyValue'] }}
-                            </div>
-                        </Teleport>
+    
+                                <div
+                                    role="cell"
+                                    style="display: flex; margin-left: 4px; height: 100%; width: 100%; flex-auto: 1 1 auto; flex-direction: column; min-width: 0;"
+                                >
+                                    <div 
+                                        role="button"
+    
+                                        @click.stop="handleClickOnPropertyValue($event, property[property.name].plain_text)"
+                                    >
+                                        {{ property[property.name].plain_text === '' ? 'Empty' : property[property.name].plain_text }}
+                                    </div>
+    
+                                </div>
+                            </div>    
+    
+                            <!-- overlay handling -->
+                            <Teleport to="#overlay">
+    
+                                <!-- page-property overlay -->
+                                <div
+                                    v-if="overlayRequestInfoInStore?.requesterBlockId === pageId && overlayRequestInfoInStore?.reason === 'page_property'"
+                                    :style="`top: ${state.overlay.top}px; left: ${state.overlay.left-9}px; width: ${state.overlay.width}px; min-height: ${state.overlay.height}px`" 
+                                    style="border-radius: 3px; padding: 6px 9px; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; background-color: #fff; position: absolute;"
+                                    contenteditable="true"
+                                    ref="overlayItem"
+                                >
+                                    {{ store.getters['getOverlayPropertyValue'] }}
+                                </div>
+                            </Teleport>
+                        </div>
+                        
                     </div>
-                    
+                </div>
+            </div>    
+    
+            <!-- page-content as blocks -->
+            <div 
+                contenteditable="true"
+                :data-block-id="pageId"
+                @keydown="handleKeyDown"
+                style="width: 100%; height: fit-content;"
+            >
+                <div>
+                    <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
+                        <template v-for="block in childBlocksInStore" :key="block.id">
+                            <BlockRender
+                                :treeId="pageId"
+                                :blockId="block.id.toString()"
+                            ></BlockRender>
+                        </template>
+                    </template>
+        
+        
+                    <div 
+                        v-else
+                        contenteditable="true"
+                        placeholder='Press "/" for commands'
+                    >
+                    </div>
+        
+                    <BaseMenu
+                        v-show="keyDownState.menuVisibility"
+                        :pos="keyDownState.menuPos"
+                        @handleSelection="appendNewBlock"
+                    ></BaseMenu>
                 </div>
             </div>
-        </div>    
-
-        <!-- page-content as blocks -->
-        <div 
-            contenteditable="true"
-            :data-block-id="pageId"
-            @keydown="handleKeyDown"
-            style="width: 100%; height: fit-content;"
-        >
-            <main>
-                <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
-                    <template v-for="block in childBlocksInStore" :key="block.id">
-                        <BlockRender
-                            :treeId="pageId"
-                            :blockId="block.id.toString()"
-                        ></BlockRender>
-                    </template>
-                </template>
-    
-    
-                <div 
-                    v-else
-                    contenteditable="true"
-                    placeholder='Press "/" for commands'
-                >
-                </div>
-    
-                <BaseMenu
-                    v-show="keyDownState.menuVisibility"
-                    :pos="keyDownState.menuPos"
-                    @handleSelection="appendNewBlock"
-                ></BaseMenu>
-            </main>
         </div>
     </div>
         

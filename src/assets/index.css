@@ -8,6 +8,16 @@
   --primary-box-shadow-color: rgba(55, 53, 47, 0.2);
 }
 
+#app,
+#xdoc-app,
+body.xdoc-body,
+html.xdoc-html {
+  background: transparent;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
 #app {
   font-weight: normal;
   background-color: #fff;

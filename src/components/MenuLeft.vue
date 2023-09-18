@@ -1,7 +1,8 @@
 <template>
-    <div
+    <nav
         id="menu-left"
         :class="getMenuState !== 'full' ? 'translate-menu-left' : ''"
+        style="z-index: 111;"
     >
         <div style="height: 100%;">    
             <div style="width: 0; position: absolute; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; overflow: visible; z-index: 9;">
@@ -95,10 +96,13 @@
                         <!-- all important messages to be passed to user can be shown here -->
                         </div>
                     </div>
+                    
+                    <div v-show="getMenuState === 'full'" style="position: absolute; right: 0; top: 0; height: 100%; width: 8px; background-color: red; cursor: col-resize;"></div>
+                    
                 </div>
             </div>
         </div>
-    </div>
+    </nav>
 </template>
 
 <script setup>

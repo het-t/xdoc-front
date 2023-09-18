@@ -4,12 +4,17 @@
     <div style="display: flex; flex-grow: 1;">
       <menu-left />
 
-      <div style="width: 100%;">
+      <div style="width: 100%; overflow: hidden;">
         <menu-top />
         
-        <div id="content">
+        <!-- set width of main element -->
+        <main 
+          class="xdoc-frame" 
+          style="flex-grow: 0; flex-shrink: 1; display: flex; flex-direction: column; background: white; z-index: 1; height: calc(100% - 45px); max-height: 100%; position: relative; transition-property: width; transition-duration: 270ms; transition-time
+          ease"
+        >
           <RouterView/>
-        </div>
+        </main>
       </div>
 
       <!-- <SidePeekRenderer /> -->
@@ -88,17 +93,6 @@ const getOverlayComponentsList = computed(() => {
   display: flex;
   position: relative;
   top: 0;
-}
-
-#content {
-  flex: 1;
-  margin-top: 39px;
-  position: relative;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  width: 100%;
 }
 
 #overlay-default,
