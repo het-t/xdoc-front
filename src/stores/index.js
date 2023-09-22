@@ -6,7 +6,11 @@ const state = {
     path: [],
     menuLeft: 'full',
 
-    overlayComponentsList: [],
+    overlayComponentsList: [
+        {name: 'SidePeekRenderer', data: {}}
+    ],
+
+    sidePeekPageId: "l"
 }
 
 const getters = {
@@ -18,6 +22,9 @@ const getters = {
     },
     getOverlayComponentsList(state) {
         return state.overlayComponentsList;
+    },
+    getSidePeekPageId(state) {
+        return state.sidePeekPageId
     }
 }
 
@@ -31,6 +38,12 @@ const mutations = {
     },
     setOverlayComponentsList(state, {name, data}) {
         state.overlayComponentsList.push({name, data});
+    },
+    resetOverlayComponentsList(state) {
+        state.overlayComponentsList = []
+    },
+    setSidePeekPageId(state, {pageId}) {
+        state.sidePeekPageId = pageId;
     }
 }
 export default createStore({

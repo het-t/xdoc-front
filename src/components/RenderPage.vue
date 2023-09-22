@@ -1,9 +1,55 @@
 <script setup>
-import { onMounted, reactive, computed, ref, nextTick} from 'vue';
+import { onMounted, reactive, computed, ref, nextTick, watch, defineProps} from 'vue';
 import BlockRender from './BlockRender.vue';
 import BaseMenu from './BaseMenu.vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+
+const store = useStore()
+const route = useRoute()
+const router = useRouter()
+
+const overlayItem = ref('')
+
+const props = defineProps({
+    pageIdFrom: {
+        type: String,
+        default: 'params'
+    }
+})
+
+if (props.pageIdFrom === "query") {
+    watch(
+        () => route.query.p,
+        (newValue, oldValue) => {
+            if (newValue !== oldValue && newValue) {
+                router.push({ 
+                    name: 'render-page', 
+                    query: {
+                        p: newValue,
+                        pm: 'c'
+                    }
+                })
+            }
+        }
+    )
+}
+else {
+    watch(
+        () => route.params.pageId,
+        (newValue, oldValue) => {
+            if (newValue !== oldValue && newValue) {
+                router.push({
+                    name: 'render-page',
+                    params: {
+                        pageId: newValue
+                    }
+                })
+            }
+        }
+    )
+}
 
 const keyDownState = reactive({
     key: '',
@@ -25,12 +71,12 @@ const state = reactive({
     }
 })
 
-const store = useStore()
-const route = useRoute()
-const overlayItem = ref('')
-
 const pageId = computed(function () {
     return route.params.pageId
+})
+
+const getPeekMode = computed(function () {
+    return route.query.pm
 })
 
 onMounted(() => {
@@ -210,115 +256,302 @@ function handleClickOnPropertyValue(e, propertyValue) {
 </script>
 
 <template>
-    <div class="xdoc-scroller vertical" style="z-index: 1; display: flex; flex-direction: column; flex-grow: 1; position: relative; align-items: center; margin-right: 0; margin-bottom: 0; overflow: hidden auto;">
+    <div 
+        class="xdoc-scroller vertical" 
+        style="z-index: 1; display: flex; flex-direction: column; flex-grow: 1; position: relative; margin-right: 0; margin-bottom: 0; overflow: hidden auto;"
+    >
+        <div style="position: absolute; top: 0; left: 0;">
+            <div></div>
+        </div>
+
         <div
             data-contenteditable-root="true" 
             contenteditable="true"
-            style="display: flex; flex-direction: column;"
+            class="whenContentEditable"
+            style="display: flex; flex-direction: column; position: relative; align-items: center; caret-color: rgb(55, 53, 47); width: 100%;"
         >
-            <!-- page-information -->
-            <div
-                style="display: flex; width: 100%; flex-shrink: 1; min-width: 0; max-width: 100%;"
+            <span style="height: 1px; width: 1px; caret-color: transparent;"></span>
+
+            <div class="layout"
+                :class="getPeekMode === 'c' ? 'layout-center-peek' : ''"
+                style="padding-bottom: 80px; transform: translateX(0px);"
             >
-                <div style="width: 100%;">
-                    <!-- page-title -->
-                    <div style="font-weight: 700; width: 100%;">
-                        <h1 style="font-weight: inherit;">
-                            First Page
-                        </h1>
-                    </div>
-    
-                    <!-- page-properties -->
+                <div class="layout-full">
                     <div 
-                        role="table" 
-                        aria-label="Page properties" 
-                        style="margin: 0;"
+                        contenteditable="false" 
+                        class="pseudoSelector"
+                        data-content-editable-void="true"
+                        style="user-select: none; --pseudoSelection--background: transparent; width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; flex-grow: 0; z-index: 2;"
                     >
-                        <div 
-                            contenteditable="false"
-                            style="display: flex; flex-direction: column;"
-                            v-if="pageDataInStore?.properties"
-                        >
-                            <div 
-                                v-for="(property) in pageDataInStore.properties"
-                                :key="property.id"
-                                role="row" 
-                                style="display: flex; width: 100%; align-items: center;"
-                            >
-                                <div
-                                    style="display: flex; height: 34px; width: 160px; align-items: center; flex: 0 0 auto;"
-                                >
-                                    {{ property.name }}
-                                </div>
-    
-                                <div
-                                    role="cell"
-                                    style="display: flex; margin-left: 4px; height: 100%; width: 100%; flex-auto: 1 1 auto; flex-direction: column; min-width: 0;"
-                                >
-                                    <div 
-                                        role="button"
-    
-                                        @click.stop="handleClickOnPropertyValue($event, property[property.name].plain_text)"
-                                    >
-                                        {{ property[property.name].plain_text === '' ? 'Empty' : property[property.name].plain_text }}
-                                    </div>
-    
-                                </div>
-                            </div>    
-    
-                            <!-- overlay handling -->
-                            <Teleport to="#overlay">
-    
-                                <!-- page-property overlay -->
-                                <div
-                                    v-if="overlayRequestInfoInStore?.requesterBlockId === pageId && overlayRequestInfoInStore?.reason === 'page_property'"
-                                    :style="`top: ${state.overlay.top}px; left: ${state.overlay.left-9}px; width: ${state.overlay.width}px; min-height: ${state.overlay.height}px`" 
-                                    style="border-radius: 3px; padding: 6px 9px; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; background-color: #fff; position: absolute;"
-                                    contenteditable="true"
-                                    ref="overlayItem"
-                                >
-                                    {{ store.getters['getOverlayPropertyValue'] }}
-                                </div>
-                            </Teleport>
-                        </div>
-                        
                     </div>
                 </div>
-            </div>    
-    
-            <!-- page-content as blocks -->
-            <div 
-                contenteditable="true"
-                :data-block-id="pageId"
-                @keydown="handleKeyDown"
-                style="width: 100%; height: fit-content;"
-            >
-                <div>
-                    <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
-                        <template v-for="block in childBlocksInStore" :key="block.id">
-                            <BlockRender
-                                :treeId="pageId"
-                                :blockId="block.id.toString()"
-                            ></BlockRender>
-                        </template>
-                    </template>
-        
-        
-                    <div 
-                        v-else
-                        contenteditable="true"
-                        placeholder='Press "/" for commands'
-                    >
+
+                <div class="layout-content">
+                </div>
+
+                <div class="layout-content">
+                    <div style="width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; flex-grow: 0;">
+                        <div style="max-width: 100%; padding-left: calc(0px + env(safe-area-inset-left)); width: 100%;">
+                            <div style="user-select: none; width: calc(100% - 0px);">
+                                
+                            </div>
+
+                            <div 
+                                contenteditable="false"
+                                class="pseudoSelection"
+                                data-content-editable-void="true"
+                                style="user-select: none; --pseudoSelection--background: transparent; pointer-events: none;"
+                            >
+
+                            </div>
+
+                            <div style="padding-right: calc(0 + env(safe-area-inset-right));">
+                                <div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-        
-                    <BaseMenu
-                        v-show="keyDownState.menuVisibility"
-                        :pos="keyDownState.menuPos"
-                        @handleSelection="appendNewBlock"
-                    ></BaseMenu>
+                </div>
+
+                <div 
+                    class="layout-nested-grid layout-header-detailSections"
+                    data-content-editable-void="true"
+                    contenteditable="false"
+                >
+                    <div class="layout-content">
+                        <div style="width: 100%; font-size: 14px;">
+                            <div style="width: 100%; max-width: 100%; padding: 8px 0px; margin: 0px auto;">
+                                <div style="width: 100%; max-width: 100%; padding-top: 8px; margin: 0px auto;">
+                                    <div style="padding-bottom: 8px;">
+                                        <div role="table"
+                                            aria-label="Page properties"
+                                            style="margin: 0px;"
+                                        >
+                                            <div style="display: flex; flex-direction: column;">
+                                                <div role="row"
+                                                    style="display: flex; align-items: center; padding-bottom: 4px;"
+                                                >
+                                                    <div style="display: flex; align-items: center; height: 34px; width: 160px; flex: 0 0 auto; color: rgba(55, 53, 47, 0.65);">
+                                                        <div role="cell"
+                                                            style="user-select: none; transition: background 20ms ease-in 0s; cursor: pointer; display: flex; align-items: center; height: 100%; width: 100%; border-radius: 3px; padding: 0px 6px;"
+                                                        >
+                                                            <div style="display: flex; align-items: center; line-height: 120%; min-width: 0px; font-size: 14px;">
+                                                                <div style="margin-right: 6px;"></div>
+                                                                <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Status</div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div role="cell"
+                                                            style="display: flex; margin-left: 4px; height: 100%; flex: 1 1 auto; flex-direction: column; min-width: 0px;"
+                                                        >
+                                                            <div style="display: flex; align-items: center; margin-left: 4px; height: 100%; flex: 1 1 auto; min-width: 0px;">
+                                                                <div role="button" tabindex="0" data-testid="property-value" style="user-select: none; transition: background 20ms ease-in 0s; cursor: pointer; position: relative; font-size: 14px; overflow: hidden; display: inline-block; border-radius: 3px; width: 100%; min-height: 34px; padding: 7px 8px;">
+                                                                    <div style="display: flex; flex-wrap: wrap; gap: 6px 8px;"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: flex;">
+                                            <div role="button"
+                                                tabindex="0"
+                                                style="user-select: none; transition: background 20ms ease-in 0s; cursor: pointer; display: flex; align-items: center; color: rgba(55, 53, 47, 0.5); border-radius: 3px; padding-left: 6px; padding-right: 6px; height: 34px; width: auto;"
+                                                class="hvr"
+                                            >
+                                                <svg 
+                                                    role="graphics-symbol" 
+                                                    viewBox="0 0 16 16" 
+                                                    class="plus" 
+                                                    style="width: 16px; height: 16px; display: block; fill: rgba(55, 53, 47, 0.35); flex-shrink: 0; margin-right: 9px; margin-top: 1px;"
+                                                >
+                                                    <path d="M7.977 14.963c.407 0 .747-.324.747-.723V8.72h5.362c.399 0 .74-.34.74-.747a.746.746 0 00-.74-.738H8.724V1.706c0-.398-.34-.722-.747-.722a.732.732 0 00-.739.722v5.529h-5.37a.746.746 0 00-.74.738c0 .407.341.747.74.747h5.37v5.52c0 .399.332.723.739.723z">
+                                                    </path>
+                                                </svg>    
+
+                                                <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0px; line-height: 16px;">Add a property</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layout-content">
+                        <div class="xdoc-page-view-discussion"
+                            style="width: 100%; margin: 0 auto;"
+                        >
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layout-content layout-editor" style="min-height: 170px;">
+                    <div class="layout-full"></div>
                 </div>
             </div>
+
+            <span style="height: 1px; width: 1px; caret-color: transparent;"></span>
+
+            <div>
+                <!-- page-information -->
+                <div
+                    style="display: flex; width: 100%; flex-shrink: 1; min-width: 0; max-width: 100%;"
+                >
+                    <div style="width: 100%;">
+                        <!-- page-title -->
+                        <div style="font-weight: 700; width: 100%;">
+                            <h1 style="font-weight: inherit;">
+                                First Page
+                            </h1>
+                        </div>
+        
+                        <!-- page-properties -->
+                        <div 
+                            role="table" 
+                            aria-label="Page properties" 
+                            style="margin: 0;"
+                        >
+                            <div 
+                                contenteditable="false"
+                                style="display: flex; flex-direction: column;"
+                                v-if="pageDataInStore?.properties"
+                            >
+                                <div 
+                                    v-for="(property) in pageDataInStore.properties"
+                                    :key="property.id"
+                                    role="row" 
+                                    style="display: flex; width: 100%; align-items: center;"
+                                >
+                                    <div
+                                        style="display: flex; height: 34px; width: 160px; align-items: center; flex: 0 0 auto;"
+                                    >
+                                        {{ property.name }}
+                                    </div>
+        
+                                    <div
+                                        role="cell"
+                                        style="display: flex; margin-left: 4px; height: 100%; width: 100%; flex-auto: 1 1 auto; flex-direction: column; min-width: 0;"
+                                    >
+                                        <div 
+                                            role="button"
+        
+                                            @click.stop="handleClickOnPropertyValue($event, property[property.name].plain_text)"
+                                        >
+                                            {{ property[property.name].plain_text === '' ? 'Empty' : property[property.name].plain_text }}
+                                        </div>
+        
+                                    </div>
+                                </div>    
+        
+                                <!-- overlay handling -->
+                                <Teleport to="#overlay">
+        
+                                    <!-- page-property overlay -->
+                                    <div
+                                        v-if="overlayRequestInfoInStore?.requesterBlockId === pageId && overlayRequestInfoInStore?.reason === 'page_property'"
+                                        :style="`top: ${state.overlay.top}px; left: ${state.overlay.left-9}px; width: ${state.overlay.width}px; min-height: ${state.overlay.height}px`" 
+                                        style="border-radius: 3px; padding: 6px 9px; box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; background-color: #fff; position: absolute;"
+                                        contenteditable="true"
+                                        ref="overlayItem"
+                                    >
+                                        {{ store.getters['getOverlayPropertyValue'] }}
+                                    </div>
+                                </Teleport>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>    
+        
+                <!-- page-content as blocks -->
+                <div 
+                    contenteditable="true"
+                    :data-block-id="pageId"
+                    @keydown="handleKeyDown"
+                    style="width: 100%; height: fit-content;"
+                >
+                    <div>
+                        <template v-if="childBlocksInStore?.length && childBlocksInStore[0] !== null">
+                            <template v-for="block in childBlocksInStore" :key="block.id">
+                                <BlockRender
+                                    :treeId="pageId"
+                                    :blockId="block.id.toString()"
+                                ></BlockRender>
+                            </template>
+                        </template>
+            
+            
+                        <div 
+                            v-else
+                            contenteditable="true"
+                            placeholder='Press "/" for commands'
+                        >
+                        </div>
+            
+                        <BaseMenu
+                            v-show="keyDownState.menuVisibility"
+                            :pos="keyDownState.menuPos"
+                            @handleSelection="appendNewBlock"
+                        ></BaseMenu>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div 
+            class="xdoc-presence-container"
+            style="position: absolute; top: 0; left: 0; z-index: 89;"
+        >
+            <div></div>
         </div>
     </div>
-        
 </template>
+
+<style scoped>
+.hvr:hover {
+    background: rgba(55, 53, 47, 0.08);
+}
+.layout {
+    --content-width: minmax(auto, 768px);
+    --margin-width: minmax(96px, 1fr);
+    display: grid;
+    grid-template-columns: [full-start] var(--margin-left-width,var(--margin-width)) [content-start] var(--content-width) [content-end] var(--margin-right-width,var(--margin-width)) [full-end];
+    width: 100%;
+}
+.layout-center-peek {
+    --content-width: 1fr;
+    --margin-width: 126px;
+}
+.layout-full {
+    grid: inherit;
+    grid-column: full;
+}
+.layout-content {
+    grid: inherit;
+    grid-column: content;
+}
+.layout-content {
+    min-width: 0;
+}
+
+.layout-nested-grid {
+    align-items: center;
+    display: grid;
+    gap: inherit;
+    grid-column: full;
+    grid-template: inherit;
+}
+
+.layout-editor {
+    padding-top: 5px;
+}
+
+[contenteditable]:empty:after {
+    content: attr(placeholder);
+}
+</style>

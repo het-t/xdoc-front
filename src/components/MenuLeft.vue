@@ -110,8 +110,11 @@ import { useStore } from "vuex";
 import { computed } from "vue";
 import Page from "../models/Page.js";
 import Transaction from "../models/Transaction.js";
+import { useRoute, useRouter } from "vue-router";
 
 const store = useStore()
+const route = useRoute()
+const router = useRouter()
 
 const getMenuState = computed(function () {
     return store.getters['getMenuState']
@@ -142,10 +145,20 @@ function newPage() {
     //Transaction - save
     createPageTransaction.save();
 
-    store.commit('setSidePeekData', {
-        visibility: true,
-        requesterBlockId: 'new-page-id',
-        peekMode: 'c'
+    if (route.name === "render-page") {
+        router.push({query: { p: page.id, pm: 'c' }});
+    }
+    else {
+        router.push(`/${page.id}`)
+    }
+
+    store.commit('setOverlayComponentsList', {
+        name: 'SidePeekRenderer',
+        data: {}
+    })
+
+    store.commit('setSidePeekPageId', {
+        pageId: page.id
     })
 }
 
