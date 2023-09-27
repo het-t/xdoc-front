@@ -6,7 +6,9 @@
         :style="style"
     >
         <div style="width: 100%; height: 100%;"></div>
+        
         <div 
+            v-if="getSidePeekPageId !== null"
             style="display: flex; flex-direction: column; position: absolute; background: white; margin-left: auto; box-shadow: rgba(15, 15, 15, 0.016) 0 0 0 1px, rgba(15, 15, 15, 0.03) 0 3px 6px, rgba(15, 15, 15, 0.06) 0 9px 24px;"
             :style="getPeekMode === 's' ? ' top: 0; right: 0; width: 100%; height: 100%; border-radius: 0;' : 'top: 72px; left: 72px; right: 72px; margin-right: auto; height: calc(100% - 144px); max-width: 970px; border-radius: 3px;'"
         >
@@ -30,13 +32,14 @@
                     <div style="flex-grow: 1; flex-shrink: 1;"></div>
 
                     <div style="display: flex; align-items: stretch; flex-grow: 0; flex-shrink: 0; z-index: 1;">
-                    
+
                     </div>
                 </div>
             </div>
 
             <RenderPage 
                 page-id-from="query"
+                peek-mode="side-peek"
                 :style="getPeekMode === 'c' ? 'transform: translateZ(0);' : ''"
             />
         </div>

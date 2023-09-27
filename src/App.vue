@@ -10,14 +10,13 @@
         <!-- set width of main element -->
         <main 
           class="xdoc-frame" 
-          style="flex-grow: 0; flex-shrink: 1; display: flex; flex-direction: column; background: white; z-index: 1; height: calc(100% - 45px); max-height: 100%; position: relative; transition-property: width; transition-duration: 270ms; transition-time
-          ease"
+          style="flex-grow: 0; flex-shrink: 1; display: flex; flex-direction: column; background: white; z-index: 1; height: calc(100% - 45px); max-height: 100%; position: relative; transition-property: width; transition-duration: 270ms; transition-timing-function: ease;"
         >
-          <RouterView/>
+          <RouterView />
         </main>
       </div>
 
-      <SidePeekRenderer v-show="state.overlayComponentStyles === ''"/>
+      <SidePeekRenderer />
     </div>
       
     <!-- default overlay -->
@@ -47,20 +46,46 @@
 
 
 <script setup>
-import { computed, defineAsyncComponent, reactive } from 'vue';
+import { computed, defineAsyncComponent, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
 import SidePeekRenderer from './components/SidePeekRenderer.vue';
 
-const state = reactive({
-  overlayComponentStyles: {
-    SettingsC: "display: flex; flex-direction: column; height: calc(100% - 144px); position: absolute; top: 72px; left: 72px; right: 72px; margin-left: auto; margin-right: auto; max-width: 970px; background: white;",
-    SidePeekRenderer: "inset: 0px; z-index: 99; background: rgba(0, 0, 0, 0.4);"
-  }
-})
+// const state = reactive({
+//   overlayComponentStyles: {
+//     SettingsC: "display: flex; flex-direction: column; height: calc(100% - 144px); position: absolute; top: 72px; left: 72px; right: 72px; margin-left: auto; margin-right: auto; max-width: 970px; background: white;",
+//     SidePeekRenderer: "inset: 0px; z-index: 99; background: rgba(0, 0, 0, 0.4);"
+//   }
+// })
 
 const store = useStore();
+const route = useRoute();
+
+watch(
+  function() {
+    return route.params?.pageId;
+  },
+  function(newValue, oldValue) {
+    console.log("ParamPageId:", newValue, oldValue);
+  }
+)
+
+watch(
+  function() {
+    return route.query?.p;
+  },
+  function(newValue, oldValue) {
+    console.log("QueryPageId:", newValue, oldValue);
+  }
+)
+
+watch(
+  function() {
+
+  }
+)
 
 const getOverlayComponentsList = computed(() => {
   return store.getters['getOverlayComponentsList'].map((component) => {

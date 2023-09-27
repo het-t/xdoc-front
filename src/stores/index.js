@@ -6,11 +6,9 @@ const state = {
     path: [],
     menuLeft: 'full',
 
-    overlayComponentsList: [
-        {name: 'SidePeekRenderer', data: {}}
-    ],
+    overlayComponentsList: [],
 
-    sidePeekPageId: "l"
+    sidePeekPageId: null
 }
 
 const getters = {
