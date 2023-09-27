@@ -8,11 +8,11 @@
         <div style="width: 100%; height: 100%;"></div>
         
         <div 
-            v-if="getSidePeekPageId !== null"
+            v-if="props.pageId !== null"
             style="display: flex; flex-direction: column; position: absolute; background: white; margin-left: auto; box-shadow: rgba(15, 15, 15, 0.016) 0 0 0 1px, rgba(15, 15, 15, 0.03) 0 3px 6px, rgba(15, 15, 15, 0.06) 0 9px 24px;"
-            :style="getPeekMode === 's' ? ' top: 0; right: 0; width: 100%; height: 100%; border-radius: 0;' : 'top: 72px; left: 72px; right: 72px; margin-right: auto; height: calc(100% - 144px); max-width: 970px; border-radius: 3px;'"
+            :style="props.peekMode === 's' ? ' top: 0; right: 0; width: 100%; height: 100%; border-radius: 0;' : 'top: 72px; left: 72px; right: 72px; margin-right: auto; height: calc(100% - 144px); max-width: 970px; border-radius: 3px;'"
         >
-            <div v-if="getPeekMode === 's'" style="position: absolute; top: 0; left: -1px; bottom: -1px; pointer-events: auto; flex-grow: 0; z-index: 109;">
+            <div v-if="props.peekMode === 's'" style="position: absolute; top: 0; left: -1px; bottom: -1px; pointer-events: auto; flex-grow: 0; z-index: 109;">
                 <div style="cursor: col-resize; height: 100%; width: 12px; margin-left: auto-6px;"></div>
             </div>
 
@@ -40,44 +40,44 @@
             <RenderPage 
                 page-id-from="query"
                 peek-mode="side-peek"
-                :style="getPeekMode === 'c' ? 'transform: translateZ(0);' : ''"
+                :style="props.peekMode === 'c' ? 'transform: translateZ(0);' : ''"
             />
         </div>
     </div>
 </template>
 
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, onMounted, reactive, defineProps } from "vue";
 import RenderPage from "@/components/RenderPage.vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
 
 const state = reactive({
     width: 522,
 })
 
+const props = defineProps({
+    pageId: {
+        type: String,
+        default: null
+    },
+    peekMode: {
+        type: String,
+        default: null
+    }
+})
 const store = useStore();
-const route = useRoute();
-
-const getSidePeekPageId = computed(function () {
-    return store.getters['getSidePeekPageId'];
-})
-
-const getPeekMode = computed(function () {
-    return route.query.pm
-})
 
 const style = computed(function() {
     let s = "position: fixed; ";
 
-    if (getPeekMode.value !== "c") {
+    if (props.peekMode !== "c") {
         s += `top: 0px; right: 0px; bottom: 0px; width: ${state.width}px; z-index: 109; transition-property: transform; transition-duration: 270ms; transition-timing-function: ease;`;
     }
     else {
         s += "inset: 0; z-index: 99; background-color: rgba(0, 0, 0, 0.4);"
     }
 
-    if (getSidePeekPageId.value === null) {
+    if (props.pageId === null) {
         s += "transform: translateX(100%) translateZ(0);"
     }
 
@@ -89,8 +89,12 @@ function closeSidePeek() {
         pageId: null
     });
 
-    if (getPeekMode.value === 'c') {
+    if (props.peekMode === 'c') {
         store.commit("resetOverlayComponentsList");
     }
 }
+
+onMounted(() => {
+    console.log("SidePeekRenderer.vue mounted", props);
+})
 </script>

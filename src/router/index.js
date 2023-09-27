@@ -11,15 +11,27 @@ const router = createRouter({
     {
       path: '/:pageId',
       name: 'render-page',
-      component: () => import('../components/RenderPage.vue'),
-      props: (route) => {
-        const childPageId = route.query.p;
-        const childPagePeekMode = route.query.pm;
-        const pageId = route.params.pageId;
+      components: {
+        default: () => import('../components/RenderPage.vue'),
+        sidePeek: () => import('../components/SidePeekRenderer.vue'),
+      },
+      props: {
+        default: (route) => {
+          const pageId = route.params.pageId;
 
-        return {
-          pageId: pageId ? pageId : childPageId,
-          peekMode: childPagePeekMode,
+          return {
+            pageId,
+            peekMode: "default"
+          }
+        },
+        sidePeek: (route) => {
+          const pageId = route.query.p;
+          const peekMode = route.query.pm;
+
+          return {
+            pageId,
+            peekMode
+          }
         }
       }
     },

@@ -10,14 +10,8 @@ const store = useStore()
 const route = useRoute()
 
 const props = defineProps({
-    peekMode: {
-        type: String,
-        default: 'default'
-    },
-    pageId: {
-        type: String,
-        default: "default pageId value"
-    }
+    peekMode: String,
+    pageId: String
 })
 
 // const keyDownState = reactive({
@@ -45,7 +39,7 @@ const pageId = computed(function () {
 })
 
 onMounted(() => {
-    console.log("mounted", props)
+    console.log(props)
     fetchPageData()
 })
 

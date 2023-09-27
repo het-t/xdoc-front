@@ -12,11 +12,11 @@
           class="xdoc-frame" 
           style="flex-grow: 0; flex-shrink: 1; display: flex; flex-direction: column; background: white; z-index: 1; height: calc(100% - 45px); max-height: 100%; position: relative; transition-property: width; transition-duration: 270ms; transition-timing-function: ease;"
         >
-          <RouterView />
+          <RouterView name="default"/>
         </main>
       </div>
 
-      <SidePeekRenderer />
+      <router-view name="sidePeek" />
     </div>
       
     <!-- default overlay -->
@@ -46,12 +46,11 @@
 
 
 <script setup>
-import { computed, defineAsyncComponent, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, defineAsyncComponent } from 'vue';
+// import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
-import SidePeekRenderer from './components/SidePeekRenderer.vue';
 
 // const state = reactive({
 //   overlayComponentStyles: {
@@ -61,31 +60,31 @@ import SidePeekRenderer from './components/SidePeekRenderer.vue';
 // })
 
 const store = useStore();
-const route = useRoute();
+// const route = useRoute();
 
-watch(
-  function() {
-    return route.params?.pageId;
-  },
-  function(newValue, oldValue) {
-    console.log("ParamPageId:", newValue, oldValue);
-  }
-)
+// watch(
+//   function() {
+//     return route.params?.pageId;
+//   },
+//   function(newValue, oldValue) {
+//     console.log("ParamPageId:", newValue, oldValue);
+//   }
+// )
 
-watch(
-  function() {
-    return route.query?.p;
-  },
-  function(newValue, oldValue) {
-    console.log("QueryPageId:", newValue, oldValue);
-  }
-)
+// watch(
+//   function() {
+//     return route.query?.p;
+//   },
+//   function(newValue, oldValue) {
+//     console.log("QueryPageId:", newValue, oldValue);
+//   }
+// )
 
-watch(
-  function() {
+// watch(
+//   function() {
 
-  }
-)
+//   }
+// )
 
 const getOverlayComponentsList = computed(() => {
   return store.getters['getOverlayComponentsList'].map((component) => {
