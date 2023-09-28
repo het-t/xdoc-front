@@ -1,13 +1,11 @@
 <script setup>
-import { onMounted, computed, defineProps } from 'vue';
+import { onMounted, defineProps } from 'vue';
 import RenderPageProperties from './RenderPageProperties.vue';
 import RenderPageDiscusstion from './RenderPageDiscussion.vue';
 
 import { useStore } from 'vuex';
-import { useRoute } from 'vue-router';
 
 const store = useStore()
-const route = useRoute()
 
 const props = defineProps({
     peekMode: String,
@@ -34,10 +32,6 @@ const props = defineProps({
 //     }
 // })
 
-const pageId = computed(function () {
-    return route.params.pageId
-})
-
 onMounted(() => {
     console.log(props)
     fetchPageData()
@@ -57,19 +51,19 @@ onMounted(() => {
 
 function fetchPageData() {
     store.dispatch('blocks/fetchBlockData', {
-        blockId: pageId.value
+        blockId: props.pageId
     })
     .then((page) => {
         store.commit('trees/setNewTreeIfNotInStore', {
-            treeId: pageId.value
+            treeId: props.pageId
         })
         return page
     })
     .then((page) => {
         for (let i = 0; i!==page.children.length; i++) {
             store.dispatch('trees/addChild', {
-                treeId: pageId.value,
-                parentBlockId: pageId.value,
+                treeId: props.pageId,
+                parentBlockId: props.pageId,
                 childBlockId: page.children[i]
             })
         }

@@ -40,9 +40,8 @@
             </div>
 
             <RenderPage 
-                page-id-from="query"
-                peek-mode="side-peek"
-
+                :page-id="props.pageId"
+                :peek-mode="props.peekMode"
                 :style="props.peekMode === 'c' ? 'transform: translateZ(0);' : ''"
             />
         </div>
@@ -52,10 +51,13 @@
 <script setup>
 import { computed, onMounted, reactive, defineProps } from "vue";
 import RenderPage from "@/components/RenderPage.vue";
-import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+
+const router = useRouter();
 
 const state = reactive({
     width: 522,
+    close: false
 })
 
 const props = defineProps({
@@ -68,7 +70,6 @@ const props = defineProps({
         default: null
     }
 })
-const store = useStore();
 
 const style = computed(function() {
     let s = "position: fixed; ";
@@ -80,21 +81,20 @@ const style = computed(function() {
         s += "inset: 0; z-index: 99; background-color: rgba(0, 0, 0, 0.4);"
     }
 
-    if (props.pageId === null) {
+    if (props.pageId === null || state.close === true) {
         s += "transform: translateX(100%) translateZ(0);"
     }
 
     return s;
 })
+const route = useRoute()
 
 function closeSidePeek() {
-    store.commit("setSidePeekPageId", {
-        pageId: null
-    });
-
-    if (props.peekMode === 'c') {
-        store.commit("resetOverlayComponentsList");
-    }
+    state.close = true;
+    //wait until transition completes
+    setTimeout(function() {
+        router.push(route.path)
+    }, 270)
 }
 
 onMounted(() => {
