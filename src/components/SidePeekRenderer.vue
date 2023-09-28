@@ -4,8 +4,10 @@
         role="region"
         aria-label="Side peek"
         :style="style"
+        v-if="props.pageId !== null && props.peekMode !== null"
     >
         <div style="width: 100%; height: 100%;"></div>
+        
         
         <div 
             v-if="props.pageId !== null"
@@ -40,6 +42,7 @@
             <RenderPage 
                 page-id-from="query"
                 peek-mode="side-peek"
+
                 :style="props.peekMode === 'c' ? 'transform: translateZ(0);' : ''"
             />
         </div>

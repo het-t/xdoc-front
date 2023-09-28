@@ -25,13 +25,7 @@
     >
       <div style="position: relative; z-index: 0;"></div>
 
-      <div v-for="(component, index) in getOverlayComponentsList" 
-        :key="'xdoc-default-overlay-container-'+index"
-        data-overlay="true"
-        style="pointer-events: auto; position: relative; z-index: 0;"
-      >
-        <component :is="component.component"></component>
-      </div>
+      <router-view name="overlayDefault" style="pointer-events: auto; position: relative; height: 100%; z-index: 0;"/>
     </div>
 
 
@@ -46,64 +40,8 @@
 
 
 <script setup>
-import { computed, defineAsyncComponent } from 'vue';
-// import { useRoute } from 'vue-router';
-import { useStore } from 'vuex';
 import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
-
-// const state = reactive({
-//   overlayComponentStyles: {
-//     SettingsC: "display: flex; flex-direction: column; height: calc(100% - 144px); position: absolute; top: 72px; left: 72px; right: 72px; margin-left: auto; margin-right: auto; max-width: 970px; background: white;",
-//     SidePeekRenderer: "inset: 0px; z-index: 99; background: rgba(0, 0, 0, 0.4);"
-//   }
-// })
-
-const store = useStore();
-// const route = useRoute();
-
-// watch(
-//   function() {
-//     return route.params?.pageId;
-//   },
-//   function(newValue, oldValue) {
-//     console.log("ParamPageId:", newValue, oldValue);
-//   }
-// )
-
-// watch(
-//   function() {
-//     return route.query?.p;
-//   },
-//   function(newValue, oldValue) {
-//     console.log("QueryPageId:", newValue, oldValue);
-//   }
-// )
-
-// watch(
-//   function() {
-
-//   }
-// )
-
-const getOverlayComponentsList = computed(() => {
-  return store.getters['getOverlayComponentsList'].map((component) => {
-    return {
-      name: component.name,
-      component: defineAsyncComponent(() => import(`@/components/${component.name}.vue`)),
-      data: component.data
-    }
-  })
-})
-
-// function handleClickOnOverlay() {
-//   store.commit('setOverlayRequestData', {
-//     visibility: false,
-//     overlayRequesterBlockId: '',
-//     overlayRequestReason: '',
-//     overlayContentBlockId: ''
-//   })
-// }
 </script>
 
 <style>

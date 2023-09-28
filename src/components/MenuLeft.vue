@@ -97,7 +97,7 @@
                         </div>
                     </div>
                     
-                    <div v-show="getMenuState === 'full'" style="position: absolute; right: 0; top: 0; height: 100%; width: 8px; background-color: red; cursor: col-resize;"></div>
+                    <div v-show="getMenuState === 'full'" style="position: absolute; right: 0; top: 0; height: 100%; width: 8px; cursor: col-resize;"></div>
                     
                 </div>
             </div>

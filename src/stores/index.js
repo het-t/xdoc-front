@@ -5,10 +5,6 @@ import trees from "./modules/trees";
 const state = {
     path: [],
     menuLeft: 'full',
-
-    overlayComponentsList: [],
-
-    sidePeekPageId: null
 }
 
 const getters = {
@@ -17,12 +13,6 @@ const getters = {
     },
     getMenuState(state) {
         return state.menuLeft
-    },
-    getOverlayComponentsList(state) {
-        return state.overlayComponentsList;
-    },
-    getSidePeekPageId(state) {
-        return state.sidePeekPageId
     }
 }
 
@@ -33,15 +23,6 @@ const mutations = {
     }, 
     setMenuState(state, value) {
         state.menuLeft = value;
-    },
-    setOverlayComponentsList(state, {name, data}) {
-        state.overlayComponentsList.push({name, data});
-    },
-    resetOverlayComponentsList(state) {
-        state.overlayComponentsList = []
-    },
-    setSidePeekPageId(state, {pageId}) {
-        state.sidePeekPageId = pageId;
     }
 }
 export default createStore({
