@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, defineProps } from 'vue';
-import RenderPageProperties from './RenderPageProperties.vue';
-import RenderPageDiscusstion from './RenderPageDiscussion.vue';
+import PagePeekFull from "@/components/PagePeekFull.vue";
+import PagePeekCenterSide from "@/components/PagePeekCenterSide.vue";
 
 import { useStore } from 'vuex';
 
@@ -33,7 +33,6 @@ const props = defineProps({
 // })
 
 onMounted(() => {
-    console.log(props)
     fetchPageData()
 })
 
@@ -227,135 +226,10 @@ function fetchPageData() {
             <span style="height: 1px; width: 1px; caret-color: transparent;"></span>
 
             <!-- full page -->
-            <template v-if="props.peekMode !== 'c' && props.peekMode !== 's'">
-                <div class="pseudoSelection"
-                    contenteditable="false"
-                    data-content-editable-void="true"
-                    style="user-select: none; --pseudoSelection--background: transparent; width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; flex-grow: 0; z-index: 2;"
-                ></div>
+            <page-peek-full v-if="props.peekMode !== 'c' && props.peekMode !== 's'" />
 
-                <div style="width: 100%; display: flex; justify-content: center; z-index: 3; flex-shrink: 0;">
-                    <div style="max-width: 100%; min-width: 0px; width: 900px;">
-                        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; flex-grow: 0;">
-                            <div style="max-width: 100%; padding-left: calc(96px + env(safe-area-inset-left)); width: 100%;">
-                                <div style="width: calc(100% - 0px); user-select: none;"></div>
-
-                                <div contenteditable="false"
-                                    class="pseudoSelection"
-                                    data-content-editable-void="true"
-                                    style="user-select: none; --pseudoSelection--background: transparent; pointer-events: none;"
-                                >
-                                    <div class="xdoc-page-controls"
-                                        style="display: flex; justify-content: center; flex-start: flex-wrap; margin-top: 80px; margin-bottom: 4px; margin-left: -1px; color: rgba(55, 53, 47, 0.5); height: 24px; pointer-events: auto;"
-                                    ></div>
-                                </div>
-
-                                <!-- page title goes here -->
-                                <div style="padding-right: calc(96px + env(safe-area-inset-right));">
-                                    <h1 style="color: #37352f;">New Task</h1>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; flex-grow: 0;">
-                            <div contenteditable="false"
-                                data-content-editable-void="true"
-                                style="padding-left: calc(96px + env(safe-area-inset-left)); padding-right: calc(96px + env(safe-area-inset-right)); max-width: 100%; width: 100%;"
-                            >
-                                <RenderPageProperties />
-
-                                <!-- separator -->
-                                <div style="width: 100%; height: 1px; background: rgba(55, 53, 47, 0.09); margin-bottom: 8px;"></div>
-
-                                <RenderPageDiscusstion />
-
-                                <!-- separator -->
-                                <div style="width: 100%; height: 1px; background: rgba(55, 53, 47, 0.09); margin-bottom: 8px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: flex; width: 100%; justify-content: center; padding-top: 5px;">
-                    <div style="width: 900px; max-width: 100%; min-width: 0px;">
-                        <div class="notion-page-content"
-                            style="flex-shrink: 0; flex-grow: 1; max-width: 100%; display: flex; align-items: flex-start; flex-direction: column; font-size: 16px; line-height: 1.50; width: 100%; z-index: 4; padding-bottom: 30vh; padding-left: calc(96px + env(safe-area-inset-left)); padding-rigth
-                            calc(96px + env(safe-area-inset-right));"
-                        >
-                            <!-- page's children blocks goes here -->
-                            <div style="color: #37352f;">someone was here way before we knew about it</div>
-                        </div>
-                    </div>
-                </div>
-            </template>
-
-            <!-- center peek and side peek -->
-            <div class="layout"
-                v-if="props.peekMode === 'c' || props.peekMode === 's'"
-                :class="props.peekMode === 'c' ? 'layout-center-peek' : ''"
-                style="padding-bottom: 80px; transform: translateX(0px);"
-            >
-                <div class="layout-full">
-                    <div 
-                        contenteditable="false" 
-                        class="pseudoSelector"
-                        data-content-editable-void="true"
-                        style="user-select: none; --pseudoSelection--background: transparent; width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; flex-grow: 0; z-index: 2;"
-                    >
-                    </div>
-                </div>
-
-                <div class="layout-content">
-                </div>
-
-                <div class="layout-content">
-                    <div style="width: 100%; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; flex-grow: 0;">
-                        <div style="max-width: 100%; padding-left: calc(0px + env(safe-area-inset-left)); width: 100%;">
-                            <div style="user-select: none; width: calc(100% - 0px);">
-                                
-                            </div>
-
-                            <div 
-                                contenteditable="false"
-                                class="pseudoSelection"
-                                data-content-editable-void="true"
-                                style="user-select: none; --pseudoSelection--background: transparent; pointer-events: none;"
-                            >
-
-                            </div>
-
-                            <div style="padding-right: calc(0 + env(safe-area-inset-right));">
-                                <div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div 
-                    class="layout-nested-grid layout-header-detailSections"
-                    data-content-editable-void="true"
-                    contenteditable="false"
-                >
-                    <div class="layout-content">
-                        <RenderPageProperties />                    
-                    </div>
-
-                    <div class="layout-content">
-                        <RenderPageDiscusstion />
-                    </div>
-                </div>
-
-                <div class="layout-content layout-editor" style="min-height: 170px;">
-                    <div class="layout-full">
-                        <div class="xdoc-page-content"
-                            style="flex-shrink: 0; flex-grow: 1; max-width: 100%; display: flex; align-items: flex-start; flex-direction: column; font-size: 16px; line-height: 1.5; width: 100%; z-index: 1; padding-bottom: 15vh; padding-left: 0px; padding-right: 0px; min-height: 240px;"
-                        >
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- center peek -->
+            <page-peek-center-side v-if="props.peekMode === 'c' || props.peekMode === 's'" />
 
             <span style="height: 1px; width: 1px; caret-color: transparent;"></span>
         </div>
@@ -370,54 +244,6 @@ function fetchPageData() {
 </template>
 
 <style scoped>
-.hvr:hover {
-    background: rgba(55, 53, 47, 0.08);
-}
-.layout {
-    --content-width: minmax(auto, 768px);
-    --margin-width: minmax(96px, 1fr);
-    display: grid;
-    grid-template-columns: [full-start] var(--margin-left-width,var(--margin-width)) [content-start] var(--content-width) [content-end] var(--margin-right-width,var(--margin-width)) [full-end];
-    width: 100%;
-}
-.layout.layout-center-peek {
-    --content-width: 1fr;
-    --margin-width: 126px;
-}
-.layout.layout-side-peek {
-    --content-width: 1fr;
-    --margin-width: 48px;
-}
-.layout-full {
-    grid: inherit;
-    grid-column: full;
-}
-.layout-content {
-    grid: inherit;
-    grid-column: content;
-}
-.layout-content {
-    min-width: 0;
-}
-
-.layout-nested-grid {
-    align-items: center;
-    display: grid;
-    gap: inherit;
-    grid-column: full;
-    grid-template: inherit;
-}
-
-.layout-header-detailSections .layout-content+.layout-content {
-    border-top: 1px solid rgba(55, 53, 47, 0.09);
-}
-.layout-header-detailSections>:last-child {
-    border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-}
-.layout-editor {
-    padding-top: 5px;
-}
-
 [contenteditable]:empty:after {
     content: attr(placeholder);
 }

@@ -12,7 +12,7 @@ const router = createRouter({
       path: '/:pageId',
       name: 'render-page',
       components: {
-        default: () => import('../components/RenderPage.vue'),
+        default: () => import('../components/RenderMain.vue'),
         sidePeek: () => import('../components/SidePeekRenderer.vue'),
         overlayDefault: () => import('../components/SidePeekRenderer.vue')
       },
