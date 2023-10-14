@@ -4,22 +4,27 @@
       style="color: rgb(55, 53, 47); fill: currentColor; line-height: 1.5; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; -webkit-font-smoothing
       auto; background-color: white;"
     >
-      <div style="display: flex; flex-grow: 1;">
-        <menu-left />
-  
-        <div style="width: 100%; overflow: hidden;">
-          <menu-top />
-          
-          <!-- set width of main element -->
-          <main 
-            class="xdoc-frame" 
-            style="flex-grow: 0; flex-shrink: 1; display: flex; flex-direction: column; background: white; z-index: 1; height: calc(100% - 45px); max-height: 100%; position: relative; transition-property: width; transition-duration: 270ms; transition-timing-function: ease;"
-          >
-            <RouterView name="default"/>
-          </main>
+      <div style="height: 100%;">
+        <div class="xdoc-cursor-listener"
+          style="width: 100vw; height: 100%; position: relative; display: flex; flex: 1 1 0%; background: white; cursor: text;"
+        >
+          <menu-left />
+    
+          <div style="display: flex; flex-direction: column; width: 100%; overflow: hidden;">
+            <menu-top />
+            
+            <!-- set width of main element -->
+            <main 
+              class="xdoc-frame" 
+              style="flex-grow: 0; flex-shrink: 1; display: flex; flex-direction: column; background: white; z-index: 1; height: calc(100% - 45px); max-height: 100%; position: relative; transition-property: width; transition-duration: 270ms; transition-timing-function: ease;"
+              :style="`width: ${getMenuState === 'full' ? state.documentInnerWidth - 220 : state.documentInnerWidth}px`"
+            >
+              <RouterView name="default"/>
+            </main>
+          </div>
+    
+          <router-view name="sidePeek" />
         </div>
-  
-        <router-view name="sidePeek" />
       </div>
         
       <!-- default overlay -->
@@ -44,8 +49,35 @@
 
 
 <script setup>
+import { reactive, computed, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
 import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
+
+const store = useStore()
+
+const state = reactive({
+  documentInnerWidth: window.innerWidth
+})
+
+const getMenuState = computed(function () {
+  return store.getters['getMenuState']
+})
+
+function updateDocumentInnerWidth() {
+  setTimeout(
+    function() {
+      state.documentInnerWidth = window.innerWidth
+    }
+  , 200)
+}
+onMounted(
+  () => window.addEventListener('resize', updateDocumentInnerWidth)
+)
+
+onUnmounted(
+  () => window.removeEventListener('resize', updateDocumentInnerWidth)
+)
 </script>
 
 <style>

@@ -4,7 +4,7 @@ import trees from "./modules/trees";
 
 const state = {
     path: [],
-    menuLeft: 'full',
+    menuLeft: 'full'
 }
 
 const getters = {

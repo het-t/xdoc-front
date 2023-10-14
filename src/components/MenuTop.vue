@@ -55,7 +55,7 @@
 
                 <div style="flex-grow: 1; flex-shrink: 1; height: 45px;"></div>
 
-                <div style="display: flex; align-items: center; justify-content: space-between; padding-left: 12px; flex-grow: 0; flex-shrink: 0; height: 45px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-right: 0px; padding-left: 12px; flex-grow: 0; flex-shrink: 0; height: 45px; z-index: 101; opacity: 1; transition: opacity 700ms ease 0s, color 700ms ease 0s;">
                     <font-awesome-icon
                         class="icon icon-2 ptr hvr-bg"
                         style="width: 32px !important;"

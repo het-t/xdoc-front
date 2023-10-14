@@ -201,6 +201,7 @@ function openSettings() {
     gap: 12px;
     height: 45px;
     padding: 0 18px;
+    user-select: none;
 }
 #menu-left {
     width: 220px;
@@ -258,6 +259,7 @@ function openSettings() {
     gap: 9px;
     align-items: center;
     padding: 3px 12px;
+    user-select: none;
 }
 .button-wrapper .button-icon {
     display: flex;
