@@ -88,4 +88,14 @@ onUnmounted(
   position: relative;
   top: 0;
 }
+
+.xdoc-focusable-within:focus-within {
+  box-shadow: inset 0 0 0 1px rgba(35, 131, 226, 0.57), 0px 0px 0px 2px rgba(35, 131, 226, 0.35) !important;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+}
 </style>

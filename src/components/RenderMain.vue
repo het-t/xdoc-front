@@ -4,14 +4,14 @@
     <render-collection-page v-else-if="state.blockType === 'collection_item'" />
     <!-- v-else-if="state.blockType === 'collection_view'"  -->
     
-    <render-collection-view />
+    <collection-view />
 
 </template>
 
 <script setup>
 import RenderPage from "./RenderPage.vue";
 import RenderCollectionPage from "./RenderCollectionPage.vue";
-import RenderCollectionView from "./RenderCollectionView.vue";
+import CollectionView from "@/views/CollectionView.vue";
 
 import { reactive } from "vue";
 
