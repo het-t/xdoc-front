@@ -146,11 +146,17 @@
 
             <div style="width: 1668px;"></div>
 
-            <div role="button"
-                tabindex="0"
+            <base-button
+                :hover-style="{'background': 'rgba(55, 53, 47, 0.08)', width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', left: 0, right: 0}"
+                :default-style="{width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', 'background': 'white', left: 0, right: 0}"
                 class="xdoc-table-view-add-row"
-                style="user-select: none; transition: background 20ms ease-in 0s; cursor: pointer; display: flex; align-items: center; height: 32px; width: 100%; padding-left: 8px; font-size: 14px; line-height: 20px; background: white; left: 0px; right: 0px;"
-            ></div>
+            >
+                <span style="display: inline-flex; position: sticky; align-items: center; left: 104px; color: rgba(55, 53, 47, 0.5);">
+                    <svg role="graphics-symbol" viewBox="0 0 16 16" class="plus" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.35); flex-shrink: 0; margin-left: -1px; margin-right: 6px;"><path d="M7.977 14.963c.407 0 .747-.324.747-.723V8.72h5.362c.399 0 .74-.34.74-.747a.746.746 0 00-.74-.738H8.724V1.706c0-.398-.34-.722-.747-.722a.732.732 0 00-.739.722v5.529h-5.37a.746.746 0 00-.74.738c0 .407.341.747.74.747h5.37v5.52c0 .399.332.723.739.723z"></path></svg>
+
+                    New
+                </span>
+            </base-button>
 
             <div contenteditable="false"
                 class="pseudoSelection"
@@ -166,6 +172,8 @@
 </template>
 
 <script setup>
+import BaseButton from './BaseButton.vue';
+
 const collection_columns = [
     {id: 1, name: "task name"},
     {id: 2, name: "description"},

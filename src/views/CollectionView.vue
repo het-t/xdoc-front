@@ -179,7 +179,10 @@ const propertyMenuTopParent = ref('')
 const store = useStore()
 
 function changeCollectionMenuVisibilityAndHeight(value) {
-    store.commit('collectionSideMenu/setCurrentComponent', {collectionId: 'test', component: 'main'})
+    store.commit('collectionSideMenu/setCurrentComponent', {
+        collectionId: 'test',
+        component: 'main'
+    })
     state.displayCollectionSideMenu = value
     setSideMenuHeight()
 }

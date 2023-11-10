@@ -48,7 +48,11 @@
 
                     <div style="margin: 0px;">
                         <!-- property goes here -->
-                        <base-collection-side-menu-item v-for="i in testProperties" :key="i" @click.stop="addComponent('editProperty')">
+                        <base-collection-side-menu-item 
+                            v-for="i in testProperties" 
+                            :key="i" 
+                            @click.stop="handleUserSelectPropertyEdit(i)"
+                        >
                             <template #propertyName>
                                 {{ i.name }}
                             </template>
@@ -81,7 +85,10 @@
 
         <template #footer>
             <div style="padding-top: 6px; padding-bottom: 6px; box-shadow: rgba(55, 53, 47, 0.09) 0px -1px 0px; margin-top: 1px;">
-                <base-button style="width: calc(100% - 8px); margin-left: 4px; margin-right: 4px; color: rgba(55, 53, 47, 0.65); fill: rgba(55, 53, 47, 0.45);">
+                <base-button 
+                    @click.stop="setCurrentComponent('propertyCreate')"
+                    style="width: calc(100% - 8px); margin-left: 4px; margin-right: 4px; color: rgba(55, 53, 47, 0.65); fill: rgba(55, 53, 47, 0.45);"
+                >
                     <div style="display: flex; align-items: center; line-height: 120%; width: 100%; user-select: none; min-height: 28px; font-size: 14px;">
                         <div style="display: flex; align-items: center; justify-content: center; margin-left: 10px; margin-right: 4px;"><svg role="graphics-symbol" viewBox="0 0 16 16" class="plus" style="width: 24px; height: 16px; display: block; fill: inherit; flex-shrink: 0; margin-right: -2px;"><path d="M7.977 14.963c.407 0 .747-.324.747-.723V8.72h5.362c.399 0 .74-.34.74-.747a.746.746 0 00-.74-.738H8.724V1.706c0-.398-.34-.722-.747-.722a.732.732 0 00-.739.722v5.529h-5.37a.746.746 0 00-.74.738c0 .407.341.747.74.747h5.37v5.52c0 .399.332.723.739.723z"></path></svg></div>
                         
@@ -101,6 +108,7 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import { useStore } from 'vuex';
 import BaseButton from './BaseButton.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
@@ -108,18 +116,38 @@ import BaseCollectionSideMenuItem from './BaseCollectionSideMenuPropertiesItem.v
 
 const store = useStore()
 
-function addComponent(component) {
+function setCurrentComponent(component) {
     store.commit('collectionSideMenu/setCurrentComponent', {collectionId: 'test', component})
 }
 
+function propertyEditClean() {
+    store.commit('collection/cleanPropertyEdit', {
+        collectionId: 'test'
+    })
+}
+
+function handleUserSelectPropertyEdit(propertyData) {
+    console.log("CollectionSideMenuProperties.vue => handleSelectPropertyEdit()")
+
+    store.commit('collection/setPropertyEdit', {
+        collectionId: 'test',
+        name: propertyData.name,
+        type: propertyData.type
+    })
+
+    setCurrentComponent('propertyEdit')
+}
+
+onMounted(propertyEditClean)
+ 
 const testProperties = [
-    {id: 1, name: "task name"},
-    {id: 2, name: "description"},
-    {id: 3, name: "deadline"},
-    {id: 4, name: "assigned"},
-    {id: 5, name: "status"},
-    {id: 6, name: "status"},
-    {id: 7, name: "status"},
-    {id: 8, name: "status"}
+    {id: 1, name: "task name", type: "Text"},
+    {id: 2, name: "description", type: "Text"},
+    {id: 3, name: "deadline", type: "Date"},
+    {id: 4, name: "assigned", type: "Person"},
+    {id: 5, name: "status", type: "Select"},
+    {id: 6, name: "status", type: "Select"},
+    {id: 7, name: "status", type: "Multiselect"},
+    {id: 8, name: "status", type: "Select"}
 ]
 </script>

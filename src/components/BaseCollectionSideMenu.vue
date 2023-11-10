@@ -6,7 +6,7 @@
             </base-collection-side-menu-header>
         </div>
         
-        <div style="padding-top: 6px; padding-bottom: 6px;">
+        <div v-if="props.topPart === true" style="padding-top: 6px; padding-bottom: 6px;">
             <slot name="top-part"></slot>
         </div>
         
@@ -23,5 +23,13 @@
 </template>
 
 <script setup>
+import { defineProps } from 'vue';
 import BaseCollectionSideMenuHeader from './BaseCollectionSideMenuHeader.vue';
+
+const props = defineProps({
+    topPart: {
+        type: Boolean,
+        default: true
+    }
+})
 </script>

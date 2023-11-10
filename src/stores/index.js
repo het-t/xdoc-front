@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 import blocks from "./modules/blocks";
 import trees from "./modules/trees";
 import collectionSideMenu from "./modules/collectionSideMenu";
+import warehouseCollection from "./modules/warehouseCollection";
+import collection from "./modules/collection";
 
 const state = {
     path: [],
@@ -31,6 +33,8 @@ export default createStore({
     getters,
     mutations,
     modules: {
+        warehouseCollection,
+        collection,
         collectionSideMenu,
         blocks,
         trees
