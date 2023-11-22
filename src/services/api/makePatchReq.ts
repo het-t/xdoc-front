@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export default function makePatchReq (url, args) {
+export default function makePatchReq (url: string, args: any) {
     return axios.patch(url, {
         args
     }, {

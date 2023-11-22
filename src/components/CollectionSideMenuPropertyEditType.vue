@@ -49,32 +49,24 @@
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
-import { inject, reactive } from 'vue';
-import { useStore } from 'vuex';
-
-const collectionId = inject('CollectionId');
-
-const store = useStore();
+import { reactive } from 'vue';
+import { useCollectionsStore } from '@/stores/collections';
 
 const state = reactive({
     filterString: ''
 })
+
+const collectionStore = useCollectionsStore();
 
 function handlePropertyTypeSelect({name, noMatchingTypeFound}) {
     console.log("CollectionPropertyTypeEdit.vue => handlePropertyTypeSelect()")
     
     const propertyType = noMatchingTypeFound === true ? 'Text' : name;
 
-    const propertyName = store.getters['collection/getPropertyEdit'](collectionId)?.name;
+    const propertyName = collectionStore.getCollectionPropertyEditData.name;
 
-    store.commit('collection/setPropertyEdit', {
-        collectionId,
-        name: propertyName,
-        type: propertyType
-    })
+    collectionStore.setPropertyEdit(propertyName, propertyType);
 
-    store.commit('collectionSideMenu/removeCurrentComponent', {
-        collectionId
-    })
+    collectionStore.removeCurrentComponent();
 }
 </script>

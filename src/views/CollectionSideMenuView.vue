@@ -33,13 +33,13 @@
 </template>
 
 <script setup>
-import { defineProps, computed, inject } from 'vue';
-import { useStore } from 'vuex';
+import { defineProps, computed } from 'vue';
 import CollectionSideMenuProperties from '@/components/CollectionSideMenuProperties.vue';
 import CollectionSideMenuOptions from '@/components/CollectionSideMenuOptions.vue';
 import CollectionSideMenuPropertyCreate from '@/components/CollectionSideMenuPropertyCreate.vue';
 import CollectionSideMenuPropertyEdit from '@/components/CollectionSideMenuPropertyEdit.vue';
 import CollectionSideMenuPropertyEditType from '@/components/CollectionSideMenuPropertyEditType.vue';
+import { useCollectionsStore } from '@/stores/collections';
 
 const props = defineProps({
     height: {
@@ -48,11 +48,9 @@ const props = defineProps({
     }
 })
 
-const collectionId = inject("CollectionId");
+const collectionStore = useCollectionsStore();
 
-const store = useStore()
-
-const componentInView = computed(
-    () => store.getters['collectionSideMenu/getCurrentComponent']({collectionId})
-)
+const componentInView = computed(function () {
+    return collectionStore.getCurrentComponent;
+})
 </script>

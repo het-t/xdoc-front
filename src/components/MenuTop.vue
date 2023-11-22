@@ -8,7 +8,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; overflow: hidden; height: 45px; padding-left: 12px; padding-right: 10px;">
                 <div
                     style="flex-shrink: 0; width: 48px; height: 48px; margin: -12px -6px -12px -12px; padding: 12px;"
-                    v-show="getMenuState !== 'full'"
+                    v-show="getMenuMode !== 'full'"
                 >
                     <div
                         style="position: relative;"
@@ -22,7 +22,7 @@
                                     class="icon icon-2 ptr hvr-bg"
                                     id="bars-menu"
                                     style="width: 32px !important;"
-                                    @click.prevent.stop="store.commit('setMenuState', 'full')"
+                                    @click.prevent.stop="setMenuLeftMode(null)"
                                 />
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                                     class="icon icon-2 ptr hvr-bg"
                                     id="open-menu"
                                     style="width: 32px !important;"
-                                    @click.prevent.stop="store.commit('setMenuState', 'full')"
+                                    @click.prevent.stop="setMenuLeftMode('full')"
                                 />
                             </div>
                         </div>
@@ -90,17 +90,21 @@
 
 <script setup>
 import { computed, reactive } from "vue";
-import { useStore } from "vuex";
+import { useMenuLeftStore } from "../stores/menuLeft";
 
-const store = useStore()
+const menuLeftStore = useMenuLeftStore();
 
 const state = reactive({
     opacity: 1
 })
 
-const getMenuState = computed(function () {
-    return store.getters['getMenuState']
+const getMenuMode = computed(function () {
+    return menuLeftStore.menuLeftMode;
 })
+
+function setMenuLeftMode(mode) {
+    menuLeftStore.setMenuLeftMode(mode);
+}
 </script>
 
 <style>

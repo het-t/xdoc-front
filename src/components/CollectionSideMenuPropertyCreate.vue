@@ -49,19 +49,17 @@
 </template>
 
 <script setup>
+import { useCollectionsStore } from '@/stores/collections';
 import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
-import { useStore } from 'vuex';
-import { inject, reactive } from 'vue';
+import { reactive } from 'vue';
 
 const state = reactive({
     filterString: ''
 })
 
-const collectionId = inject('CollectionId');
-
-const store = useStore();
+const collectionStore = useCollectionsStore();
 
 function handlePropertyTypeSelect({name, noMatchingTypeFound}) {
     console.log("CollectionSideMenuPropertyCreate.vue => handlePropertyTypeSelect()", name)
@@ -70,15 +68,8 @@ function handlePropertyTypeSelect({name, noMatchingTypeFound}) {
     //put logic to calculate name, ex 'Text 2'
     const propertyType = noMatchingTypeFound === true ? 'Text' : propertyName;
 
-    store.commit('collection/setPropertyEdit', {
-        collectionId,
-        name: propertyName,
-        type: propertyType
-    })
+    collectionStore.setPropertyEdit(propertyName, propertyType);
 
-    store.commit('collectionSideMenu/setCurrentComponent', {
-        collectionId,
-        component: 'propertyEdit'
-    })
+    collectionStore.setCurrentComponent('propertyEdit');
 }
 </script>

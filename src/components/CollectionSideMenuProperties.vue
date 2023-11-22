@@ -108,38 +108,25 @@
 </template>
 
 <script setup>
-import { inject, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { onMounted } from 'vue';
 import BaseButton from './BaseButton.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuItem from './BaseCollectionSideMenuPropertiesItem.vue';
+import { useCollectionsStore } from '@/stores/collections';
 
-const collectionId = inject('CollectionId');
-
-const store = useStore()
+const collectionStore = useCollectionsStore();
 
 function setCurrentComponent(component) {
-    store.commit('collectionSideMenu/setCurrentComponent', {
-        collectionId, 
-        component
-    })
+    collectionStore.setCurrentComponent(component);
 }
 
 function propertyEditClean() {
-    store.commit('collection/cleanPropertyEdit', {
-        collectionId
-    })
+    collectionStore.setPropertyEdit(null, null);
 }
 
 function handleUserSelectPropertyEdit(propertyData) {
     console.log("CollectionSideMenuProperties.vue => handleSelectPropertyEdit()")
-
-    store.commit('collection/setPropertyEdit', {
-        collectionId,
-        name: propertyData.name,
-        type: propertyData.type
-    })
-
+    collectionStore.setPropertyEdit(propertyData.name, propertyData.type);
     setCurrentComponent('propertyEdit')
 }
 

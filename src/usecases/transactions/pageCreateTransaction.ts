@@ -16,7 +16,9 @@ export const pageCreateTransaction = function (
 
     const pageCreateTransaction = new Transaction({
         spaceId,
-        debug: "MenuLeft.vue->new page button",
+        debug: {
+            action: "MenuLeft.vue->new page button"
+        },
         operations: [
             pageSet,
             pageSetParent
@@ -24,7 +26,7 @@ export const pageCreateTransaction = function (
     });
 
     try {
-        TransactionApi.save(pageCreateTransaction);
+        TransactionApi.save([pageCreateTransaction]);
     } catch (error) {
         console.log(error)
         throw error;

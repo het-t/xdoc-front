@@ -3,17 +3,17 @@ import { defineProps, onMounted, computed } from 'vue';
 import BlockRenderHeadings from './BlockRenderHeadings.vue';
 import BlockRenderCheckboxes from './BlockRenderCheckboxes.vue';
 import BlockRenderParagraph from './BlockRenderParagraph.vue';
-import { useStore } from 'vuex';
+import { useBlocksStore } from '@/stores/blocks';
 
 const props = defineProps({
     blockId: String,
     treeId: String
 })
 
-const store = useStore()
+const blocksStore = useBlocksStore();
 
 const blockDataInStore = computed(function () {
-    return store.getters['blocks/getBlockData'](props.blockId)
+    return blocksStore.getBlockById(props.blockId)
 })
 
 const blockChildrenInStore = computed(function () {

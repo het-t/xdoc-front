@@ -52,32 +52,26 @@
 </template>
 
 <script setup>
-import { computed, inject, onMounted, reactive } from 'vue';
-import { useStore } from 'vuex';
+import { computed, onMounted, reactive } from 'vue';
 import BaseButton from './BaseButton.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuItemCol3 from './BaseCollectionSideMenuItemCol3.vue';
-
-const collectionId = inject("CollectionId");
+import { useCollectionsStore } from '@/stores/collections';
 
 const state = reactive({
     propertyName: '',
     propertyType: ''
 })
 
-const store = useStore();
+const collectionStore = useCollectionsStore();
 
-const propertyEditData = computed(function() {
-    return store.getters['collection/getPropertyEdit'](collectionId)
+const propertyEditData = computed(function () {
+    return collectionStore.getCollectionPropertyEditData;
 })
 
 function handlePropertyTypeChange() {
     console.log("CollectionSideMenuPropertyEdit.vue => handlePropertyTypeChange()")
-
-    store.commit('collectionSideMenu/setCurrentComponent', {
-        collectionId,
-        component: 'propertyTypes'
-    })
+    collectionStore.setCurrentComponent("propertyTypes")
 }
 
 onMounted(function() {

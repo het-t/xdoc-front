@@ -14,11 +14,11 @@
 </template>
 
 <script setup>
+import { useCollectionsStore } from '@/stores/collections';
 import BaseCollectionSideMenuItemCol2 from './BaseCollectionSideMenuItemCol2.vue';
 import { computed, defineProps, defineEmits } from 'vue';
-import { useStore } from 'vuex';
 
-const store = useStore();
+const collectionsStore = useCollectionsStore();
 
 const emits = defineEmits([
     'property-type-select'
@@ -44,7 +44,7 @@ const propertyTypes = computed(function() {
 })
 
 const propertyTypesInStore = computed(function () {
-    return store.getters['warehouseCollection/getPropertyTypes']
+    return collectionsStore.types;
 })
 
 const handleUserInputPropertyName = computed(function() {

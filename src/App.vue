@@ -50,18 +50,19 @@
 
 <script setup>
 import { reactive, computed, onMounted, onUnmounted } from 'vue';
-import { useStore } from 'vuex';
 import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
+import { useMenuLeftStore } from './stores/menuLeft';
 
-const store = useStore()
 
 const state = reactive({
   documentInnerWidth: window.innerWidth
 })
 
+const menuLeftStore = useMenuLeftStore();
+
 const getMenuState = computed(function () {
-  return store.getters['getMenuState']
+  return menuLeftStore.menuLeftState;
 })
 
 function updateDocumentInnerWidth() {

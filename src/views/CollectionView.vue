@@ -168,7 +168,7 @@ import { reactive, ref, defineProps, provide } from 'vue';
 import CollectionViewTable from '../components/CollectionViewTable.vue';
 import BaseButton from '../components/BaseButton.vue';
 import CollectionSideMenuView from './CollectionSideMenuView.vue';
-import { useStore } from 'vuex';
+import { useCollectionsStore } from '@/stores/collections';
 
 const props = defineProps({
     collectionId: {
@@ -179,19 +179,17 @@ const props = defineProps({
 
 provide('CollectionId', props.collectionId);
 
+const collectionStore = useCollectionsStore();
+
 const state = reactive({
     displayCollectionSideMenu: false,
     sideMenuHeight: ''
 })
 
 const propertyMenuTopParent = ref('')
-const store = useStore()
 
 function changeCollectionMenuVisibilityAndHeight(value) {
-    store.commit('collectionSideMenu/setCurrentComponent', {
-        collectionId: props.collectionId,
-        component: 'main'
-    })
+    collectionStore.setCurrentComponent('main');
     state.displayCollectionSideMenu = value
     setSideMenuHeight()
 }

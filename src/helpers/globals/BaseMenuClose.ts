@@ -1,4 +1,4 @@
-export default function(context, meta) {
+export default function(context: any, meta: any) {
     context.menu.visibility = false
     context.menu.posX = ''
     context.menu.posY = ''

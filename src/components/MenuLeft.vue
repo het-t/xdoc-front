@@ -1,20 +1,20 @@
 <template>
     <nav
         id="menu-left"
-        :class="getMenuState !== 'full' ? 'translate-menu-left' : ''"
+        :class="getMenuMode !== 'full' ? 'translate-menu-left' : ''"
         style="z-index: 111;"
     >
         <div style="height: 100%;">    
             <div style="width: 0; position: absolute; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; overflow: visible; z-index: 9;">
                 <div 
                     id="menu-left-wrapper" 
-                    :class="getMenuState !== 'full' ? 'translate-menu-left-wrapper' : ''"
+                    :class="getMenuMode !== 'full' ? 'translate-menu-left-wrapper' : ''"
                 >
-                    <div :style="getMenuState !== 'full' ? 'display: block;' : 'display: none;'" style="position: absolute; height: 100%; inset: 0;">
+                    <div :style="getMenuMode !== 'full' ? 'display: block;' : 'display: none;'" style="position: absolute; height: 100%; inset: 0;">
 
                     </div>
 
-                    <div :style="getMenuState !== 'full' ? 'display: block;' : 'display: none;'" style="position: absolute; height: 100%; inset: 0; background-color: white;"></div>
+                    <div :style="getMenuMode !== 'full' ? 'display: block;' : 'display: none;'" style="position: absolute; height: 100%; inset: 0; background-color: white;"></div>
 
                     <div style="display: flex; flex-direction: column; position: relative; height: 100%; overflow: hidden;">
                         <!-- space info -->
@@ -33,7 +33,7 @@
                                 :icon="['fas', 'angles-left']"
                                 class="icon hvr-bg ptr"
                                 id="close-menu"
-                                @click.prevent.stop="store.commit('setMenuState', 'none')"
+                                @click.prevent.stop="setMenuLeftMode"
                             />
                         </div>
             
@@ -97,7 +97,7 @@
                         </div>
                     </div>
                     
-                    <div v-show="getMenuState === 'full'" style="position: absolute; right: 0; top: 0; height: 100%; width: 8px; cursor: col-resize;"></div>
+                    <div v-show="getMenuMode === 'full'" style="position: absolute; right: 0; top: 0; height: 100%; width: 8px; cursor: col-resize;"></div>
                     
                 </div>
             </div>
@@ -106,17 +106,17 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useMenuLeftStore } from "../stores/menuLeft";
 import { pageCreateTransaction } from "../usecases/transactions/pageCreateTransaction";
 
-const store = useStore()
 const route = useRoute()
 const router = useRouter()
+const menuLeftStore = useMenuLeftStore();
 
-const getMenuState = computed(function () {
-    return store.getters['getMenuState']
+const getMenuMode = computed(function () {
+    return menuLeftStore.menuLeftMode;
 })
 
 async function createNewPage() {   
@@ -128,6 +128,11 @@ async function createNewPage() {
     else {
         router.push(`/${pageIdOrError}`)
     }
+}
+
+//hides left menu
+function setMenuLeftMode() {
+    menuLeftStore.setMenuLeftMode(null);
 }
 
 function openSettings() {

@@ -22,28 +22,22 @@
 </template>
 
 <script setup>
+import { useCollectionsStore } from "@/stores/collections";
 import BaseButton from "./BaseButton.vue";
-import { defineEmits, inject } from "vue"
-import { useStore } from "vuex"
+import { defineEmits } from "vue"
 
-const collectionId = inject('CollectionId');
+const collectionStore = useCollectionsStore();
 
 const emits = defineEmits([
     'close'
 ])
 
-const store = useStore()
-
 function removeLastComponent() {
-    store.commit('collectionSideMenu/removeCurrentComponent', {
-        collectionId
-    })
+    collectionStore.removeCurrentComponent();
 }
 
 function close() {
-    store.commit('collectionSideMenu/removeAllComponent', {
-        collectionId
-    })
+    collectionStore.removeAllComponent();
     emits('close')
 }
 </script>

@@ -1,6 +1,11 @@
 import uuid from "@/helpers/globals/uuid";
 import { Operation } from './Operation';
 
+interface TransactionProps {
+    spaceId: string;
+    debug: object;
+    operations: Operation[];
+}
 export default class Transaction {
     transactions: [{
         id: string,
@@ -9,7 +14,7 @@ export default class Transaction {
         operations: Operation[]
     }]
 
-    constructor({ spaceId, debug, operations }) {
+    constructor({ spaceId, debug, operations }: TransactionProps) {
         this.transactions = [{
             id: uuid(),
             spaceId: spaceId,
