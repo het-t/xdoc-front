@@ -61,7 +61,7 @@
                             <!-- new page -->
                             <div
                                 class="button-wrapper hvr-bg ptr"
-                                @click.prevent.stop="newPage"
+                                @click.prevent.stop="createNewPage()"
                             >
                                 <div
                                     class="button-icon"
@@ -108,9 +108,8 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed } from "vue";
-import Page from "../models/Page.js";
-import Transaction from "../models/Transaction.js";
 import { useRoute, useRouter } from "vue-router";
+import { pageCreateTransaction } from "../usecases/transactions/pageCreateTransaction";
 
 const store = useStore()
 const route = useRoute()
@@ -120,54 +119,19 @@ const getMenuState = computed(function () {
     return store.getters['getMenuState']
 })
 
-function newPage() {   
-    const page = new Page({
-        parentTable: "workspace",
-        parentId: 'defautl-space-id',
-        spaceId: "default-space-id"
-    });
-
-    const createPageTransaction = new Transaction({
-        spaceId: page.spaceId,
-        debug: "MenuLeft.vue -> newPage",
-    });
-
-    //Page - create
-    createPageTransaction.addOperation(
-        page.operationSetPage()
-    );
-
-    //Page - setting parent
-    createPageTransaction.addOperation(
-        page.operationSetParent()
-    )
-
-    //Transaction - save
-    createPageTransaction.save();
+async function createNewPage() {   
+    const pageIdOrError = await pageCreateTransaction("{{space-id}}", "space", "{{space-id}}");
 
     if (route.name === "render-page") {
-        router.push({query: { p: page.id, pm: 'c' }});
+        router.push({ query: { p: pageIdOrError, pm: 'c' } });
     }
     else {
-        router.push(`/${page.id}`)
+        router.push(`/${pageIdOrError}`)
     }
-
-    store.commit('setOverlayComponentsList', {
-        name: 'SidePeekRenderer',
-        data: {}
-    })
-
-    store.commit('setSidePeekPageId', {
-        pageId: page.id
-    })
 }
 
 function openSettings() {
-    store.commit('setOverlayRequestData', {
-        visibility: true,
-        requesterBlockId: null,
-        reason: 'settings'
-    })
+    console.log('please add logic to open settings')
 }
 </script>
 

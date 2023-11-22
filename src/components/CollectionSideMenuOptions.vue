@@ -55,16 +55,19 @@
 </template>
 
 <script setup>
+import { inject } from 'vue';
 import { useStore } from 'vuex';
 import BaseButton from './BaseButton.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuItemCol3 from './BaseCollectionSideMenuItemCol3.vue';
 
+const collectionId = inject('CollectionId');
+
 const store = useStore()
 
 function setCurrentComponent(componentName) {
     store.commit('collectionSideMenu/setCurrentComponent', {
-        collectionId: 'test',
+        collectionId,
         component: componentName
     })
 }

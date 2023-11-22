@@ -20,9 +20,9 @@
                         v-if="componentInView === 'propertyEdit'"
                     ></collection-side-menu-property-edit>
                 
-                    <collection-property-type-edit
+                    <collection-side-menu-property-edit-type
                         v-if="componentInView === 'propertyTypes'"
-                    ></collection-property-type-edit>
+                    ></collection-side-menu-property-edit-type>
                 </div>
             </div>
 
@@ -33,13 +33,13 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from 'vue';
+import { defineProps, computed, inject } from 'vue';
 import { useStore } from 'vuex';
 import CollectionSideMenuProperties from '@/components/CollectionSideMenuProperties.vue';
 import CollectionSideMenuOptions from '@/components/CollectionSideMenuOptions.vue';
 import CollectionSideMenuPropertyCreate from '@/components/CollectionSideMenuPropertyCreate.vue';
 import CollectionSideMenuPropertyEdit from '@/components/CollectionSideMenuPropertyEdit.vue';
-import CollectionPropertyTypeEdit from '@/components/CollectionPropertyTypeEdit.vue';
+import CollectionSideMenuPropertyEditType from '@/components/CollectionSideMenuPropertyEditType.vue';
 
 const props = defineProps({
     height: {
@@ -48,7 +48,11 @@ const props = defineProps({
     }
 })
 
+const collectionId = inject("CollectionId");
+
 const store = useStore()
 
-const componentInView = computed(() => store.getters['collectionSideMenu/getCurrentComponent']({collectionId: "test"}))
+const componentInView = computed(
+    () => store.getters['collectionSideMenu/getCurrentComponent']({collectionId})
+)
 </script>

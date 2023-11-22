@@ -9,5 +9,12 @@ export const Block = {
 }
 
 export const TransactionApi = {
-    save: (args) => makePostReq('/api/saveTransaction', args)
+    save: async function (args) {
+        try {
+            const res = makePostReq('/api/saveTransaction', args);
+            console.log(res);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }

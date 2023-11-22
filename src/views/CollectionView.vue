@@ -164,11 +164,20 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, defineProps, provide } from 'vue';
 import CollectionViewTable from '../components/CollectionViewTable.vue';
 import BaseButton from '../components/BaseButton.vue';
 import CollectionSideMenuView from './CollectionSideMenuView.vue';
 import { useStore } from 'vuex';
+
+const props = defineProps({
+    collectionId: {
+        type: String,
+        required: true
+    }
+})
+
+provide('CollectionId', props.collectionId);
 
 const state = reactive({
     displayCollectionSideMenu: false,
@@ -180,7 +189,7 @@ const store = useStore()
 
 function changeCollectionMenuVisibilityAndHeight(value) {
     store.commit('collectionSideMenu/setCurrentComponent', {
-        collectionId: 'test',
+        collectionId: props.collectionId,
         component: 'main'
     })
     state.displayCollectionSideMenu = value

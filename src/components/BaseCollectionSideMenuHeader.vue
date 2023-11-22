@@ -23,8 +23,10 @@
 
 <script setup>
 import BaseButton from "./BaseButton.vue";
-import { defineEmits } from "vue"
+import { defineEmits, inject } from "vue"
 import { useStore } from "vuex"
+
+const collectionId = inject('CollectionId');
 
 const emits = defineEmits([
     'close'
@@ -33,11 +35,15 @@ const emits = defineEmits([
 const store = useStore()
 
 function removeLastComponent() {
-    store.commit('collectionSideMenu/removeCurrentComponent', {collectionId: 'test'})
+    store.commit('collectionSideMenu/removeCurrentComponent', {
+        collectionId
+    })
 }
 
 function close() {
-    store.commit('collectionSideMenu/removeAllComponent', {collectionId: 'test'})
+    store.commit('collectionSideMenu/removeAllComponent', {
+        collectionId
+    })
     emits('close')
 }
 </script>

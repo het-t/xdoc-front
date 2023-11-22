@@ -52,11 +52,13 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue';
+import { computed, inject, onMounted, reactive } from 'vue';
 import { useStore } from 'vuex';
 import BaseButton from './BaseButton.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuItemCol3 from './BaseCollectionSideMenuItemCol3.vue';
+
+const collectionId = inject("CollectionId");
 
 const state = reactive({
     propertyName: '',
@@ -66,14 +68,14 @@ const state = reactive({
 const store = useStore();
 
 const propertyEditData = computed(function() {
-    return store.getters['collection/getPropertyEdit']('test')
+    return store.getters['collection/getPropertyEdit'](collectionId)
 })
 
 function handlePropertyTypeChange() {
     console.log("CollectionSideMenuPropertyEdit.vue => handlePropertyTypeChange()")
 
     store.commit('collectionSideMenu/setCurrentComponent', {
-        collectionId: 'test',
+        collectionId,
         component: 'propertyTypes'
     })
 }

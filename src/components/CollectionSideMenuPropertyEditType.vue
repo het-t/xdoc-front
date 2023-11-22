@@ -49,8 +49,10 @@
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
-import { reactive } from 'vue';
+import { inject, reactive } from 'vue';
 import { useStore } from 'vuex';
+
+const collectionId = inject('CollectionId');
 
 const store = useStore();
 
@@ -63,16 +65,16 @@ function handlePropertyTypeSelect({name, noMatchingTypeFound}) {
     
     const propertyType = noMatchingTypeFound === true ? 'Text' : name;
 
-    const propertyName = store.getters['collection/getPropertyEdit']('test')?.name;
+    const propertyName = store.getters['collection/getPropertyEdit'](collectionId)?.name;
 
     store.commit('collection/setPropertyEdit', {
-        collectionId: 'test',
+        collectionId,
         name: propertyName,
         type: propertyType
     })
 
     store.commit('collectionSideMenu/removeCurrentComponent', {
-        collectionId: 'test'
+        collectionId
     })
 }
 </script>

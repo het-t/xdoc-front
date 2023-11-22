@@ -1,4 +1,4 @@
-import { Block } from '@/api';
+import { Block } from '@/services/api';
 
 const state = {
     focusBlockId: '',
