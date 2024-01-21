@@ -23,11 +23,11 @@
                         :collection-view-id="props.collectionViewId"
                     ></collection-side-menu-property-create>
                     
-                    <collection-side-menu-property-edit 
+                    <collection-side-menu-property-edit-view 
                         v-if="componentInView === 'propertyEdit'"
                         :collection-id="props.collectionId"
                         :collection-view-id="props.collectionViewId"
-                    ></collection-side-menu-property-edit>
+                    ></collection-side-menu-property-edit-view>
                 
                     <collection-side-menu-property-edit-type
                         v-if="componentInView === 'propertyTypes'"
@@ -46,7 +46,7 @@ import { defineProps, computed } from 'vue';
 import CollectionSideMenuProperties from '@/ui/components/CollectionSideMenuProperties.vue';
 import CollectionSideMenuOptions from '@/ui/components/CollectionSideMenuOptions.vue';
 import CollectionSideMenuPropertyCreate from '@/ui/components/CollectionSideMenuPropertyCreate.vue';
-import CollectionSideMenuPropertyEdit from '@/ui/components/CollectionSideMenuPropertyEdit.vue';
+import CollectionSideMenuPropertyEditView from '@/ui/views/CollectionSideMenuPropertyEditView.vue';
 import CollectionSideMenuPropertyEditType from '@/ui/components/CollectionSideMenuPropertyEditType.vue';
 import { useCollectionsStore } from '@/stores/collections';
 
