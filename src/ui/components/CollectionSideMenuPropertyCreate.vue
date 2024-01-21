@@ -103,7 +103,7 @@ function handlePropertyTypeSelect({name, noMatchingTypeFound}) {
     collectionRecordValueInStore.addProperty(propertyId, propertyName, propertyType);
     collectionViewRecordValueInStore.addProperty(propertyId);
 
-    collectionStore.setPropertyEdit(propertyName, propertyType);
+    collectionStore.setPropertyEdit(propertyId);
     collectionStore.setCurrentComponent('propertyEdit');
 }
 

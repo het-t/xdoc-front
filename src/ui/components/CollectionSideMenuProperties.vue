@@ -47,7 +47,7 @@
                         <base-collection-side-menu-property-item 
                             v-for="(property) in visibleProperties" 
                             :key="property.id" 
-                            @click.stop="handleUserSelectPropertyEdit(property.id, property.name, property.type)"
+                            @click.stop="handleUserSelectPropertyEdit(property.id)"
                             @on-property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
                             :name="property.name"
                             :id="property.id"
@@ -76,7 +76,7 @@
                         <base-collection-side-menu-property-item 
                             v-for="(property) in hiddenProperties" 
                             :key="property.id" 
-                            @click.stop="handleUserSelectPropertyEdit(property.id, property.name, property.type)"
+                            @click.stop="handleUserSelectPropertyEdit(property.id)"
                             @on-property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
                             :name="property.name"
                             :id="property.id"
@@ -233,11 +233,11 @@ function setCurrentComponent(component) {
 }
 
 function propertyEditClean() {
-    collectionStore.setPropertyEdit(null, null);
+    collectionStore.setPropertyEdit(null);
 }
 
-function handleUserSelectPropertyEdit(propertyId, propertyName, propertyType) {
-    collectionStore.setPropertyEdit(propertyName, propertyType);
+function handleUserSelectPropertyEdit(propertyId) {
+    collectionStore.setPropertyEdit(propertyId);
     setCurrentComponent('propertyEdit')
 }
 

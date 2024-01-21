@@ -3,10 +3,7 @@ import { defineStore } from "pinia"
 interface state {
     menu: {
         component: string[],
-        editProperty: {
-            name: string | null,
-            type: string | null
-        }
+        editPropertyId: string | null
     };
     types: Array<string>
 }
@@ -15,10 +12,7 @@ export const useCollectionsStore = defineStore('collections', {
     state: (): state => ({
         menu: {
             component: [],
-            editProperty: {
-                name: null,
-                type: null
-            }
+            editPropertyId: null
         },
         types: ['Text', 'Number', 'Date', 'Select', 'Multiselect', 'Checkbox', 'Person', 'Url']
     }),
@@ -26,8 +20,8 @@ export const useCollectionsStore = defineStore('collections', {
         getCurrentComponent(state): string {
             return state.menu.component[state.menu.component.length - 1];
         },
-        getCollectionPropertyEditData(state): { name: string | null, type: string | null } {
-            return state.menu.editProperty;
+        getCollectionPropertyEditId(state): string | null {
+            return state.menu.editPropertyId;
         }
     },
     actions: {
@@ -40,9 +34,8 @@ export const useCollectionsStore = defineStore('collections', {
         removeAllComponent() {
             this.menu.component = [];
         },
-        setPropertyEdit(name: string, type: string) {
-            this.menu.editProperty.name = name;
-            this.menu.editProperty.type = type;
+        setPropertyEdit(id: string) {
+            this.menu.editPropertyId = id;
         }
     }
 })
