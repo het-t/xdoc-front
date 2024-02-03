@@ -25,7 +25,11 @@
             </main>
           </div>
     
-          <router-view name="sidePeek" />
+          <page-peek-side 
+            v-if="state.peekBlockId !== null && state.peekMode === 's'"
+            :block-id="transformToStandardUUIDFormat(state.peekBlockId)"
+            peek-mode="s"
+          />
         </div>
       </div>
         
@@ -35,9 +39,10 @@
       >
         <div style="position: relative; z-index: 0;"></div>
 
-        <router-view 
-          name="overlayDefault" 
-          style="pointer-events: auto; position: relative; height: 100%; z-index: 0;"
+        <page-peek-side 
+          v-if="state.peekBlockId !== null && state.peekMode === 'c'"
+          :block-id="transformToStandardUUIDFormat(state.peekBlockId)"
+          peek-mode="c"
         />
       
         <base-slash-menu :pos=slashMenuPosition v-if="showSlashMenu === true"></base-slash-menu>
@@ -55,7 +60,7 @@
 
 
 <script setup>
-import { reactive, computed, onMounted, onUnmounted } from 'vue';
+import { reactive, computed, onMounted, onUnmounted, watch } from 'vue';
 import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
 import BaseSlashMenu from './components/BaseSlashMenu.vue';
@@ -63,9 +68,40 @@ import { useMenuLeftStore } from '../stores/menuLeft';
 import { useTransactionsQueue } from '@/stores/transactionsQueue';
 import { useKeyStrokeStore } from '@/stores/keyStrokes';
 import { useRecordValuesStore } from '@/stores/recordValues';
+import { useRoute } from 'vue-router';
+import PagePeekSide from './components/PagePeekSide.vue';
+import { transformToStandardUUIDFormat } from './helpers/router/transformToStandardUUIDFormat';
+
+const route = useRoute();
+
+watch(
+  () => route?.query?.pm,
+  (newVal, oldVal) => {
+    if (newVal && newVal !== oldVal) {
+      state.peekMode = newVal;
+    }
+    else {
+      state.peekMode = null;
+    }
+  }
+)
+
+watch(
+  () => route?.query?.p,
+  (newVal, oldVal) => {
+    if (newVal !== null && newVal !== oldVal) {
+      state.peekBlockId = newVal;
+    }
+    else {
+      state.peekBlockId = null;
+    }
+  }
+)
 
 const state = reactive({
-  documentInnerWidth: window.innerWidth
+  documentInnerWidth: window.innerWidth,
+  peekMode: "s",
+  peekBlockId: ""
 })
 
 const keystrokesStore = useKeyStrokeStore();

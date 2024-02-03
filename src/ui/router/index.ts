@@ -14,8 +14,6 @@ const router = createRouter({
       name: 'render-page',
       components: {
         default: () => import('../components/RenderMain.vue'),
-        sidePeek: () => import('../components/PagePeekSide.vue'),
-        overlayDefault: () => import('../components/PagePeekSide.vue')
       },
       props: {
         default: (route) => {
@@ -23,34 +21,6 @@ const router = createRouter({
 
           return {
             blockId
-          }
-        },
-        sidePeek: (route) => {
-          let blockId: string | null = null;
-          let peekMode: string | null = null;
-
-          if (peekMode === "s") {
-            blockId = transformToStandardUUIDFormat(route.query.p as string);
-            peekMode = route.query.pm as string;
-          }
-
-          return {
-            blockId,
-            peekMode
-          }
-        },
-        overlayDefault: (route) => {
-          let blockId: string | null = null;
-          let peekMode: string | null = null;
-
-          if (peekMode === "c") {
-            blockId = transformToStandardUUIDFormat(route.query.p as string);
-            peekMode = route.query.pm as string;
-          }
-          
-          return {
-            blockId,
-            peekMode
           }
         }
       }
