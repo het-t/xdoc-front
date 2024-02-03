@@ -3,7 +3,7 @@
         class="xdoc-peek-renderer"
         role="region"
         aria-label="Side peek"
-        :style="style"
+        :style="style + ' ' + state.style"
         v-if="props.blockId !== null && props.peekMode !== null"
     >
         <div style="width: 100%; height: 100%;"></div>
@@ -39,25 +39,32 @@
                 </div>
             </div>
 
-            <RenderPage 
-                :page-id="props.blockId"
-                :peek-mode="props.peekMode"
-                :style="props.peekMode === 'c' ? 'transform: translateZ(0);' : ''"
-            />
+            <base-data-provider
+                :block-id="props.blockId"
+                space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                table="block"
+                v-slot="{ recordValueDeferInStore }"
+                :key="props.blockId"
+            >
+            <!-- :peek-mode="props.peekMode"
+            :style="props.peekMode === 'c' ? 'transform: translateZ(0);' : ''" -->
+                <RenderPage v-if="recordValueDeferInStore"
+                    :block-id="props.blockId"
+                />
+            </base-data-provider>
         </div>
     </div>
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, defineProps } from "vue";
+import { computed, reactive, defineProps } from "vue";
 import RenderPage from "@/ui/components/RenderPage.vue";
+import BaseDataProvider from "./BaseDataProvider.vue";
 import { useRoute, useRouter } from "vue-router";
-
-const router = useRouter();
 
 const state = reactive({
     width: 522,
-    close: false
+    style: ""
 })
 
 const props = defineProps({
@@ -81,23 +88,22 @@ const style = computed(function() {
         s += "inset: 0; z-index: 99; background-color: rgba(0, 0, 0, 0.4);"
     }
 
-    if (props.blockId === null || state.close === true) {
+    if (props.blockId === null) {
         s += "transform: translateX(100%) translateZ(0);"
     }
 
     return s;
 })
-const route = useRoute()
+
+const router = useRouter();
+const route = useRoute();
 
 function closeSidePeek() {
-    state.close = true;
-    //wait until transition completes
+    state.style = "transform: translateX(100%) translateZ(0);";
+
     setTimeout(function() {
-        router.push(route.path)
+        router.push(route.path);
+        state.style = "";
     }, 270)
 }
-
-onMounted(() => {
-    
-})
 </script>

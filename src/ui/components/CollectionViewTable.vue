@@ -31,7 +31,7 @@
                     >
                         <div style="display: flex; position: relative;">
                             <div class="xdoc-table-view-header-cell"
-                                style="display: flex; flex-shrink: 0; overflow: hidden; font-size: 14px; padding: 0px; width: 200px; border-right: 1px solid rgb(233, 233, 231);"
+                                style="display: flex; flex-shrink: 0; overflow: hidden; font-size: 14px; padding: 0px; width: 276px; border-right: 1px solid rgb(233, 233, 231);"
                             >
                                 <div role="button"
                                     tabindex="0"
@@ -109,9 +109,11 @@
                             v-if="recordValueDeferInStore" 
                             class="xdoc-table-view-row"
                             style="display: flex;"
+                            @mouseover="updatePointerRowIndex(rowIndex)"
+                            @mouseleave="updatePointerRowIndex(-1)"
                         >
                             <div style="display: flex;">   
-                                <div style="position: sticky; left: 0px; z-index: 83; display: flex;">
+                                <div style="position: sticky; left: 0px; z-index: 85; display: flex;">
                                     <div style="display: flex; opacity: 1; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
                                         <div style="background: white; border-bottom: rgb(233, 233, 231); height: 100%; opacity: 0; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
                                             <label style="height: 100%; margin-right: -8px; align-items: flex-start; justify-content: center; display: flex; cursor: pointer; z-index: 1; opacity: 0; padding-left: 0px; padding-right: 0px; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
@@ -127,18 +129,17 @@
                                     </div>
                                 </div>
                 
-                                <div v-for="(propertyFormat, colIndex) in collectionViewPropertiesRecordValueInStore" :key="`r${rowIndex}c${colIndex}`" class="xdoc-table-view-cell"
+                                <collection-view-table-cell v-for="(propertyFormat, colIndex) in collectionViewPropertiesRecordValueInStore" :key="`r${rowIndex}c${colIndex}`" class="xdoc-table-view-cell"
                                     :data-row-index="rowIndex"
                                     :data-col-index="colIndex"
-                                    style="width: 200px; height: calc(100% + 1px); position: relative; border-right: 1px solid rgb(233, 233, 231);"
                                 >
-                                    <div style="display: flex; overflow-x: hidden; height: 100%; width: 200px;">
-                                        <collection-view-table-property-value
-                                            :page-id="pageId"
-                                            :property="propertyFormat.property"
-                                        />
-                                    </div>
-                                </div>
+                                    <collection-view-table-property-value
+                                        @open_record="handleOpenRecord(pageId)"
+                                        :page-id="pageId"
+                                        :property="propertyFormat.property"
+                                        :display-open-btn="pointerRowIndex === rowIndex"
+                                    />
+                                </collection-view-table-cell>
                             </div>
                             
                             <!-- <div class="xdoc-selectable-halo"
@@ -182,9 +183,11 @@
 <script setup>
 import BaseDataProvider from './BaseDataProvider.vue';
 import BaseButton from './BaseButton.vue';
-import CollectionViewTablePropertyValue from './CollectionViewTablePropertyValue.vue';
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, ref } from 'vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
+import CollectionViewTableCell from './CollectionViewTableCell.vue';
+import CollectionViewTablePropertyValue from './CollectionViewTablePropertyValue.vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     collectionId: {
@@ -238,5 +241,17 @@ function handleAddNewRecord() {
     );
 
     console.log(newRecord);
+}
+
+/** open button */
+const pointerRowIndex = ref(0);
+const router = useRouter();
+
+function updatePointerRowIndex(rowIndex) {
+    pointerRowIndex.value = rowIndex;
+}
+
+function handleOpenRecord(pageId) {
+    router.push({ query: { p: pageId.replaceAll("-", ""), pm: 's' } });
 }
 </script>

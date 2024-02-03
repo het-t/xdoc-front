@@ -1,18 +1,40 @@
-<template>
-    <div role="button"
-        tabindex="0"
+<template>    
+    <base-button
+        :hover-style="{background: 'none'}"
         data-testid="property-value"
-        style="user-select: none; transition: background 20ms ease-in 0s; cursor: pointer; position: relative; display: block; font-size: 14px; overflow: hidden; width: 252px; border-right: none; white-space: nowrap; height: 32px; min-height: 32px; padding: 5px 8px;"
+        style="position: relative; width: 100%; display: block; font-size: 14px; overflow: clip;border-right: none; white-space: normal; min-height: 32px; padding: 5px 8px 5px 0px; border-radius: unset; align-items: unset; justify-content: unset;"
     >
-        <span style="line-height: 1.5; white-space: nowrap; word-break: normal; display: inline; font-weight: 500; background-image: linear-gradient(to right, rgba(55, 53, 47, 0.16) 0%, rgba(55, 53, 47, 0.1) 100%); background-repeat: repeat-x; background-position: 0px 100%; background-size: 100% 1px;">
+        <div v-if="props.property === 'title' && props.displayOpenBtn"
+            style="display: flex; justify-content: end; position: absolute; top: 4px; right: 0px; left: 0px; z-index: 2; margin: 0px 6px; pointer-events: none;"
+        >
+            <div style="display: flex; gap: 4px; pointer-events: auto; position: sticky; right: 6px;">
+                <div>
+                    <base-button
+                        :hover-style="{background: 'rgb(239, 239, 238)'}"
+                        :default-style="{background: 'white'}"
+                        style="font-weight: 500; white-space: nowrap; border-radius: 4px; height: 24px; padding-left: 6px; padding-right: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: rgba(15, 15, 15, 0.1); font-size: 12px; line-height: 1.2; color: rgba(55, 53, 47, 0.65); fill: rgba(55, 53, 47, 0.65); box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 26, 15, 0.1) 0px 2px 4px;"
+                        @click.prevent="emits('open_record')"
+                    >   
+                        Open
+                    </base-button>
+                </div>
+            </div>
+        </div>
+        
+        <span style="line-height: 1.5; white-space: pre-wrap; word-break: break-word; display: inline; font-weight: 500; background-image: linear-gradient(to right, rgba(55, 53, 47, 0.16) 0%, rgba(55, 53, 47, 0.1) 100%); background-repeat: repeat-x; background-position: 0px 100%; background-size: 100% 1px;">
             {{ propertyValueRecordValueInStore }}
         </span>
-    </div>
+    </base-button>
 </template>
 
 <script setup>
 import { useRecordValuesStore } from '@/stores/recordValues';
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, defineEmits } from 'vue';
+import BaseButton from './BaseButton.vue';
+
+const emits = defineEmits([
+    "open_record"
+])
 
 const props = defineProps({
     pageId: {
@@ -22,6 +44,10 @@ const props = defineProps({
     property: {
         type: String,
         required: true
+    },
+    displayOpenBtn: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -32,6 +58,6 @@ const propertyValueRecordValueInStore = computed(function() {
         props.pageId,
         "block",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.properties?.["title"]
+    )?.properties?.["title"][0][0]
 })
 </script>
