@@ -27,6 +27,7 @@
                         type="text" 
                         placeholder="Type a new option" 
                         style="font-size: inherit; line-height: inherit; border: none; background: none; width: 100%; display: block; resize: none; padding: 0px;"
+                        @keydown.stop="handleCreateNewOption"
                     >
                 </div>
             </div>
@@ -57,9 +58,15 @@
 </template>
 
 <script setup>
+import uuid from '@/helpers/globals/uuid';
 import BaseButton from './BaseButton.vue';
 import BaseTag from "./BaseTag.vue";
-import { defineProps, reactive } from 'vue';
+import { defineProps, reactive, defineEmits } from 'vue';
+import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
+
+const emits = defineEmits([
+    "propertyEdit"
+])
 
 const props = defineProps({
     propertyId: {
@@ -75,4 +82,25 @@ const props = defineProps({
 const state = reactive({
     createNewOption: false
 })
+
+function handleCreateNewOption(e) {
+    const targetDiv = e.target;
+    
+    // keyCode 13 represets "enter"(keyboards) and "go"(phones) keys
+    if (e.keyCode === 13) {
+        if (targetDiv.value) {
+            emits("propertyEdit", {
+                type: "multiselect",
+                operation: "optionAdd",
+                data: [{
+                    id: transformToStandardUUIDFormat(uuid()),
+                    color: "red",
+                    value: targetDiv.value
+                }]
+            });
+
+            targetDiv.value = ""
+        }
+    }
+}
 </script>

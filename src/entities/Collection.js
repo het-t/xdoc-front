@@ -32,3 +32,7 @@ Collection.prototype.addProperty = function(id, name, type, misc = {}) {
         ...misc
     }
 }
+
+// Collection.prototype.getPropertyById = function(id) {
+//     return this.schema[id];
+// }
