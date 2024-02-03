@@ -11,6 +11,7 @@ import { Text } from "@/entities/Text";
 import { Collection } from "@/entities/Collection";
 import { CollectionView } from "@/entities/CollectionView";
 import { CollectionViewPage } from "@/entities/CollectionViewPage";
+import { Page } from "@/entities/Page";
 
 const DELAY_DEFAULT: number = 5 * 1000;
 const BATCH_SIZE_DEFAULT: number = 10;
@@ -94,6 +95,13 @@ export const useTransactionsQueue = defineStore('q', () => {
                             }
                             case "collection_view_page" : {
                                 recordValue = new CollectionViewPage(recordValue);
+                                break;
+                            }
+                            case "page": {
+                                recordValue = new Page(recordValue);
+                                break;
+                            }
+                            default : {
                                 break;
                             }
                         }

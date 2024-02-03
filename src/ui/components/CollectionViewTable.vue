@@ -126,7 +126,7 @@
                                         </div>
                                     </div>
                                 </div>
-        
+                
                                 <div v-for="(propertyFormat, colIndex) in collectionViewPropertiesRecordValueInStore" :key="`r${rowIndex}c${colIndex}`" class="xdoc-table-view-cell"
                                     :data-row-index="rowIndex"
                                     :data-col-index="colIndex"
@@ -136,14 +136,14 @@
                                         <collection-view-table-property-value
                                             :page-id="pageId"
                                             :property="propertyFormat.property"
-                                        ></collection-view-table-property-value>
+                                        />
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="xdoc-selectable-halo"
+                            <!-- <div class="xdoc-selectable-halo"
                                 style="position: absolute; pointer-events: none; inset: 0; background: rgba(35, 131, 226, 0.14); z-index: 84; border-radius: 0px; opacity: 1; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"
-                            ></div>
+                            ></div> -->
                         </div>
                     </base-data-provider>
 
@@ -166,11 +166,11 @@
                 </span>
             </base-button>
 
-            <div contenteditable="false"
+            <!-- <div contenteditable="false"
                 class="pseudoSelection"
                 data-content-editable-void="true"
                 style="user-select: none; --pseudoSelection--background: transparent; display: flex; position: absolute; background: white; z-index: 83; font-size: 14px; height: 43px; min-width: 100%; clip-path: polygon(0% -20%, 100% -20%, 100% 100%, 0% 100%); left: 0px; border-top: 1px solid rgb(233, 233, 231); transform: translate3d(0px, -288px, 0px);"
-            ></div>
+            ></div> -->
 
             <div style="height: 32px;"></div>
         </div>
@@ -222,10 +222,21 @@ const collectionViewPagesRecordValueInStore = computed(function() {
         props.collectionViewId,
         "collection_view",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.page_sort
+    )?.pageSort
 })
 
 function handleAddNewRecord() {
-    console.log(props)
+    const collectionViewInStore =  recordValuesStore.getRecordValue(
+        props.collectionViewId,
+        "collection_view",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    )
+
+    const newRecord = collectionViewInStore.addNewRecord(
+        "collection",
+        props.collectionId
+    );
+
+    console.log(newRecord);
 }
 </script>
