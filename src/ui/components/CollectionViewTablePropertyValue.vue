@@ -1,6 +1,7 @@
 <template>    
     <base-button
-        :hover-style="{background: 'none'}"
+        @click.prevent="handleClickTableViewCell"
+        :hover-style="{ background: 'none' }"
         data-testid="property-value"
         style="position: relative; width: 100%; display: block; font-size: 14px; overflow: clip;border-right: none; white-space: normal; min-height: 32px; padding: 5px 8px 5px 0px; border-radius: unset; align-items: unset; justify-content: unset;"
     >
@@ -13,7 +14,7 @@
                         :hover-style="{background: 'rgb(239, 239, 238)'}"
                         :default-style="{background: 'white'}"
                         style="font-weight: 500; white-space: nowrap; border-radius: 4px; height: 24px; padding-left: 6px; padding-right: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: rgba(15, 15, 15, 0.1); font-size: 12px; line-height: 1.2; color: rgba(55, 53, 47, 0.65); fill: rgba(55, 53, 47, 0.65); box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 26, 15, 0.1) 0px 2px 4px;"
-                        @click.prevent="emits('open_record')"
+                        @click.stop="emits('open_record')"
                     >   
                         Open
                     </base-button>
@@ -31,6 +32,7 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { computed, defineProps, defineEmits } from 'vue';
 import BaseButton from './BaseButton.vue';
+import { useGeneralStore } from '@/stores/general';
 
 const emits = defineEmits([
     "open_record"
@@ -60,4 +62,21 @@ const propertyValueRecordValueInStore = computed(function() {
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
     )?.properties?.["title"][0][0]
 })
+
+
+
+function handleClickTableViewCell(e) {
+    const generalStore = useGeneralStore();
+    
+    const cellElement = e.target.closest(".xdoc-table-view-cell");
+    const measures = cellElement.getBoundingClientRect();
+
+    generalStore.collectionPropertyValueOverlay.pageId = props.pageId;
+    generalStore.collectionPropertyValueOverlay.propertyId = props.property;
+
+    generalStore.collectionPropertyValueOverlay.dialogWidth = measures.width;
+    generalStore.collectionPropertyValueOverlay.dialogPosTop = measures.top;
+    generalStore.collectionPropertyValueOverlay.dialogPosLeft = measures.left;
+    generalStore.collectionPropertyValueOverlay.visible = true;
+}
 </script>

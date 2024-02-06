@@ -44,6 +44,12 @@
           :block-id="transformToStandardUUIDFormat(state.peekBlockId)"
           peek-mode="c"
         />
+
+        <div data-overlay="true" style="position: relative; z-index: 0; pointer-events: auto;"
+          v-if="collectionRecordPropertyValueOverlayDataVisible === true"
+        >
+          <collection-record-property-edit-overlay />
+        </div>
       
         <base-slash-menu :pos=slashMenuPosition v-if="showSlashMenu === true"></base-slash-menu>
       </div>
@@ -64,13 +70,15 @@ import { reactive, computed, onMounted, onUnmounted, watch } from 'vue';
 import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
 import BaseSlashMenu from './components/BaseSlashMenu.vue';
+import PagePeekSide from './components/PagePeekSide.vue';
+import CollectionRecordPropertyEditOverlay from './components/CollectionRecordPropertyEditOverlay.vue';
 import { useMenuLeftStore } from '../stores/menuLeft';
 import { useTransactionsQueue } from '@/stores/transactionsQueue';
 import { useKeyStrokeStore } from '@/stores/keyStrokes';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { useRoute } from 'vue-router';
-import PagePeekSide from './components/PagePeekSide.vue';
 import { transformToStandardUUIDFormat } from './helpers/router/transformToStandardUUIDFormat';
+import { useGeneralStore } from '@/stores/general';
 
 const route = useRoute();
 
@@ -154,6 +162,10 @@ function inputHandler(e) {
       }
     }
 }
+
+/** collection-record-porperty-value-overlay */
+const generalStore = useGeneralStore();
+const collectionRecordPropertyValueOverlayDataVisible = computed(() => generalStore.collectionPropertyValueOverlay.visible);
 
 onMounted(
   () => window.addEventListener('resize', updateDocumentInnerWidth)
