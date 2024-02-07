@@ -39,16 +39,16 @@
       >
         <div style="position: relative; z-index: 0;"></div>
 
-        <page-peek-side 
-          v-if="state.peekBlockId !== null && state.peekMode === 'c'"
-          :block-id="transformToStandardUUIDFormat(state.peekBlockId)"
-          peek-mode="c"
-        />
+        <div data-overlay="true" style="position: relative; z-index: 0; pointer-events: auto;">
+          <page-peek-side 
+            v-if="state.peekBlockId !== null && state.peekMode === 'c'"
+            :block-id="transformToStandardUUIDFormat(state.peekBlockId)"
+            peek-mode="c"
+          />
 
-        <div data-overlay="true" style="position: relative; z-index: 0; pointer-events: auto;"
-          v-if="collectionRecordPropertyValueOverlayDataVisible === true"
-        >
-          <collection-record-property-edit-overlay />
+          <collection-record-property-edit-overlay 
+            v-if="collectionRecordPropertyValueOverlayDataVisible === true"
+          />
         </div>
       
         <base-slash-menu :pos=slashMenuPosition v-if="showSlashMenu === true"></base-slash-menu>

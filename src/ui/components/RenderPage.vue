@@ -119,7 +119,6 @@
                 <div class="layout-content layout-content-with-divider">
                     <div contenteditable="false" data-content-editable-void="true">
                         <page-properties 
-                            v-if="pagePropertiesRecordValueInStore === 1"
                             :block-id="props.blockId"
                         />
                     </div>
@@ -207,14 +206,6 @@ if (pageParentTable === "collection") {
         )
     })
 }
-
-const pagePropertiesRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        pageParentId,
-        "collection",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.defer
-})
 
 const pageDiscussionRecordValueInStore = computed(function() {
     return recordValuesStore.getRecordValue(
