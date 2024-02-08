@@ -12,6 +12,8 @@ import { Collection } from "@/entities/Collection";
 import { CollectionView } from "@/entities/CollectionView";
 import { CollectionViewPage } from "@/entities/CollectionViewPage";
 import { Page } from "@/entities/Page";
+import { Discussion } from "@/entities/Discussion";
+import { Comment } from "@/entities/Comment";
 
 const DELAY_DEFAULT: number = 5 * 1000;
 const BATCH_SIZE_DEFAULT: number = 10;
@@ -132,6 +134,24 @@ export const useTransactionsQueue = defineStore('q', () => {
                     case "collection_view_page": {
                         let recordValue = record.value.value;
                         recordValue = new CollectionViewPage(recordValue);
+                        recordValue.defer = 1;
+
+                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        break;
+                    }
+
+                    case "discussion": {
+                        let recordValue = record.value.value;
+                        recordValue = new Discussion(recordValue);
+                        recordValue.defer = 1;
+                        
+                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        break;
+                    }
+
+                    case "comment": {
+                        let recordValue = record.value.value;
+                        recordValue = new Comment(recordValue);
                         recordValue.defer = 1;
 
                         setRecordValue(pointerId, table, recordValue, recordValue.spaceId);

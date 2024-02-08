@@ -7,4 +7,5 @@ export function Page(props) {
 
     this.type = "page";
     this.properties = props.properties;
+    this.discussions = props.discussions;
 }

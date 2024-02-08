@@ -126,10 +126,17 @@
 
                 <div class="layout-content layout-content-with-divider">
                     <div contenteditable="false" data-content-editable-void="true">
-                        <page-discussion 
-                            v-if="pageDiscussionRecordValueInStore === 1"
-                            :block-id="props.blockId"
-                        />
+                        <base-data-provider
+                            :block-id="discussions[0]"
+                            space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                            table="discussion"
+                            v-slot="{ recordValueDeferInStore }"
+                        >
+                            <page-discussion 
+                                v-if="recordValueDeferInStore === 1"
+                                :discussion-id="discussions[0]"
+                            />
+                        </base-data-provider>
                     </div>
                 </div>
 
@@ -156,9 +163,10 @@
 import PageProperties from "@/ui/components/PageProperties.vue";
 import PageDiscussion from "@/ui/components/PageDiscussion.vue";
 import PageContent from "@/ui/components/PageContent.vue";
-import { computed, defineProps } from 'vue';
+import { defineProps } from 'vue';
 import { useRecordValuesStore } from "@/stores/recordValues";
 import { syncRecordValueFromApi } from "@/helpers/globals/SyncRecordValueFromApi";
+import BaseDataProvider from "./BaseDataProvider.vue";
 
 const props = defineProps({
     blockId: {
@@ -207,13 +215,13 @@ if (pageParentTable === "collection") {
     })
 }
 
-const pageDiscussionRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        pageRecordValue.discussion,
-        "collection",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.defer
-})
+// const pageDiscussionRecordValueInStore = computed(function() {
+//     return recordValuesStore.getRecordValue(
+//         pageRecordValue.discussion,
+//         "collection",
+//         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+//     )?.defer
+// })
 </script>
 
 
