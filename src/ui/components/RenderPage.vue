@@ -127,14 +127,16 @@
                 <div class="layout-content layout-content-with-divider">
                     <div contenteditable="false" data-content-editable-void="true">
                         <base-data-provider
-                            :block-id="discussions[0]"
+                            v-for="discussionId in discussions"
+                            :block-id="discussionId"
                             space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                             table="discussion"
                             v-slot="{ recordValueDeferInStore }"
+                            :key="discussionId"
                         >
                             <page-discussion 
                                 v-if="recordValueDeferInStore === 1"
-                                :discussion-id="discussions[0]"
+                                :discussion-id="discussionId"
                             />
                         </base-data-provider>
                     </div>

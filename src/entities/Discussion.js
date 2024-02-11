@@ -7,3 +7,11 @@ export function Discussion(props) {
     this.spaceId = props.space_id;
     this.type = "default";
 }
+
+Discussion.prototype.addNewComment = function(id) {
+    this.comments.push(id);
+}
+
+Discussion.prototype.updateResolvedStatus = function(resolved) {
+    this.resolved = resolved;
+}
