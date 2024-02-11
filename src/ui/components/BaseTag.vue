@@ -1,18 +1,25 @@
 <template>
-    <div 
-        :style='{ display: "inline-flex", alignItems: "center", minWidth: "0px", maxWidth: "100%", height: "20px", borderRadius: "3px", paddingRight: "6px", paddingLeft: "6px", fontSize: "14px", lineHeight: "120%", margin: "0", backgroundColor: TagBackgroundColorStringToRgba(props.backgroundColor)}'
+    <div
+        style="display: flex; align-items: center; flex-shrink: 1; min-width: 0px; max-width: 100%; height: 20px; border-radius: 3px; font-size: 14px; line-height: 120%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+        :style="{ ...tagColorStringToRgba(props.tag.color) }"
     >
+        <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-flex; align-items: center; height: 20px; line-height: 20px;">
+            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ props.tag.value }}
+            </span>
+        </div>
+
         <slot></slot>
     </div>
 </template>
 
 <script setup>
 import { defineProps } from "vue";
-import { TagBackgroundColorStringToRgba } from "../../helpers/globals/TagBackgroundColorStringToRgba";
+import { tagColorStringToRgba } from "../../helpers/globals/tagColorStringToRgba";
 
 const props = defineProps({
-    backgroundColor: {
-        type: String,
+    tag: {
+        type: Object,
         required: true
     }
 })

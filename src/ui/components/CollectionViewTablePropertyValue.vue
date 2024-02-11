@@ -43,6 +43,10 @@ const props = defineProps({
         type: String,
         required: true
     },
+    collectionId: {
+        type: String,
+        required: true
+    },
     propertyId: {
         type: String,
         required: true
@@ -67,6 +71,6 @@ function handleClickTableViewCell(e) {
     const cellElement = e.target.closest(".xdoc-table-view-cell");
     const measures = cellElement.getBoundingClientRect();
 
-    overlayHandle(props.pageId, props.propertyId, measures, "page_property_value_edit");
+    overlayHandle(props.pageId, props.collectionId, props.propertyId, measures, "page_property_value_edit");
 }
 </script>

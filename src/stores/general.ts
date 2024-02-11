@@ -10,8 +10,9 @@ export const useGeneralStore = defineStore("generalStore", () => {
     
     const propertyValueOverlay: Ref<{}> = ref({
         visible: false,
+        propertyId: "",
         pageId: "",
-        propertyId: ""
+        collectionId: ""
     });
 
     const type: Ref<string> = ref("");

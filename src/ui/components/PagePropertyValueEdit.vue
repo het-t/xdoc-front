@@ -16,7 +16,17 @@
                     <div style="display: flex; align-items: center; position: relative; flex-direction: column-reverse; transform-origin: 0% top; left: 0; top: 0;">
                         <div role="dialog" style="border-radius: 6px; background: white; backdrop-filter: none; position: relative; max-width: calc(-24px + 100vw); box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: visible; width: 272.2px; min-height: 54px; max-height: 710px; display: flex; flex-direction: column;">
                             <div style="display: flex; flex-direction: column; overflow-y: auto; flex-grow: 1; height: 100%;">
-                                <div style="padding: 6px 9px; font-size: 14px; min-height: 34px; display: flex; height: 100%; flex-direction: column; justify-content: space-between; flex-grow: 1; font-weight: 500;">
+                                <!-- for multiselect -->
+                                <page-property-value-edit-multiselect 
+                                    v-if="propertyType === 'multi_select' || propertyType === 'select'"
+                                    :multiselect="propertyType === 'multi_select' ? true : false"
+                                    :page-id="overlayData.pageId"
+                                    :property-id="overlayData.propertyId"
+                                    :collection-id="overlayData.collectionId"
+                                />
+
+                                 <!-- for text value -->
+                                 <div v-else style="padding: 6px 9px; font-size: 14px; min-height: 34px; display: flex; height: 100%; flex-direction: column; justify-content: space-between; flex-grow: 1; font-weight: 500;">
                                     <div 
                                         class="notranslate"
                                         spellcheck="true"
@@ -24,7 +34,7 @@
                                         contenteditable="true"
                                         style="width: 100%; height: 100%; white-space: pre-wrap; word-break: break-word; caret-color: rgb(55, 53, 47);"
                                     >
-                                        {{ propertyValue }}
+                                        {{ overlayData.propertyId }}
                                     </div>
                                 </div>
                             </div>
@@ -37,6 +47,7 @@
 </template>
 
 <script setup>
+import PagePropertyValueEditMultiselect from './PagePropertyValueEditMultiselect.vue';
 import { overlayHandle } from '@/helpers/globals/overlayHandle';
 import { useGeneralStore } from '@/stores/general';
 import { useRecordValuesStore } from '@/stores/recordValues';
@@ -48,13 +59,19 @@ const generalStore = useGeneralStore();
 const overlayData = generalStore.propertyValueOverlay;
 const dialog = computed(() => generalStore.dialog);
 
-const propertyValue = recordValuesStore.getRecordValue(
-    overlayData.pageId,
-    "block",
+// const propertyValue = recordValuesStore.getRecordValue(
+//     overlayData.pageId,
+//     "block",
+//     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+// ).properties?.[overlayData.propertyId];
+
+const propertyType = recordValuesStore.getRecordValue(
+    overlayData.collectionId,
+    "collection",
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-).properties?.[overlayData.propertyId];
+).getPropertyById(overlayData.propertyId).type;
 
 function handleClickOutsideDialog() {
-    overlayHandle(null, null, {}, null);
+    overlayHandle(null, null, null, {}, null);
 }
 </script>

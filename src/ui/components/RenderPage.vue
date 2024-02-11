@@ -119,13 +119,17 @@
                 <div class="layout-content layout-content-with-divider">
                     <div contenteditable="false" data-content-editable-void="true">
                         <page-properties 
+                            v-if="pageParentTable === 'collection'"
                             :page-id="props.blockId"
+                            :collection-id="pageParentId"
                         />
                     </div>
                 </div>
 
-                <div class="layout-content layout-content-with-divider">
-                    <div contenteditable="false" data-content-editable-void="true">
+                <div class="layout-content layout-content-with-divider"> 
+                    <div v-if="pageParentTable === 'collection'" 
+                        contenteditable="false" data-content-editable-void="true"
+                    >
                         <base-data-provider
                             v-for="discussionId in discussions"
                             :block-id="discussionId"

@@ -90,6 +90,10 @@ const props = defineProps({
     pageId: {
         type: String,
         required: true
+    },
+    collectionId: {
+        type: String,
+        required: true
     }
 })
 
@@ -103,26 +107,26 @@ const pagePropertiesRecordValueInStore = computed(function() {
     ).properties
 });
 
-const pageRecordValueInStore = recordValuesStore.getRecordValue(
-    props.pageId,
-    "block",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-);
-
 const pageCollectionRecordValueInStore = recordValuesStore.getRecordValue(
-    pageRecordValueInStore.parentId,
-    pageRecordValueInStore.parentTable,
+    props.collectionId,
+    "collection",
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 )
 
 function propertyNameFromId(id) {
-    return pageCollectionRecordValueInStore.getProperty(id).name
+    return pageCollectionRecordValueInStore.getPropertyById(id).name
 }
 
 function handlePropertyEdit(e, propertyId) {    
     const cellElement = e.target.closest("[role='cell']");
     const measures = cellElement.getBoundingClientRect();
 
-    overlayHandle(props.pageId, propertyId, measures, "page_property_value_edit");
+    overlayHandle(
+        props.pageId, 
+        props.collectionId, 
+        propertyId, 
+        measures, 
+        "page_property_value_edit"
+    );
 }
 </script>
