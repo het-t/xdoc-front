@@ -136,7 +136,7 @@
                                     <collection-view-table-property-value
                                         @open_record="handleOpenRecord(pageId)"
                                         :page-id="pageId"
-                                        :property="propertyFormat.property"
+                                        :property-id="propertyFormat.property"
                                         :display-open-btn="pointerRowIndex === rowIndex"
                                     />
                                 </collection-view-table-cell>

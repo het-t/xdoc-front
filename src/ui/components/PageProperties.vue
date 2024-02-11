@@ -8,8 +8,8 @@
                         style="margin: 0px;"
                     >
                         <div style="display: flex; flex-direction: column;">
-                            <div v-for="(value, name) in blockPropertiesFromRecordValueInStore"
-                                :key="name" 
+                            <div v-for="(value, propertyId) in pagePropertiesRecordValueInStore"
+                                :key="propertyId" 
                                 role="row" aria-labelledby="aria-labelledby"
                                 style="display: flex; width: 100%; padding-bottom: 4px;"
                             >
@@ -33,13 +33,15 @@
                                         <div style="display: flex; align-items: center; line-height: 120%; min-width: 0px; font-size: 14px;">
                                             <div style="margin-right: 6px;"></div>
                                             <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                {{ name }}
+                                                {{ propertyNameFromId(propertyId) }}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div role="cell"
+                                <div
+                                    @click.stop="handlePropertyEdit($event, propertyId)" 
+                                    role="cell"
                                     style="display: flex; margin-left: 4px; height: 100%; flex: 1 1 auto; flex-direction: column; min-width: 0px;"
                                 >
                                     <div style="display: flex; align-items: center; margin-left: 4px; height: 100%; flex: 1 1 auto; min-width: 0px;">
@@ -80,11 +82,12 @@
 </template>
 
 <script setup>
+import { propertyValueEditOverlay } from '@/helpers/globals/PropertyValueEditOverlay';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { computed, defineProps } from 'vue';
 
 const props = defineProps({
-    blockId: {
+    pageId: {
         type: String,
         required: true
     }
@@ -92,11 +95,34 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const blockPropertiesFromRecordValueInStore = computed(function() {
+const pagePropertiesRecordValueInStore = computed(function() { 
     return recordValuesStore.getRecordValue(
-        props.blockId,
+        props.pageId,
         "block",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
     ).properties
-})
+});
+
+const pageRecordValueInStore = recordValuesStore.getRecordValue(
+    props.pageId,
+    "block",
+    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+);
+
+const pageCollectionRecordValueInStore = recordValuesStore.getRecordValue(
+    pageRecordValueInStore.parentId,
+    pageRecordValueInStore.parentTable,
+    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+)
+
+function propertyNameFromId(id) {
+    return pageCollectionRecordValueInStore.getProperty(id).name
+}
+
+function handlePropertyEdit(e, propertyId) {    
+    const cellElement = e.target.closest("[role='cell']");
+    const measures = cellElement.getBoundingClientRect();
+
+    propertyValueEditOverlay(props.pageId, propertyId, measures, true);
+}
 </script>

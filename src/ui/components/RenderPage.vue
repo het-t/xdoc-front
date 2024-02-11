@@ -119,7 +119,7 @@
                 <div class="layout-content layout-content-with-divider">
                     <div contenteditable="false" data-content-editable-void="true">
                         <page-properties 
-                            :block-id="props.blockId"
+                            :page-id="props.blockId"
                         />
                     </div>
                 </div>

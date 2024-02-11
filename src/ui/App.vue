@@ -46,7 +46,7 @@
             peek-mode="c"
           />
 
-          <collection-record-property-edit-overlay 
+          <property-edit-overlay
             v-if="collectionRecordPropertyValueOverlayDataVisible === true"
           />
         </div>
@@ -71,7 +71,7 @@ import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
 import BaseSlashMenu from './components/BaseSlashMenu.vue';
 import PagePeekSide from './components/PagePeekSide.vue';
-import CollectionRecordPropertyEditOverlay from './components/CollectionRecordPropertyEditOverlay.vue';
+import PropertyEditOverlay from './components/PropertyEditOverlay.vue';
 import { useMenuLeftStore } from '../stores/menuLeft';
 import { useTransactionsQueue } from '@/stores/transactionsQueue';
 import { useKeyStrokeStore } from '@/stores/keyStrokes';

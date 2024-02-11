@@ -5,7 +5,7 @@
         data-testid="property-value"
         style="position: relative; width: 100%; display: block; font-size: 14px; overflow: clip;border-right: none; white-space: normal; min-height: 32px; padding: 5px 8px 5px 0px; border-radius: unset; align-items: unset; justify-content: unset;"
     >
-        <div v-if="props.property === 'title' && props.displayOpenBtn"
+        <div v-if="props.propertyId === 'title' && props.displayOpenBtn"
             style="display: flex; justify-content: end; position: absolute; top: 4px; right: 0px; left: 0px; z-index: 2; margin: 0px 6px; pointer-events: none;"
         >
             <div style="display: flex; gap: 4px; pointer-events: auto; position: sticky; right: 6px;">
@@ -32,7 +32,7 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { computed, defineProps, defineEmits } from 'vue';
 import BaseButton from './BaseButton.vue';
-import { useGeneralStore } from '@/stores/general';
+import { propertyValueEditOverlay } from '@/helpers/globals/PropertyValueEditOverlay';
 
 const emits = defineEmits([
     "open_record"
@@ -43,7 +43,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    property: {
+    propertyId: {
         type: String,
         required: true
     },
@@ -60,23 +60,13 @@ const propertyValueRecordValueInStore = computed(function() {
         props.pageId,
         "block",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.properties?.["title"][0][0]
+    )?.properties?.[props.propertyId]
 })
 
-
-
-function handleClickTableViewCell(e) {
-    const generalStore = useGeneralStore();
-    
+function handleClickTableViewCell(e) {    
     const cellElement = e.target.closest(".xdoc-table-view-cell");
     const measures = cellElement.getBoundingClientRect();
 
-    generalStore.collectionPropertyValueOverlay.pageId = props.pageId;
-    generalStore.collectionPropertyValueOverlay.propertyId = props.property;
-
-    generalStore.collectionPropertyValueOverlay.dialogWidth = measures.width;
-    generalStore.collectionPropertyValueOverlay.dialogPosTop = measures.top;
-    generalStore.collectionPropertyValueOverlay.dialogPosLeft = measures.left;
-    generalStore.collectionPropertyValueOverlay.visible = true;
+    propertyValueEditOverlay(props.pageId, props.propertyId, measures, true);
 }
 </script>
