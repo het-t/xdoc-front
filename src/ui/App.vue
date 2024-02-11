@@ -46,8 +46,8 @@
             peek-mode="c"
           />
 
-          <property-edit-overlay
-            v-if="collectionRecordPropertyValueOverlayDataVisible === true"
+          <page-property-value-edit
+            v-if="type === 'page_property_value_edit'"
           />
         </div>
       
@@ -71,7 +71,7 @@ import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
 import BaseSlashMenu from './components/BaseSlashMenu.vue';
 import PagePeekSide from './components/PagePeekSide.vue';
-import PropertyEditOverlay from './components/PropertyEditOverlay.vue';
+import PagePropertyValueEdit from './components/PagePropertyValueEdit.vue';
 import { useMenuLeftStore } from '../stores/menuLeft';
 import { useTransactionsQueue } from '@/stores/transactionsQueue';
 import { useKeyStrokeStore } from '@/stores/keyStrokes';
@@ -165,7 +165,7 @@ function inputHandler(e) {
 
 /** collection-record-porperty-value-overlay */
 const generalStore = useGeneralStore();
-const collectionRecordPropertyValueOverlayDataVisible = computed(() => generalStore.collectionPropertyValueOverlay.visible);
+const type = computed(() => generalStore.type);
 
 onMounted(
   () => window.addEventListener('resize', updateDocumentInnerWidth)

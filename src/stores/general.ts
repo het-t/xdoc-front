@@ -2,16 +2,23 @@ import { defineStore } from "pinia";
 import { Ref, ref } from "vue";
 
 export const useGeneralStore = defineStore("generalStore", () => {
-    const collectionPropertyValueOverlay: Ref<{}> = ref({
+    const dialog: Ref<{}> = ref({
+        width: 276,
+        top: 300,
+        left: 500
+    })
+    
+    const propertyValueOverlay: Ref<{}> = ref({
         visible: false,
-        dialogWidth: 276,
-        dialogPosTop: 300,
-        dialogPosLeft: 500,
         pageId: "",
         propertyId: ""
     });
 
+    const type: Ref<string> = ref("");
+
     return {
-        collectionPropertyValueOverlay
+        propertyValueOverlay,
+        type,
+        dialog
     }
 })

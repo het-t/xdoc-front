@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { propertyValueEditOverlay } from '@/helpers/globals/PropertyValueEditOverlay';
+import { overlayHandle } from '@/helpers/globals/overlayHandle';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { computed, defineProps } from 'vue';
 
@@ -123,6 +123,6 @@ function handlePropertyEdit(e, propertyId) {
     const cellElement = e.target.closest("[role='cell']");
     const measures = cellElement.getBoundingClientRect();
 
-    propertyValueEditOverlay(props.pageId, propertyId, measures, true);
+    overlayHandle(props.pageId, propertyId, measures, "page_property_value_edit");
 }
 </script>
