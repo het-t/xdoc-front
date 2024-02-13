@@ -42,11 +42,11 @@
                 <base-button style="margin-left: 4px; margin-right: 4px;">
                     <div style="display: flex; align-items: center; min-height: 28px; font-size: 14px; width: 100%; line-height: 120%;">
                         <div style="margin-right: 6px; margin-left: 12px; min-width: 0px; flex: 1 1 auto;">
-                            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <div style="display: flex; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                 <base-tag
-                                    :background-color="option.color"
+                                    :tag="option"
+                                    style="padding-left: 6px; padding-right: 6px; border-radius: 4px;"
                                 >
-                                    {{ option.value }}
                                 </base-tag>
                             </div>
                         </div>
