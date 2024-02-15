@@ -25,8 +25,16 @@
                                     :collection-id="overlayData.collectionId"
                                 />
 
-                                 <!-- for text value -->
-                                 <div v-else style="padding: 6px 9px; font-size: 14px; min-height: 34px; display: flex; height: 100%; flex-direction: column; justify-content: space-between; flex-grow: 1; font-weight: 500;">
+                                <!-- for relation -->
+                                <page-property-value-edit-relation
+                                    v-if="propertyType === 'relation'"
+                                    :page-id="overlayData.pageId"
+                                    :property-id="overlayData.propertyId"
+                                    :collection-id="overlayData.collectionId"
+                                />
+
+                                <!-- for text value -->
+                                <div v-else style="padding: 6px 9px; font-size: 14px; min-height: 34px; display: flex; height: 100%; flex-direction: column; justify-content: space-between; flex-grow: 1; font-weight: 500;">
                                     <div 
                                         class="notranslate"
                                         spellcheck="true"
@@ -48,6 +56,7 @@
 
 <script setup>
 import PagePropertyValueEditMultiselect from './PagePropertyValueEditMultiselect.vue';
+import PagePropertyValueEditRelation from './PagePropertyValueEditRelation.vue';
 import { overlayHandle } from '@/helpers/globals/overlayHandle';
 import { useGeneralStore } from '@/stores/general';
 import { useRecordValuesStore } from '@/stores/recordValues';
