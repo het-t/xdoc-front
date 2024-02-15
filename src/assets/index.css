@@ -1,0 +1,130 @@
+@import './buttons.css';
+
+:root {
+  --primary-black-color: #19171199;
+  --secondary-black-color: rgba(25, 23, 17, 0.6);
+  --tertary-black-color: rgba(25, 23, 17, 0.45);
+  --focus-black-color: #37352f;
+  --primary-box-shadow-color: rgba(55, 53, 47, 0.2);
+}
+
+#app,
+#xdoc-app,
+body.xdoc-body,
+html.xdoc-html {
+  background: transparent;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+#app {
+  font-weight: normal;
+  background-color: #fff;
+  color: #19171199;
+  min-width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 14px;
+}
+
+
+a {
+  text-decoration: none;
+  color: #19171199;
+  font-weight: 500;
+}
+
+.router-link-active, 
+.router-link-exact-active 
+.headings {
+  color: #37352f;
+}
+.router-link-active, .router-link-exact-active {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.ptr {
+  cursor: pointer;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+*:focus {
+  outline: none;
+}
+
+*::selection {
+  background: rgba(35, 131, 226, 0.28);
+}
+
+body {
+  background-color: white;
+  min-height: 100vh;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body, textarea, input[type="date"] {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+  Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+
+[contenteditable=true]:empty::after {
+  content: attr(placeholder);
+}
+
+
+/* font-awesome-icon styling */
+.icon-1 {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.icon-2 {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.icon {
+  width: 14px;
+  height: 14px;
+  padding: 3px 2px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.hvr-bg:hover {
+  background-color: rgba(55, 53, 47, 0.08);
+  border-radius: 2px;
+}
+.ptr {
+  cursor: pointer;
+}
+/* ************************* */
+
+
+/* scroll-bar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D3D1CB;
+}
+
+::-webkit-scrollbar-track {
+  background: #EDECE9;
+}
+/* ****************** */
