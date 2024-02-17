@@ -203,14 +203,16 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const collectionSchemaRecordValueInStore = recordValuesStore.getRecordValue(
-    props.collectionId,
-    "collection",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-).schema;
+const collectionSchemaRecordValueInStore = computed(function() {
+    return recordValuesStore.getRecordValue(
+        props.collectionId,
+        "collection",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    ).schema
+})
 
 function getCollectionPropertyById(id) {
-    return collectionSchemaRecordValueInStore[id];
+    return collectionSchemaRecordValueInStore.value[id];
 }
 
 const collectionViewPropertiesRecordValueInStore = computed(function() {

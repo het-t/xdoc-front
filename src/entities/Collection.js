@@ -33,6 +33,11 @@ Collection.prototype.addProperty = function(id, name, type, misc = {}) {
     }
 }
 
+Collection.prototype.deleteProperty = function(id) {
+    const schema = this.getSchema();
+    delete schema[id];
+}
+
 Collection.prototype.getPropertyById = function(id) {
     const schema = this.getSchema();
 

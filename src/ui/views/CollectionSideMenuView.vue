@@ -34,6 +34,7 @@
                         v-if="componentInView.name === 'propertyEdit'"
                         :collection-id="props.collectionId"
                         :collection-view-id="props.collectionViewId"
+                        :property-id="componentInView.props.id"
                     ></collection-side-menu-property-edit-view>
                 
                     <collection-side-menu-property-edit-type

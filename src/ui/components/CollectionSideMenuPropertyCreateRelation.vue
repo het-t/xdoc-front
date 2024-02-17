@@ -115,7 +115,8 @@ function handleCollectionSelection() {
 
     const collectionStore = useCollectionsStore();
     
-    collectionStore.setPropertyEdit(propertyId);
-    collectionStore.setCurrentComponent("propertyEdit");
+    collectionStore.setCurrentComponent("propertyEdit", {
+        id: propertyId
+    });
 }
 </script>

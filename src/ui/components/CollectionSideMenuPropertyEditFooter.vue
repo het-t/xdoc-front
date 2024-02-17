@@ -2,7 +2,7 @@
     <base-collection-side-menu-item-col-2
         style="line-height: 120%;"
         :hover-style="{ color: 'rgb(235, 87, 87) !important', background: 'rgba(55, 53, 47, 0.08)'}"
-        @click.stop="emits('propertyRemove')"
+        @click.stop="emits('propertyDelete')"
     >
         <template #graphic>
             <svg role="graphic-symbol" viewBox="0 0 16 16" style="width: 24px; height: 16px; display: block; fill: inherit; flex-shrink: 0; margin-right: -2px;">
@@ -21,6 +21,6 @@ import BaseCollectionSideMenuItemCol2 from './BaseCollectionSideMenuItemCol2.vue
 import { defineEmits } from 'vue';
 
 const emits = defineEmits([
-    "propertyRemove"
+    "propertyDelete"
 ])
 </script>

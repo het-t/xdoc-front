@@ -89,8 +89,9 @@ function handlePropertyTypeSelect({type, userInput}) {
         }
     );
 
-    collectionStore.setPropertyEdit(propertyId);
-    collectionStore.setCurrentComponent('propertyEdit');
+    collectionStore.setCurrentComponent('propertyEdit',{
+        id: propertyId
+    });
 }
 
 // function enqueuePropertyCreateOperations(id, name, type) {

@@ -134,7 +134,7 @@
 </template>
 
 <script setup>
-import { onMounted, defineProps, ref } from 'vue';
+import { defineProps, ref } from 'vue';
 import BaseButton from './BaseButton.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuPropertyItem from './BaseCollectionSideMenuPropertiesItem.vue';
@@ -181,24 +181,24 @@ const visibleProperties = ref(
     visiblePropertyIds.map(id => {
         const property = collectionSchema[id];
 
-        return {
+        if (property) return {
             id,
             name: property.name,
             type: property.type
         }
-    })
+    }).filter(property => property !== undefined)
 )
 
 let hiddenProperties = ref(
     hiddenPropertyIds.map(id => {
         const property = collectionSchema[id];
 
-        return {
+        if (property) return {
             id,
             name: property.name,
             type: property.type
         }
-    })
+    }).filter(property => property !== undefined)
 )
 
 //
@@ -228,18 +228,13 @@ function handlePropertyVisibilityChange(id, visibile) {
 // handling side menu visible component
 const collectionStore = useCollectionsStore();
 
-function setCurrentComponent(component) {
-    collectionStore.setCurrentComponent(component);
-}
-
-function propertyEditClean() {
-    collectionStore.setPropertyEdit(null);
+function setCurrentComponent(component, props = {}) {
+    collectionStore.setCurrentComponent(component, props);
 }
 
 function handleUserSelectPropertyEdit(propertyId) {
-    collectionStore.setPropertyEdit(propertyId);
-    setCurrentComponent('propertyEdit')
+    setCurrentComponent('propertyEdit', {
+        id: propertyId
+    })
 }
-
-onMounted(propertyEditClean)
 </script>

@@ -3,7 +3,6 @@ import { defineStore } from "pinia"
 interface state {
     menu: {
         component: Array<{name: string, props: object}>,
-        editPropertyId: string | null,
     };
     types: Array<{type: string, label: string}>
 }
@@ -12,7 +11,6 @@ export const useCollectionsStore = defineStore('collections', {
     state: (): state => ({
         menu: {
             component: [],
-            editPropertyId: null
         },
         types: [
             {
@@ -56,9 +54,6 @@ export const useCollectionsStore = defineStore('collections', {
     getters: {
         getCurrentComponent(state): object {
             return state.menu.component[state.menu.component.length - 1];
-        },
-        getCollectionPropertyEditId(state): string | null {
-            return state.menu.editPropertyId;
         }
     },
     actions: {
@@ -70,9 +65,6 @@ export const useCollectionsStore = defineStore('collections', {
         },
         removeAllComponent() {
             this.menu.component = [];
-        },
-        setPropertyEdit(id: string) {
-            this.menu.editPropertyId = id;
         }
     }
 })
