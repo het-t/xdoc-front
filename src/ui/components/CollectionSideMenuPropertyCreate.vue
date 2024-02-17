@@ -54,11 +54,7 @@ import { useCollectionsStore } from '@/stores/collections';
 import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
-import { useTransactionsQueue } from '@/stores/transactionsQueue';
-import { collectionFormatUpdate } from '../helpers/operations/collectionFormatUpdate';
-import { collectionSchemaUpdate } from '../helpers/operations/collectionSchemaUpdate';
-import { getUid } from '@/helpers/globals/uidByLength';
-import { useRecordValuesStore } from '@/stores/recordValues';
+import { collectionSideMenuPropertyCreate as addPropertyHelper } from '../../helpers/globals/collectionSideMenuPropertyCreate';
 
 const props = defineProps({
     collectionId: {
@@ -75,65 +71,55 @@ const state = reactive({
     filterString: ''
 })
 
-const collectionStore = useCollectionsStore();
-const transactionsQueue = useTransactionsQueue();
+function handlePropertyTypeSelect({type, userInput}) {
+    const collectionStore = useCollectionsStore();
 
+    if (type === 'relation') {
+        collectionStore.setCurrentComponent('propertyCreateRelationChooseCollection');
+        return;
+    }
 
-function handlePropertyTypeSelect({name, noMatchingTypeFound}) {
-    const recordValuesStore = useRecordValuesStore();
-    
-    const collectionRecordValueInStore = recordValuesStore.getRecordValue(
-        props.collectionId,
-        "collection",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )
-    
-    const collectionViewRecordValueInStore = recordValuesStore.getRecordValue(
+    const propertyId = addPropertyHelper(
+        props.collectionId, 
         props.collectionViewId,
-        "collection_view",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )
-
-    const propertyName = name;
-    const propertyType = noMatchingTypeFound === true ? 'Text' : propertyName;    
-    const propertyId = getUid(4, Object.keys(collectionRecordValueInStore.getSchema()));
-
-    enqueuePropertyCreateOperations(propertyId, propertyName, propertyType);
-
-    collectionRecordValueInStore.addProperty(propertyId, propertyName, propertyType);
-    collectionViewRecordValueInStore.addProperty(propertyId);
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
+        {
+            type,
+            name: userInput
+        }
+    );
 
     collectionStore.setPropertyEdit(propertyId);
     collectionStore.setCurrentComponent('propertyEdit');
 }
 
-function enqueuePropertyCreateOperations(id, name, type) {
-    const spaceId = "placeholder-space-id";
+// function enqueuePropertyCreateOperations(id, name, type) {
+//     const spaceId = "placeholder-space-id";
 
-    transactionsQueue.enqueue(
-        collectionFormatUpdate(
-            spaceId,
-            props.collectionId,
-            {
-                table_properties: {
-                    property: name,
-                    visible: true
-                }
-            }
-        )
-    );
+//     transactionsQueue.enqueue(
+//         collectionFormatUpdate(
+//             spaceId,
+//             props.collectionId,
+//             {
+//                 table_properties: {
+//                     property: name,
+//                     visible: true
+//                 }
+//             }
+//         )
+//     );
 
-    transactionsQueue.enqueue(
-        collectionSchemaUpdate(
-            spaceId,
-            props.collectionId,
-            {
-                [id]: {
-                    name,
-                    type
-                }
-            }
-        )
-    );
-}
+//     transactionsQueue.enqueue(
+//         collectionSchemaUpdate(
+//             spaceId,
+//             props.collectionId,
+//             {
+//                 [id]: {
+//                     name,
+//                     type
+//                 }
+//             }
+//         )
+//     );
+// }
 </script>

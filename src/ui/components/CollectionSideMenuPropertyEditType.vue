@@ -58,15 +58,14 @@ const state = reactive({
 
 const collectionStore = useCollectionsStore();
 
-function handlePropertyTypeSelect({name, noMatchingTypeFound}) {
-    console.log("CollectionPropertyTypeEdit.vue => handlePropertyTypeSelect()")
+function handlePropertyTypeSelect({type}) {
     
-    const propertyType = noMatchingTypeFound === true ? 'Text' : name;
+    // const propertyName = collectionStore.getCollectionPropertyEditData.name;
 
-    const propertyName = collectionStore.getCollectionPropertyEditData.name;
-
-    collectionStore.setPropertyEdit(propertyName, propertyType);
-
+    // collectionStore.setPropertyEdit(propertyName, type);
+    
     collectionStore.removeCurrentComponent();
+
+    console.log(type);
 }
 </script>

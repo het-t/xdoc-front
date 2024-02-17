@@ -8,29 +8,36 @@
                 <div style="display: flex; flex-direction: column; min-width: 290px; max-width: 290px; height: 100%; max-height: calc(100% - 16px);">
                     <collection-side-menu-options 
                         :collection-view-id="props.collectionViewId"
-                        v-if="componentInView === 'main'"
+                        v-if="componentInView.name === 'main'"
                     ></collection-side-menu-options>
                     
                     <collection-side-menu-properties 
-                        v-if="componentInView === 'properties'"
+                        v-if="componentInView.name === 'properties'"
                         :collection-id="props.collectionId"
                         :collection-view-id="props.collectionViewId"
                     ></collection-side-menu-properties>
-                    
+
+                    <collection-side-menu-property-create-relation 
+                        v-if="componentInView.name === 'propertyCreateRelationChooseCollection'"
+                        :collection-id="props.collectionId"
+                        :collection-view-id="props.collectionViewId"
+                        :property-id="componentInView.props.id"
+                    />
+
                     <collection-side-menu-property-create 
-                        v-if="componentInView === 'propertyCreate'"
+                        v-if="componentInView.name === 'propertyCreate'"
                         :collection-id="props.collectionId"
                         :collection-view-id="props.collectionViewId"
                     ></collection-side-menu-property-create>
-                    
+
                     <collection-side-menu-property-edit-view 
-                        v-if="componentInView === 'propertyEdit'"
+                        v-if="componentInView.name === 'propertyEdit'"
                         :collection-id="props.collectionId"
                         :collection-view-id="props.collectionViewId"
                     ></collection-side-menu-property-edit-view>
                 
                     <collection-side-menu-property-edit-type
-                        v-if="componentInView === 'propertyTypes'"
+                        v-if="componentInView.name === 'propertyTypes'"
                     ></collection-side-menu-property-edit-type>
                 </div>
             </div>
@@ -46,6 +53,7 @@ import { defineProps, computed } from 'vue';
 import CollectionSideMenuProperties from '@/ui/components/CollectionSideMenuProperties.vue';
 import CollectionSideMenuOptions from '@/ui/components/CollectionSideMenuOptions.vue';
 import CollectionSideMenuPropertyCreate from '@/ui/components/CollectionSideMenuPropertyCreate.vue';
+import CollectionSideMenuPropertyCreateRelation from '../components/CollectionSideMenuPropertyCreateRelation.vue';
 import CollectionSideMenuPropertyEditView from '@/ui/views/CollectionSideMenuPropertyEditView.vue';
 import CollectionSideMenuPropertyEditType from '@/ui/components/CollectionSideMenuPropertyEditType.vue';
 import { useCollectionsStore } from '@/stores/collections';

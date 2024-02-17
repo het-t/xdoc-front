@@ -36,6 +36,7 @@ CollectionView.prototype.getName = function() {
 
 CollectionView.prototype.addProperty = function(id) {
     const properties = this.getProperties();
+    
     properties.push({
         visible: true,
         property: id

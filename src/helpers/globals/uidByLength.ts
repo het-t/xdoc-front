@@ -9,7 +9,7 @@ export const getUid = function (len: number, banned?: string[]): string {
 
     let stopLoop: boolean = false;
 
-    while(stopLoop === false) {
+    while(stopLoop === false && banned?.length) {
         shuffleCorpus();
         
         const startIndex = Math.min(

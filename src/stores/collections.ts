@@ -2,10 +2,10 @@ import { defineStore } from "pinia"
 
 interface state {
     menu: {
-        component: string[],
-        editPropertyId: string | null
+        component: Array<{name: string, props: object}>,
+        editPropertyId: string | null,
     };
-    types: Array<string>
+    types: Array<{type: string, label: string}>
 }
 
 export const useCollectionsStore = defineStore('collections', {
@@ -14,10 +14,47 @@ export const useCollectionsStore = defineStore('collections', {
             component: [],
             editPropertyId: null
         },
-        types: ['Text', 'Number', 'Date', 'Select', 'Multiselect', 'Checkbox', 'Person', 'Url']
+        types: [
+            {
+                type: "text",
+                label: "Text"
+            },
+            {
+                type: "number",
+                label: "Number"
+            },
+            {
+                type: "date",
+                label: "Date"
+            },
+            {
+                type: "select",
+                label: "Select"
+            },
+            {
+                type: "multi_select",
+                label: "Multiselect"
+            },
+            {
+                type: "checkbox",
+                label: "Checkbox"
+            },
+            {
+                type: "person",
+                label: "Person"
+            },
+            {
+                type: "url",
+                label: "Url"
+            },
+            {
+                type: "relation",
+                label: "Relation"
+            }
+        ]
     }),
     getters: {
-        getCurrentComponent(state): string {
+        getCurrentComponent(state): object {
             return state.menu.component[state.menu.component.length - 1];
         },
         getCollectionPropertyEditId(state): string | null {
@@ -25,8 +62,8 @@ export const useCollectionsStore = defineStore('collections', {
         }
     },
     actions: {
-        setCurrentComponent(component: string) {
-            this.menu.component.push(component);
+        setCurrentComponent(name: string, props: object = {}) {
+            this.menu.component.push({ name, props });
         },
         removeCurrentComponent() {
             this.menu.component.pop();

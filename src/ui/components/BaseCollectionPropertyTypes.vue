@@ -8,7 +8,7 @@
         </template>
 
         <template #item>
-            {{ propertyType }}
+            {{ propertyType.label }}
         </template>
     </base-collection-side-menu-item-col-2>
 </template>
@@ -48,20 +48,16 @@ const propertyTypesInStore = computed(function () {
 })
 
 const handleUserInputPropertyName = computed(function() {
-    console.log("CollectionSideMenuPropertyCreate.vue => handleUserInputPropertyName()")
-    const filteredTypes = propertyTypesInStore.value.filter((type) => type.toLowerCase().includes(props.filterString.toLowerCase()))
+    const filteredTypes = propertyTypesInStore.value.filter((type) => type.label.toLowerCase().includes(props.filterString.toLowerCase()))
 
-    return (filteredTypes?.length === 0 ? [props.filterString] : filteredTypes)
+    return (filteredTypes?.length === 0 ? [{ type: "text", label: "Text" }] : filteredTypes)
 })
 
-function handleUserSelectType(propertyType) {
-    const noMatchingTypeFound = (
-        propertyTypesInStore.value.filter((type) => type.toLowerCase().includes(props.filterString.toLowerCase())).length === 0
-    )
-
+function handleUserSelectType(property) {
     emits('property-type-select', {
-        name: propertyType,
-        noMatchingTypeFound
+        label: property.label,
+        type: property.type,
+        userInput: props.filterString
     })
 }
 </script>

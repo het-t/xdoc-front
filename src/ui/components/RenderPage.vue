@@ -191,8 +191,8 @@ const pageRecordValue = recordValuesStore.getRecordValue(
 
 const pageHeadingText = pageRecordValue?.properties?.title?.[0]?.[0]
 const { 
-    parent_table: pageParentTable, 
-    parent_id: pageParentId,
+    parentTable: pageParentTable, 
+    parentId: pageParentId,
     discussions,
     content
 } = pageRecordValue;
