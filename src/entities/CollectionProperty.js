@@ -13,3 +13,7 @@ export function CollectionProperty({bannedIds, ...props}) {
         type: props.type
     }
 }
+
+CollectionProperty.prototype.editProperty = function(path, value) {
+    this[path] = value;
+}

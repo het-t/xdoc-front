@@ -116,7 +116,9 @@ const propertyEdit = collectionProperties[propertyEditId];
 console.log(propertyEditId, propertyEdit);
 
 function handlePropertyTypeChange() {
-    collectionStore.setCurrentComponent("propertyTypes")
+    collectionStore.setCurrentComponent("propertyTypes", {
+        id: propertyEditId
+    })
 }
 
 function handlePropertyEdit({type, operation, data}) {

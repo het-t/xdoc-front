@@ -38,6 +38,8 @@
                 
                     <collection-side-menu-property-edit-type
                         v-if="componentInView.name === 'propertyTypes'"
+                        :collection-id="props.collectionId"
+                        :property-id="componentInView.props.id"
                     ></collection-side-menu-property-edit-type>
                 </div>
             </div>

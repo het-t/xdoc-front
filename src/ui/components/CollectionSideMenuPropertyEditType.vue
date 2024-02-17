@@ -49,8 +49,20 @@
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
-import { reactive } from 'vue';
+import { reactive, defineProps } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
+import { editProperty as editPropertyUsecase } from "@/usecases/collection/editProperty";
+
+const props = defineProps({
+    collectionId: {
+        type: String,
+        required: true
+    },
+    propertyId: {
+        type: String,
+        required: true
+    }
+})
 
 const state = reactive({
     filterString: ''
@@ -59,13 +71,14 @@ const state = reactive({
 const collectionStore = useCollectionsStore();
 
 function handlePropertyTypeSelect({type}) {
-    
-    // const propertyName = collectionStore.getCollectionPropertyEditData.name;
-
-    // collectionStore.setPropertyEdit(propertyName, type);
+    editPropertyUsecase(
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
+        props.collectionId,
+        props.propertyId,
+        'type',
+        type
+    );
     
     collectionStore.removeCurrentComponent();
-
-    console.log(type);
 }
 </script>
