@@ -54,7 +54,7 @@ CollectionView.prototype.removePropertyById = function(id) {
     }
 }
 
-CollectionView.prototype.addNewRecord = function(parentId, parentTable) {
+CollectionView.prototype.addRecord = function(parentId, parentTable) {
     const blockId = transformToStandardUUIDFormat(uuid());
 
     const block = new Block({ 

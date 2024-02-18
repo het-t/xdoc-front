@@ -189,6 +189,7 @@ import { useRecordValuesStore } from '@/stores/recordValues';
 import CollectionViewTableCell from './CollectionViewTableCell.vue';
 import CollectionViewTablePropertyValue from './CollectionViewTablePropertyValue.vue';
 import { useRouter } from 'vue-router';
+import { addRecord as addRecordUsecase } from "@/usecases/collection-view/addRecord";
 
 const props = defineProps({
     collectionId: {
@@ -232,16 +233,11 @@ const collectionViewPagesRecordValueInStore = computed(function() {
 })
 
 function handleAddNewRecord() {
-    const collectionViewInStore =  recordValuesStore.getRecordValue(
-        props.collectionViewId,
-        "collection_view",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )
 
-    const newRecord = collectionViewInStore.addNewRecord(
-        "collection",
-        props.collectionId
-    );
+    const newRecord = addRecordUsecase(
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
+        props.collectionViewId
+    ) 
 
     console.log(newRecord);
 }
