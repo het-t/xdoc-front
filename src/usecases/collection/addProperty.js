@@ -12,8 +12,7 @@ export function addProperty(property) {
 
     Collection.prototype.addProperty.call(this, ...[
         propertyId, 
-        propertyValue.name, 
-        propertyValue.type
+        propertyValue
     ]);
 
     //transaction - api call

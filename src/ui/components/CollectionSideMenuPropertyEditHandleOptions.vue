@@ -28,6 +28,7 @@
                         placeholder="Type a new option" 
                         style="font-size: inherit; line-height: inherit; border: none; background: none; width: 100%; display: block; resize: none; padding: 0px;"
                         @keydown.stop="handleCreateNewOption"
+                        @input.stop=""
                     >
                 </div>
             </div>
@@ -61,14 +62,20 @@
 import uuid from '@/helpers/globals/uuid';
 import BaseButton from './BaseButton.vue';
 import BaseTag from "./BaseTag.vue";
-import { defineProps, reactive, defineEmits } from 'vue';
+import { defineProps, reactive } from 'vue';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
-
-const emits = defineEmits([
-    "propertyEdit"
-])
+import { editProperty as editPropertyUsecase } from "../../usecases/collection/editProperty";
+import { tagColorStringToRgbaRandom } from '@/helpers/globals/tagColorStringToRgbaRandom';
 
 const props = defineProps({
+    spaceId: {
+        type: String,
+        required: true
+    },
+    collectionId: {
+        type: String,
+        required: true
+    },
     propertyId: {
         type: String,
         required: true
@@ -89,17 +96,22 @@ function handleCreateNewOption(e) {
     // keyCode 13 represets "enter"(keyboards) and "go"(phones) keys
     if (e.keyCode === 13) {
         if (targetDiv.value) {
-            emits("propertyEdit", {
-                type: "multiselect",
-                operation: "optionAdd",
-                data: [{
-                    id: transformToStandardUUIDFormat(uuid()),
-                    color: "red",
-                    value: targetDiv.value
-                }]
-            });
+            editPropertyUsecase(
+                props.spaceId,
+                props.collectionId,
+                props.propertyId,
+                'options',
+                [
+                    ...props.options,
+                    {
+                        id: transformToStandardUUIDFormat(uuid()),
+                        color: tagColorStringToRgbaRandom(),
+                        value: targetDiv.value
+                    }
+                ]
+            )
 
-            targetDiv.value = ""
+            targetDiv.value = "";
         }
     }
 }

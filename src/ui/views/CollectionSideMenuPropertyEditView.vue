@@ -48,11 +48,12 @@
                     </template>
                 </base-collection-side-menu-item-col-3>
 
-                <!-- @property-edit="handlePropertyEdit" -->
                 <collection-side-menu-property-edit-handle-options
                     v-if="property.type === 'multi_select' || property.type === 'select'"
                     :property-id="props.propertyId"
                     :options="property.options"
+                    space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                    :collection-id="props.collectionId"
                 />
 
                 <collection-side-menu-property-edit-relation

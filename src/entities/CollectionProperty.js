@@ -10,6 +10,13 @@ export function CollectionProperty({bannedIds, ...props}) {
         name: props.name,
         type: props.type
     }
+    
+    switch (props.type) {
+        case "select": 
+        case "multi_select":  {
+            if(!this[id]?.options) this[id].options = [];
+        }
+    }
 }
 
 CollectionProperty.prototype.editProperty = function(path, value) {

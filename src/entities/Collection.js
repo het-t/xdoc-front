@@ -43,15 +43,15 @@ Collection.prototype.getPropertyByName = function(name) {
     return Object.values(this.getSchema()).find(property => property.name === name);
 }
 
-Collection.prototype.addProperty = function(id, name, type, misc = {}) {
+Collection.prototype.addProperty = function(id, property) {
     const schema = this.getSchema();
 
-    const postfixedName = this.getPropertyNamePostfixed(id, name, type);
+    const postfixedName = this.getPropertyNamePostfixed(id, property.name, property.type);
 
     schema[id] = {
+        ...property,
         name: postfixedName,
-        type,
-        ...misc
+        type: property.type,
     }
 }
 
