@@ -23,11 +23,24 @@ Collection.prototype.getFormat = function() {
     return this.format;
 }
 
+Collection.prototype.getPropertyNamePostfixed = function(name, type) {
+    const postfix = Object.values(this.getSchema()).filter(property => {
+        console.log(property.name.indexOf(name))
+        return property.type === type && property.name.indexOf(name) >= 0;
+    })?.length;
+
+    if (postfix > 0) name += " " + postfix;
+
+    return name;
+}
+
 Collection.prototype.addProperty = function(id, name, type, misc = {}) {
     const schema = this.getSchema();
 
+    const postfixedName = this.getPropertyNamePostfixed(name, type);
+
     schema[id] = {
-        name,
+        name: postfixedName,
         type,
         ...misc
     }
