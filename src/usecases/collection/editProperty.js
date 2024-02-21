@@ -13,6 +13,7 @@ export function editProperty(spaceId, collectionId, id, path, value) {
 
     if (path === 'name') {
         value = Collection.prototype.getPropertyNamePostfixed.call(collectionRecordInStore, ...[
+            id,
             value, 
             property.type
         ]);
