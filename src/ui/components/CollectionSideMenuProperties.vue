@@ -48,7 +48,7 @@
                             v-for="(property) in visibleProperties" 
                             :key="property.id" 
                             @click.stop="handleUserSelectPropertyEdit(property.id)"
-                            @on-property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
+                            @property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
                             :name="property.name"
                             :id="property.id"
                             :visible=true
@@ -77,7 +77,7 @@
                             v-for="(property) in hiddenProperties" 
                             :key="property.id" 
                             @click.stop="handleUserSelectPropertyEdit(property.id)"
-                            @on-property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
+                            @property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
                             :name="property.name"
                             :id="property.id"
                             :visible=false

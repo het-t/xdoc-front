@@ -87,11 +87,11 @@ const state = reactive({
 })
 
 const emits = defineEmits([
-    "on-property-visibility-change"
+    "property-visibility-change"
 ])
 
 function emitPropertyVisibilityChangeEvent() {
-    emits("on-property-visibility-change", {
+    emits("property-visibility-change", {
         id: props.id,
         visible: !props.visible
     })
