@@ -20,7 +20,7 @@ export const tagColorStringToRgba = function(colorStr: string): {background: str
             };
         case "orange":
             return {
-                background: "rgb(250, 22, 201)",
+                background: "rgb(250, 222, 201)",
                 color: "rgb(73, 41, 14)",
                 fill: "rgb(73, 41, 14)"
             };

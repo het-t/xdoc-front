@@ -1,0 +1,62 @@
+[
+    {
+        "background": "rgba(227, 226, 224, 0.5)",
+        "color": "rgb(50, 48, 44)",
+        "fill": "rgb(50, 48, 44)",
+        "name": "light gray"
+    },
+    {
+        "background": "rgb(227, 226, 224)",
+        "color": "rgb(50, 48, 44)",
+        "fill": "rgb(50, 48, 44)",
+        "name": "gray"
+    },
+    {
+        "background": "rgb(238, 224, 218)",
+        "color": "rgb(68, 42, 30)",
+        "fill": "rgb(68, 42, 30)",
+        "name": "brown"
+    },
+    {
+        "background": "rgb(250, 222, 201)",
+        "color": "rgb(73, 41, 14)",
+        "fill": "rgb(73, 41, 14)",
+        "name": "orange"
+    },
+    {
+        "background": "rgb(253, 236, 200)",
+        "color": "rgb(66, 44, 27)",
+        "fill": "rgb(66, 44, 27)",
+        "name": "yellow"
+    },
+    {
+        "background": "rgb(219, 237, 219)",
+        "color": "rgb(28, 56, 41)",
+        "fill": "rgb(28, 56, 41)",
+        "name": "green"
+    },
+    {
+        "background": "rgb(211, 229, 239)",
+        "color": "rgb(24, 51, 71)",
+        "fill": "rgb(24, 51, 71)",
+        "name": "blue"
+    },
+    {
+        "background": "rgb(232, 222, 238)",
+        "color": "rgb(65, 36, 84)",
+        "fill": "rgb(65, 36, 84)",
+        "name": "purple"
+    },
+    {
+        "background": "rgb(245, 224, 233)",
+        "color": "rgb(76, 35, 55)",
+        "fill": "rgb(76, 35, 55)",
+        "name": "pink"
+    },
+    {
+        "background": "rgb(255, 226, 221)",
+        "color": "rgb(93, 23, 21)",
+        "fill": "rgb(93, 23, 21)",
+        "name": "red"
+    }
+]
