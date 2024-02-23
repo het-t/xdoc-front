@@ -36,6 +36,7 @@
 
         <div style="margin: 0;">
             <div 
+                @click.stop="handleOptionEdit($event, option.id)"
                 v-for="option in props.options"
                 :key="option.id"
                 style="display: flex; flex-direction: column;"
@@ -66,6 +67,7 @@ import { defineProps, reactive } from 'vue';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import { editProperty as editPropertyUsecase } from "../../usecases/collection/editProperty";
 import { tagColorStringToRgbaRandom } from '@/helpers/globals/tagColorStringToRgbaRandom';
+import { useGeneralStore } from '@/stores/general';
 
 const props = defineProps({
     spaceId: {
@@ -89,6 +91,22 @@ const props = defineProps({
 const state = reactive({
     createNewOption: false
 })
+
+function handleOptionEdit(e, optionId) {
+    const generalStore = useGeneralStore();
+
+    const measures = e.target.getBoundingClientRect();
+
+    generalStore.dialog.top = measures.top;
+    generalStore.dialog.left = measures.left;
+
+    generalStore.setCurrentComponentInDefaultOverlay('page_property_option_edit', {
+        optionId,
+        propertyId: props.propertyId,
+        collectionId: props.collectionId,
+        spaceId: props.spaceId
+    });
+}
 
 function handleCreateNewOption(e) {
     const targetDiv = e.target;

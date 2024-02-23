@@ -32,7 +32,7 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { computed, defineProps, defineEmits } from 'vue';
 import BaseButton from './BaseButton.vue';
-import { overlayHandle } from '@/helpers/globals/overlayHandle';
+import { handlePropertyValueOverlay } from '@/helpers/globals/handlePropertyValueOverlay';
 
 const emits = defineEmits([
     "open_record"
@@ -71,6 +71,6 @@ function handleClickTableViewCell(e) {
     const cellElement = e.target.closest(".xdoc-table-view-cell");
     const measures = cellElement.getBoundingClientRect();
 
-    overlayHandle(props.pageId, props.collectionId, props.propertyId, measures, "page_property_value_edit");
+    handlePropertyValueOverlay(props.pageId, props.collectionId, props.propertyId, measures);
 }
 </script>

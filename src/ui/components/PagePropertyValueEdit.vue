@@ -20,17 +20,17 @@
                                 <page-property-value-edit-multiselect 
                                     v-if="propertyType === 'multi_select' || propertyType === 'select'"
                                     :multiselect="propertyType === 'multi_select' ? true : false"
-                                    :page-id="overlayData.pageId"
-                                    :property-id="overlayData.propertyId"
-                                    :collection-id="overlayData.collectionId"
+                                    :page-id="props.pageId"
+                                    :property-id="props.propertyId"
+                                    :collection-id="props.collectionId"
                                 />
 
                                 <!-- for relation -->
                                 <page-property-value-edit-relation
                                     v-if="propertyType === 'relation'"
-                                    :page-id="overlayData.pageId"
-                                    :property-id="overlayData.propertyId"
-                                    :collection-id="overlayData.collectionId"
+                                    :page-id="props.pageId"
+                                    :property-id="props.propertyId"
+                                    :collection-id="props.collectionId"
                                 />
 
                                 <!-- for text value -->
@@ -42,7 +42,7 @@
                                         contenteditable="true"
                                         style="width: 100%; height: 100%; white-space: pre-wrap; word-break: break-word; caret-color: rgb(55, 53, 47);"
                                     >
-                                        {{ overlayData.propertyId }}
+                                        {{ props.propertyId }}
                                     </div>
                                 </div>
                             </div>
@@ -57,15 +57,29 @@
 <script setup>
 import PagePropertyValueEditMultiselect from './PagePropertyValueEditMultiselect.vue';
 import PagePropertyValueEditRelation from './PagePropertyValueEditRelation.vue';
-import { overlayHandle } from '@/helpers/globals/overlayHandle';
+import { handlePropertyValueOverlay } from '@/helpers/globals/handlePropertyValueOverlay';
 import { useGeneralStore } from '@/stores/general';
 import { useRecordValuesStore } from '@/stores/recordValues';
-import { computed } from 'vue';
+import { computed, defineProps } from 'vue';
+
+const props = defineProps({
+    propertyId: {
+        type: String,
+        required: true
+    },
+    collectionId: {
+        type: String,
+        required: true
+    },
+    pageId: {
+        type: String,
+        required: true
+    }
+})
 
 const recordValuesStore = useRecordValuesStore();
 const generalStore = useGeneralStore();
 
-const overlayData = generalStore.propertyValueOverlay;
 const dialog = computed(() => generalStore.dialog);
 
 // const propertyValue = recordValuesStore.getRecordValue(
@@ -75,12 +89,12 @@ const dialog = computed(() => generalStore.dialog);
 // ).properties?.[overlayData.propertyId];
 
 const propertyType = recordValuesStore.getRecordValue(
-    overlayData.collectionId,
+    props.collectionId,
     "collection",
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-).getPropertyById(overlayData.propertyId).type;
+).getPropertyById(props.propertyId).type;
 
 function handleClickOutsideDialog() {
-    overlayHandle(null, null, null, {}, null);
+    handlePropertyValueOverlay(null, null, null, {});
 }
 </script>

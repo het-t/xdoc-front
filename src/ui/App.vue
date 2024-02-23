@@ -47,7 +47,18 @@
           />
 
           <page-property-value-edit
-            v-if="type === 'page_property_value_edit'"
+            v-if="currentComponent === 'page_property_value_edit'"
+            :property-id="currentComponentProps.propertyId"
+            :page-id="currentComponentProps.pageId"
+            :collection-id="currentComponentProps.collectionId"
+          />
+
+          <option-edit-view 
+            v-if="currentComponent === 'page_property_option_edit'"
+            :option-id="currentComponentProps.optionId"
+            :collection-id="currentComponentProps.collectionId"
+            :property-id="currentComponentProps.propertyId"
+            :space-id="currentComponentProps.spaceId"
           />
         </div>
       
@@ -79,6 +90,7 @@ import { useRecordValuesStore } from '@/stores/recordValues';
 import { useRoute } from 'vue-router';
 import { transformToStandardUUIDFormat } from './helpers/router/transformToStandardUUIDFormat';
 import { useGeneralStore } from '@/stores/general';
+import OptionEditView from './views/OptionEditView.vue';
 
 const route = useRoute();
 
@@ -138,7 +150,6 @@ const recordValuesStore = useRecordValuesStore();
 const transactionsQueue = useTransactionsQueue();
 
 function inputHandler(e) {
-    console.log(e)
     const target = e.target;
     const dataBlock = target.closest("[data-block-id]");
 
@@ -165,7 +176,8 @@ function inputHandler(e) {
 
 /** collection-record-porperty-value-overlay */
 const generalStore = useGeneralStore();
-const type = computed(() => generalStore.type);
+const currentComponent = computed(() => generalStore.getCurrentComponentAndProps().component.value);
+const currentComponentProps = computed(() => generalStore.getCurrentComponentAndProps()?.props.value);
 
 onMounted(
   () => window.addEventListener('resize', updateDocumentInnerWidth)

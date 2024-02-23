@@ -7,19 +7,30 @@ export const useGeneralStore = defineStore("generalStore", () => {
         top: 300,
         left: 500
     })
-    
-    const propertyValueOverlay: Ref<{}> = ref({
-        visible: false,
-        propertyId: "",
-        pageId: "",
-        collectionId: ""
-    });
 
-    const type: Ref<string> = ref("");
+    const component = ref("");
+    const props = ref(Object());
+
+    function setCurrentComponentInDefaultOverlay(
+        _component: string, 
+        _props: object
+    ): void {
+        component.value = _component;
+        props.value = _props; 
+    }
+
+    function getCurrentComponentAndProps() {
+        return {
+            component,
+            props
+        }
+    }
 
     return {
-        propertyValueOverlay,
-        type,
+        component,
+        props,
+        setCurrentComponentInDefaultOverlay,
+        getCurrentComponentAndProps,
         dialog
     }
 })
