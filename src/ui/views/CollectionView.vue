@@ -85,6 +85,7 @@
                             style="font-size: 14px; position: relative; display: inline-flex; flex-shrink: 0; border-radius: 3px; overflow: hidden; height: 28px; margin-left: 8px;"
                         >
                             <base-button style="white-space: nowrap; border-radius: 0; border-top-left-radius: 3px; border-bottom-left-radius: 3px; padding-left: 8px; padding-right: 8px; color: white; font-weight: 500;"
+                                @click.stop="handleClickNew"
                                 :hover-style="{background: 'rgb(0, 119, 212)'}"
                                 :default-style="{background: 'rgb(35, 131, 226)'}"
                             >
@@ -169,8 +170,22 @@ import CollectionViewsTabsList from "../components/CollectionViewsTabsList.vue"
 import { reactive, ref, defineProps, computed } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
 import { useRecordValuesStore } from '@/stores/recordValues';
+import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
+import uuid from '@/helpers/globals/uuid';
+import { set as setUsecase } from '@/usecases/set';
+import { setParent as setParentUsecase } from '@/usecases/setParent';
+import { listBefore as listBeforeUsecase } from '@/usecases/listBefore';
+import { update as updateUsecase } from '@/usecases/update';
 
 const props = defineProps({
+    collectionId: {
+        type: String,
+        required: true
+    },
+    collectionViewId: {
+        type: String,
+        required: true
+    },
     blockId: {
         type: String,
         required: true
@@ -218,6 +233,77 @@ function changeCollectionMenuVisibilityAndHeight(value) {
 
 function setSideMenuHeight() {
     state.sideMenuHeight = window.innerHeight - propertyMenuTopParent.value.getBoundingClientRect().top;
+}
+
+function handleClickNew() {
+    const blockId = transformToStandardUUIDFormat(uuid());
+    const spaceId = "f2cf1fd1-8789-4ddd-9190-49f41966c446";
+
+    recordValuesStore.setRecordValue(
+        blockId,
+        "block",
+        {},
+        spaceId
+    );
+
+    setUsecase(
+        {
+            type: "page",
+            space_id: spaceId,
+            id: blockId,
+            // version: 1
+        },
+        [],
+        {
+            table: "block",
+            id: blockId,
+            spaceId
+        }
+    );
+
+    setParentUsecase(
+        {
+            parent_id: props.collectionId,
+            parent_table: "collection"
+        },
+        [],
+        {
+            table: "block",
+            id: blockId,
+            spaceId
+        }
+    );
+
+    listBeforeUsecase(
+        {
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId
+        },
+        ["page_sort"],
+        {
+            id: blockId
+        }
+    );
+
+    const currentTime = Date.now();
+
+    updateUsecase(
+        {
+            created_by_id: "",
+            created_by_table: "xdoc_user",
+            created_time: currentTime,
+            last_edited_time: currentTime,
+            last_edited_by_id: "",
+            last_edited_by_table: "xdoc_user"
+        },
+        [],
+        {
+            id: blockId,
+            table: "block",
+            spaceId
+        }
+    );
 }
 </script>
 

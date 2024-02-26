@@ -9,6 +9,11 @@ export function set(args, path, pointer) {
 
     let targetNode = recordInStore;
 
+    if(!path.length) {
+        targetNode = args;
+        return;
+    }
+    
     let i = 0;
     for(i = 0; i!==path.length - 1; i++) {
         targetNode = targetNode[path[i]];

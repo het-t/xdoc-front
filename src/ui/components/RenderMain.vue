@@ -12,7 +12,7 @@
         
         <collection-view 
             v-else-if="recordValueDeferInStore && blockTypeRecordValueInStore === 'collection_view_page'" 
-            :block-id="props.blockId"
+            :collection-view-id="props.blockId"
         />        
     
         <div v-else-if="blockTypeRecordValueInStore === -1">
