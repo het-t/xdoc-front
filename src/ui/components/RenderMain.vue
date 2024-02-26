@@ -10,9 +10,9 @@
             :block-id="props.blockId"
         />
         
-        <collection-view 
+        <collection-view-page
             v-else-if="recordValueDeferInStore && blockTypeRecordValueInStore === 'collection_view_page'" 
-            :collection-view-id="props.blockId"
+            :page-id="props.blockId"
         />        
     
         <div v-else-if="blockTypeRecordValueInStore === -1">
@@ -25,7 +25,7 @@
 import { computed, defineProps } from "vue";
 import RenderPage from "./RenderPage.vue";
 import { useRecordValuesStore } from "@/stores/recordValues";
-import CollectionView from "../views/CollectionView.vue";
+import CollectionViewPage from "../views/CollectionViewPage.vue";
 import BaseDataProvider from "./BaseDataProvider.vue";
 
 const props = defineProps({

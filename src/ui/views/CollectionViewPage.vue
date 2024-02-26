@@ -1,7 +1,7 @@
 <template>
     
     <div 
-        v-if="collectionRecordValue?.defer === 1"
+        v-if="collectionViewPageRecordValue?.defer === 1"
         class="xdoc-scroller vertical horizontal"
         style="z-index: 1; display: flex; flex-direction: column; flex-grow: 1; position: relative; margin-bottom: 0;"
         :style="`${state.displayCollectionSideMenu ? 'overflow: auto hidden; margin-right: 10px;' : 'overflow: auto; margin-right: 0;'}`"
@@ -43,13 +43,13 @@
             data-content-editable-void="true"
             style="min-height: 40px; padding-left: 96px; padding-right: 96px; flex-shrink: 0; position: sticky; z-index: 86; left: 0;"
         >
-            <div :data-block-id="props.blockId"
+            <div :data-block-id="collectionId"
                 class="xdoc-selectable xdoc-collection_view-block"
             >
                 <div style="display: flex; align-items: center; height: 40px; left: 96px; width: 100%;">
                     <!-- collection-tabs -->
                     <collection-views-tabs-list
-                        :block-id="props.blockId"
+                        :collection-id="props.pageId"
                         space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                     ></collection-views-tabs-list>
 
@@ -111,8 +111,8 @@
                 <collection-side-menu-view 
                     v-if="state.displayCollectionSideMenu && noComponentInSideMenu"
                     @close="state.displayCollectionSideMenu = false"
-                    :collection-id="collectionIdRecordValue"
-                    :collection-view-id="currentCollectionViewBlockId"
+                    :collection-id="collectionId"
+                    :collection-view-id="currentCollectionViewId"
                     :height=state.sideMenuHeight
                 />
             </transition>
@@ -126,14 +126,14 @@
                 style="z-index: 1; flex-grow: 1; flex-shrink: 0; margin-right: 0px; margin-bottom: 0px;"
             >
                 <base-data-provider
-                    :block-id="collectionIdRecordValue"
+                    :block-id="collectionId"
                     table="collection"
                     space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                     v-slot="collectionDefer"
                 >
                     <base-data-provider
                         v-if="collectionDefer.recordValueDeferInStore"
-                        :block-id="currentCollectionViewBlockId"
+                        :block-id="currentCollectionViewId"
                         table="collection_view"
                         space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                         v-slot="collectionViewDefer"
@@ -141,8 +141,8 @@
                         <template v-if="collectionViewDefer.recordValueDeferInStore">          
                             <collection-view-table 
                                 v-if="currentCollectionViewRecordValueInStore.type === 'table'"  
-                                :collection-id="collectionIdRecordValue"
-                                :collection-view-id="currentCollectionViewBlockId"
+                                :collection-id="collectionId"
+                                :collection-view-id="currentCollectionViewId"
                             ></collection-view-table>
                         </template>
                     </base-data-provider>
@@ -178,15 +178,7 @@ import { listBefore as listBeforeUsecase } from '@/usecases/listBefore';
 import { update as updateUsecase } from '@/usecases/update';
 
 const props = defineProps({
-    collectionId: {
-        type: String,
-        required: true
-    },
-    collectionViewId: {
-        type: String,
-        required: true
-    },
-    blockId: {
+    pageId: {
         type: String,
         required: true
     }
@@ -194,19 +186,19 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const collectionRecordValue = recordValuesStore.getRecordValue(
-    props.blockId,
+const collectionViewPageRecordValue = recordValuesStore.getRecordValue(
+    props.pageId,
     "block",
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 )
 
-const collectionIdRecordValue = collectionRecordValue.getCollectionId();
+const collectionId = collectionViewPageRecordValue.collection_id;
 
-const currentCollectionViewBlockId = ref(collectionRecordValue.viewIds[0]);
+const currentCollectionViewId = ref(collectionViewPageRecordValue.view_ids[0]);
 
 const currentCollectionViewRecordValueInStore = computed(function() {
     return recordValuesStore.getRecordValue(
-        currentCollectionViewBlockId.value,
+        currentCollectionViewId.value,
         "collection_view",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
     )
@@ -263,7 +255,7 @@ function handleClickNew() {
 
     setParentUsecase(
         {
-            parent_id: props.collectionId,
+            parent_id: collectionId,
             parent_table: "collection"
         },
         [],
@@ -276,13 +268,14 @@ function handleClickNew() {
 
     listBeforeUsecase(
         {
-            id: props.collectionViewId,
-            table: "collection_view",
-            spaceId
+            id: blockId,
+            before: currentCollectionViewRecordValueInStore.value.page_sort[0]
         },
         ["page_sort"],
         {
-            id: blockId
+            id: currentCollectionViewId.value,
+            table: "collection_view",
+            spaceId
         }
     );
 

@@ -8,16 +8,16 @@ export function listAfter(args, path, pointer) {
     );
 
     let targetNode = recordInStore;
-
+    
     path.forEach(node => {
         targetNode = targetNode[node];
     })
+    
+    const indexToPush = targetNode.findIndex((id) => id === args.after) + 1;
+    
+    const targetNodeCopy = [...targetNode];
 
-    const indexToPush = targetNode.findIndex((id) => id === args.after);
-
-    targetNode = [
-        ...targetNode.slice(0, indexToPush),
-        args.id,
-        ...targetNode.slice(indexToPush)
-    ]
+    targetNode.splice(indexToPush);
+    targetNode.push(args.id);
+    targetNode.push(...targetNodeCopy.slice(indexToPush));
 }

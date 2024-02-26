@@ -231,11 +231,10 @@ const collectionViewPagesRecordValueInStore = computed(function() {
         props.collectionViewId,
         "collection_view",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.pageSort
+    )?.page_sort
 })
 
 function handleAddNewRecord() {
-
     listAfterUsecase(
         {
             after: collectionViewPagesRecordValueInStore.value[collectionViewPagesRecordValueInStore.value.length-1],

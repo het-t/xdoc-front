@@ -40,7 +40,7 @@ import { useRecordValuesStore } from '@/stores/recordValues';
 import { defineProps, computed } from 'vue';
 
 const props = defineProps({
-    blockId: {
+    collectionId: {
         type: String,
         required: true
     },
@@ -54,9 +54,9 @@ const recordValuesStore = useRecordValuesStore();
 
 const collectionViewsIdsRecordValueInStore = computed(function() {
     return recordValuesStore.getRecordValue(
-        props.blockId,
+        props.collectionId,
         "collection",
         props.spaceId
-    ).getViewIds()
+    ).view_ids;
 })
 </script>

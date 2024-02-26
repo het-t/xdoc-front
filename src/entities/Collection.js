@@ -19,10 +19,6 @@ Collection.prototype.getTemplatePages = function() {
     return this.templatePages;
 }
 
-Collection.prototype.getFormat = function() {
-    return this.format;
-}
-
 Collection.prototype.getPropertyNamePostfixed = function(id, name, type) {
     let postfix = 1;
     let postfixedName = name;

@@ -13,11 +13,11 @@ export function listBefore(args, path, pointer) {
         targetNode = targetNode[node];
     })
 
-    const indexToPush = targetNode.findIndex((id) => id === args.before) - 1;
+    const indexToPush = targetNode.findIndex((id) => id === args.before);
 
-    targetNode = [
-        ...targetNode.slice(0, indexToPush),
-        args.id,
-        ...targetNode.slice(indexToPush)
-    ]
+    const targetNodeCopy = [...targetNode];
+
+    targetNode.splice(0, indexToPush);
+    targetNode.unshift(args.id);
+    targetNode.unshift(...targetNodeCopy.slice(0, indexToPush));
 }

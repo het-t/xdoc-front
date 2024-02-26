@@ -73,6 +73,7 @@
       </div>
     </div>
   </div>
+  {{ routeQuery }}
 </template>
 
 
@@ -117,6 +118,8 @@ watch(
     }
   }
 )
+
+const routeQuery = computed(() => route.query);
 
 const state = reactive({
   documentInnerWidth: window.innerWidth,
