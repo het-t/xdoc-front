@@ -147,6 +147,8 @@ function handlePropertyDelete() {
         }
     }
 
+    collectionRecordInStore.schema = updatedSchema;
+    
     updateUsecase(
         {
             schema: updatedSchema
