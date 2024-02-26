@@ -57,6 +57,7 @@ import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
 import { update as updateUsecase } from '@/usecases/update';
 import { CollectionProperty } from "@/entities/CollectionProperty";
+import { Collection } from '@/entities/Collection';
 
 const props = defineProps({
     collectionId: {
@@ -87,17 +88,35 @@ function handlePropertyTypeSelect({type, userInput}) {
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
     ).format.table_properties;
 
-    const collectionSchemaRecordValueInStore = useRecordValuesStore().getRecordValue(
+    const collectionRecordValueInStore = useRecordValuesStore().getRecordValue(
         props.collectionId,
         "collection",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    ).schema;
+    );
 
-    const property = new CollectionProperty({
-        bannedIds: Object.keys(collectionSchemaRecordValueInStore),
-        name: userInput,
+    const [propertyId, {name: propertyName}] = Object.entries(
+        new CollectionProperty({
+            bannedIds: Object.keys(collectionRecordValueInStore.schema),
+            name: userInput,
+            type
+        })
+    )[0];
+
+    const propertyNamePostfixed = Collection.prototype.getPropertyNamePostfixed.call(collectionRecordValueInStore, ...[
+        propertyId,
+        propertyName,
         type
-    })
+    ]);
+
+    const propertyValue = Object.values(new CollectionProperty({
+        bannedIds: Object.keys(collectionRecordValueInStore.schema),
+        name: propertyNamePostfixed,
+        type 
+    }))[0];
+
+    const property = {
+        [propertyId]: propertyValue
+    }
 
     const updatedCollectionViewProperties = [];
     for (const existingProperty of collectionViewPropertiesRecordValueInStore) {
@@ -129,7 +148,7 @@ function handlePropertyTypeSelect({type, userInput}) {
     );
 
     collectionStore.setCurrentComponent('propertyEdit',{
-        id: Object.keys(property)[0]
+        id: propertyId
     });
 }
 </script>

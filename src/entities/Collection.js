@@ -28,7 +28,7 @@ Collection.prototype.getPropertyNamePostfixed = function(id, name, type) {
     let postfixedName = name;
     let property = this.getPropertyByName(name);
 
-    while(property  && property.id !== id && property.type === type) {
+    while(property && property.id !== id && property.type === type) {
         postfixedName = name + " " + postfix;
         if(!this.getPropertyByName(postfixedName)) {
             break;
@@ -53,11 +53,6 @@ Collection.prototype.addProperty = function(id, property) {
         name: postfixedName,
         type: property.type,
     }
-}
-
-Collection.prototype.deleteProperty = function(id) {
-    const schema = this.getSchema();
-    delete schema[id];
 }
 
 Collection.prototype.getPropertyById = function(id) {
