@@ -84,9 +84,8 @@ import BaseCollectionSideMenuItemCol3 from '@/ui/components/BaseCollectionSideMe
 import CollectionSideMenuPropertyEditHandleOptions from '@/ui/components/CollectionSideMenuPropertyEditHandleOptions.vue';
 import CollectionSideMenuPropertyEditRelation from "@/ui/components/CollectionSideMenuPropertyEditRelation.vue";
 import CollectionSideMenuPropertyEditFooter from '@/ui/components/CollectionSideMenuPropertyEditFooter.vue';
-import { editProperty as editPropertyUsecase } from '@/usecases/collection/editProperty';
-import { deleteProperty as deletePropertyFromCollectionUsecase } from '@/usecases/collection/deleteProperty';
-import { removePropertyById as removePropertyByIdFromCollectionViewUsecase } from '@/usecases/collection-view/removeProperty';
+import { set as setUsecase } from '@/usecases/set';
+import { update as updateUsecase } from '@/usecases/update';
 import { useCollectionsStore } from '@/stores/collections';
 import { useRecordValuesStore } from '@/stores/recordValues';
 
@@ -109,12 +108,14 @@ const recordValuesStore = useRecordValuesStore();
 
 const collectionStore = useCollectionsStore();
 
+const collectionRecordInStore = recordValuesStore.getRecordValue(
+    props.collectionId,
+    "collection",
+    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+);
+
 const property = Collection.prototype.getPropertyById.call(
-    recordValuesStore.getRecordValue(
-        props.collectionId,
-        "collection",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    ),
+    collectionRecordInStore,
     ...[props.propertyId]
 )
 
@@ -125,27 +126,37 @@ function displayTypesList() {
     })
 }
 
-function handlePropertyNameChange(e) {   
-    editPropertyUsecase(
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
-        props.collectionId,
-        props.propertyId,
-        "name",
-        e.target.value
-    )
+function handlePropertyNameChange(e) {  
+    setUsecase(
+        e.target.value,
+        ['schema', props.propertyId, "name"],
+        {
+            id: props.collectionId,
+            table: "collection",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        }
+    );
 }
 
 function handlePropertyDelete() {
-    deletePropertyFromCollectionUsecase(
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
-        props.collectionId,
-        props.propertyId
-    );
+    const updatedSchema = {};
 
-    removePropertyByIdFromCollectionViewUsecase(
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
-        props.collectionViewId,
-        props.propertyId
+    for(const key in collectionRecordInStore.schema) {
+        if(key !== props.propertyId) {
+            updatedSchema[key] = collectionRecordInStore.schema[key];
+        }
+    }
+
+    updateUsecase(
+        {
+            schema: updatedSchema
+        },
+        [],
+        {
+            id: props.collectionId,
+            table: "collection",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        }
     );
 
     collectionStore.removeCurrentComponent();

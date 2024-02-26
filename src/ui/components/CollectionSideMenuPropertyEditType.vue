@@ -51,7 +51,9 @@ import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
 import { reactive, defineProps } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
-import { editProperty as editPropertyUsecase } from "@/usecases/collection/editProperty";
+import { update as updateUsecase } from "@/usecases/update";
+import { useRecordValuesStore } from '@/stores/recordValues';
+import { Collection } from '@/entities/Collection';
 
 const props = defineProps({
     collectionId: {
@@ -71,13 +73,29 @@ const state = reactive({
 const collectionStore = useCollectionsStore();
 
 function handlePropertyTypeSelect({type}) {
-    editPropertyUsecase(
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
-        props.collectionId,
-        props.propertyId,
-        'type',
-        type
-    );
+    const propertyName = Collection.prototype.getPropertyById.call(
+        useRecordValuesStore().getRecordValue(
+            props.collectionId,
+            "collection",
+            "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        ),
+        ...[props.propertyId]
+    ).name;
+
+    updateUsecase(
+        {
+            [props.propertyId]: {
+                name: propertyName, 
+                type
+            }
+        },
+        ['schema'],
+        {
+            id: props.collectionId,
+            table: "collection",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        }
+    )
     
     collectionStore.removeCurrentComponent();
 }

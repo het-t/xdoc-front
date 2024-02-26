@@ -43,7 +43,7 @@
                                             </div>
 
                                             <base-menu-item
-                                                @click.stop="handleStyleSelect"  
+                                                @click.stop="handleStyleSelect(color.name)"  
                                                 v-for="color of colors"             
                                                 :key="color.name"                         
                                             >
@@ -79,9 +79,8 @@ import BaseMenuItem from '../components/BaseMenuItem.vue';
 import colors from "@/assets/colors.json";
 import { defineProps, ref, onMounted } from 'vue';
 import { useGeneralStore } from '@/stores/general';
-import { editProperty } from "@/usecases/collection/editProperty";
-import { useRecordValuesStore } from '@/stores/recordValues';
-import { Collection } from '@/entities/Collection';
+import { keyedObjectListUpdate as keyedObjectListUpdateUsecase } from "@/usecases/keyedObjectListUpdate";
+import { keyedObjectListRemove as keyedObjectListRemoveUsecase } from '@/usecases/keyedObjectListRemove';
 
 const props = defineProps({
     spaceId: {
@@ -105,33 +104,36 @@ const props = defineProps({
 const generalStore = useGeneralStore();
 
 function handleOptionDelete() {
-    const options = [...Collection.prototype.getPropertyById.call(
-            useRecordValuesStore().getRecordValue(
-                props.collectionId,
-                "collection",
-                props.spaceId
-            ),
-            props.propertyId
-        )?.options
-    ];
-
-    const newOptions = options.filter((option) => {
-        if (option.id !== props.optionId) return option;
-    })
-
-    editProperty(
-        props.spaceId,
-        props.collectionId,
-        props.propertyId,
-        "options",
-        newOptions
+    keyedObjectListRemoveUsecase(
+        {
+            remove: {
+                id: props.optionId
+            }
+        },
+        ['schema', props.propertyId, 'options'],
+        {
+            id: props.collectionId,
+            table: "collection",
+            spaceId: props.spaceId
+        }
     );
 
     generalStore.setCurrentComponentInDefaultOverlay(null, {});
 }
 
-function handleStyleSelect() {
-    console.log(props.optionId)
+function handleStyleSelect(color) {
+    keyedObjectListUpdateUsecase(
+        {
+            id: props.optionId,
+            color
+        },
+        ['schema', props.propertyId, 'options'],
+        {
+            table: "collection",
+            id: props.collectionId,
+            spaceId: props.spaceId
+        }
+    );
 }
 
 function handleClickOutside() {

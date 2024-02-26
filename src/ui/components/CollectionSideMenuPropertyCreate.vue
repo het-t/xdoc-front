@@ -12,7 +12,7 @@
                     <div style="min-width: 0px; margin-right: 12px; margin-left: 12px; flex: 1 1 auto;">
                         <div style="display: flex;">
                             <div class="xdoc-focusable-within" style="display: flex; align-items: center; width: 100%; font-size: 14px; line-height: 20px; padding: 3px 6px; position: relative; border-radius: 4px; box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px inset; background: rgba(242, 241, 238, 0.6); cursor: text; height: 28px;">
-                                <input 
+                                <input
                                     v-model="state.filterString"
                                     placeholder="Search or add new property"
                                     type="text"
@@ -35,7 +35,7 @@
 
                 <div style="padding-top: 6px; padding-bottom: 6px;">
                     <collection-side-menu-category>Type</collection-side-menu-category>
-    
+
                     <base-collection-property-types
                         :filterString="state.filterString"
                         :filterTypesOnUserInput=true
@@ -51,10 +51,12 @@
 <script setup>
 import { reactive, defineProps } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
+import { useRecordValuesStore } from '@/stores/recordValues';
 import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
-import { collectionSideMenuPropertyCreate as addPropertyHelper } from '../../helpers/globals/collectionSideMenuPropertyCreate';
+import { update as updateUsecase } from '@/usecases/update';
+import { CollectionProperty } from "@/entities/CollectionProperty";
 
 const props = defineProps({
     collectionId: {
@@ -79,48 +81,55 @@ function handlePropertyTypeSelect({type, userInput}) {
         return;
     }
 
-    const propertyId = addPropertyHelper(
-        props.collectionId, 
+    const collectionViewPropertiesRecordValueInStore = useRecordValuesStore().getRecordValue(
         props.collectionViewId,
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
+        "collection_view",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    ).format.table_properties;
+
+    const collectionSchemaRecordValueInStore = useRecordValuesStore().getRecordValue(
+        props.collectionId,
+        "collection",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    ).schema;
+
+    const property = new CollectionProperty({
+        bannedIds: Object.keys(collectionSchemaRecordValueInStore),
+        name: userInput,
+        type
+    })
+
+    const updatedCollectionViewProperties = [];
+    for (const existingProperty of collectionViewPropertiesRecordValueInStore) {
+        updatedCollectionViewProperties.push(existingProperty);
+    }
+
+    updatedCollectionViewProperties.push(property);
+
+    updateUsecase(
         {
-            type,
-            name: userInput
+            table_properties: updatedCollectionViewProperties,
+        },
+        ["format"],
+        {
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        }
+    );
+
+    updateUsecase(
+        property,
+        ["schema"],
+        {
+            id: props.collectionId,
+            table: "collection",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
         }
     );
 
     collectionStore.setCurrentComponent('propertyEdit',{
-        id: propertyId
+        id: Object.keys(property)[0]
     });
 }
-
-// function enqueuePropertyCreateOperations(id, name, type) {
-//     const spaceId = "placeholder-space-id";
-
-//     transactionsQueue.enqueue(
-//         collectionFormatUpdate(
-//             spaceId,
-//             props.collectionId,
-//             {
-//                 table_properties: {
-//                     property: name,
-//                     visible: true
-//                 }
-//             }
-//         )
-//     );
-
-//     transactionsQueue.enqueue(
-//         collectionSchemaUpdate(
-//             spaceId,
-//             props.collectionId,
-//             {
-//                 [id]: {
-//                     name,
-//                     type
-//                 }
-//             }
-//         )
-//     );
-// }
 </script>

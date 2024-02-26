@@ -65,7 +65,7 @@ import BaseButton from './BaseButton.vue';
 import BaseTag from "./BaseTag.vue";
 import { defineProps, reactive } from 'vue';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
-import { editProperty as editPropertyUsecase } from "../../usecases/collection/editProperty";
+import { keyedObjectListBefore as keyedObjectListBeforeUsecase } from "../../usecases/keyedObjectListBefore";
 import { tagColorStringToRgbaRandom } from '@/helpers/globals/tagColorStringToRgbaRandom';
 import { useGeneralStore } from '@/stores/general';
 
@@ -114,19 +114,21 @@ function handleCreateNewOption(e) {
     // keyCode 13 represets "enter"(keyboards) and "go"(phones) keys
     if (e.keyCode === 13) {
         if (targetDiv.value) {
-            editPropertyUsecase(
-                props.spaceId,
-                props.collectionId,
-                props.propertyId,
-                'options',
-                [
-                    ...props.options,
-                    {
+
+            keyedObjectListBeforeUsecase(
+                {
+                    value: {
                         id: transformToStandardUUIDFormat(uuid()),
                         color: tagColorStringToRgbaRandom(),
                         value: targetDiv.value
                     }
-                ]
+                },
+                ["schema", props.propertyId, "options"],
+                {
+                    id: props.collectionId,
+                    table: "collection",
+                    spaceId: props.spaceId
+                }
             )
 
             targetDiv.value = "";

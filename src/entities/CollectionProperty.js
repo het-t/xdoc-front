@@ -18,7 +18,3 @@ export function CollectionProperty({bannedIds, ...props}) {
         }
     }
 }
-
-CollectionProperty.prototype.editProperty = function(path, value) {
-    this[path] = value;
-}
