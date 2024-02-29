@@ -1,18 +1,35 @@
 <template>
-    <block-render-paragraph
-        v-if="blockTypeRecordValueInStore === 'text'"
+    <base-data-provider
         :block-id="props.blockId"
-    ></block-render-paragraph>
+        :space-id="props.spaceId"
+        table="block"
+        v-slot="{ recordValueDeferInStore }"
+    >
+        <block-render-paragraph
+            v-if="recordValueDeferInStore && blockTypeRecordValueInStore === 'text'"
+            :block-id="props.blockId"
+        />
+
+        <block-render-page 
+            v-else-if="recordValueDeferInStore && blockTypeRecordValueInStore === 'page'"
+            :block-id="props.blockId"
+        />
+    </base-data-provider>
 </template>
 
 <script setup>
-import { computed, defineProps, onMounted } from 'vue';
+import { computed, defineProps } from 'vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
-import { syncRecordValueFromApi } from '@/helpers/globals/SyncRecordValueFromApi';
 import BlockRenderParagraph from './BlockRenderParagraph.vue';
+import BaseDataProvider from './BaseDataProvider.vue';
+import BlockRenderPage from './BlockRenderPage.vue';
 
 const props = defineProps({
     blockId: {
+        type: String,
+        required: true
+    },
+    spaceId: {
         type: String,
         required: true
     }
@@ -24,17 +41,7 @@ const blockTypeRecordValueInStore = computed(function() {
     return recordValuesStore.getRecordValue(
         props.blockId,
         "block",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        props.spaceId
     )?.type
 })
-
-onMounted(
-    () => {
-        syncRecordValueFromApi(
-            "block",
-            props.blockId,
-            "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        )
-    }
-)
 </script>
