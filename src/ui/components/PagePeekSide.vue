@@ -82,7 +82,7 @@ const style = computed(function() {
     let s = "position: fixed; ";
 
     if (props.peekMode !== "c") {
-        s += `top: 0px; right: 0px; bottom: 0px; width: ${state.width}px; z-index: 109; transition-property: transform; transition-duration: 270ms; transition-timing-function: ease;`;
+        s += `top: 0px; right: 0px; bottom: 0px; width: 50%; z-index: 109; transition-property: transform; transition-duration: 270ms; transition-timing-function: ease;`;
     }
     else {
         s += "inset: 0; z-index: 99; background-color: rgba(15, 15, 15, 0.6);"

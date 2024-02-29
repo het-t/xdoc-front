@@ -55,6 +55,7 @@
 </template>
 
 <script setup>
+import { Collection } from '@/entities/Collection';
 import PagePropertyValueEditMultiselect from './PagePropertyValueEditMultiselect.vue';
 import PagePropertyValueEditRelation from './PagePropertyValueEditRelation.vue';
 import { handlePropertyValueOverlay } from '@/helpers/globals/handlePropertyValueOverlay';
@@ -82,17 +83,14 @@ const generalStore = useGeneralStore();
 
 const dialog = computed(() => generalStore.dialog);
 
-// const propertyValue = recordValuesStore.getRecordValue(
-//     overlayData.pageId,
-//     "block",
-//     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-// ).properties?.[overlayData.propertyId];
-
-const propertyType = recordValuesStore.getRecordValue(
-    props.collectionId,
-    "collection",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-).getPropertyById(props.propertyId).type;
+const propertyType = Collection.prototype.getPropertyById.call(
+    recordValuesStore.getRecordValue(
+        props.collectionId,
+        "collection",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    ),
+    ...[props.propertyId]
+).type;
 
 function handleClickOutsideDialog() {
     handlePropertyValueOverlay(null, null, null, {});

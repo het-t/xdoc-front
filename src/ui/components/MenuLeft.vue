@@ -61,7 +61,7 @@
                             <!-- new page -->
                             <div
                                 class="button-wrapper hvr-bg ptr"
-                                @click.prevent.stop="createNewPage()"
+                                @click.prevent.stop="createNewPage"
                             >
                                 <div
                                     class="button-icon"

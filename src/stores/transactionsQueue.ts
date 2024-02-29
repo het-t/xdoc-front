@@ -87,10 +87,6 @@ export const useTransactionsQueue = defineStore('q', () => {
                                 recordValue = new Text(recordValue);
                                 break;
                             }
-                            case "collection": {
-                                recordValue = new Collection(recordValue);
-                                break;
-                            }
                             case "collection_view" : {
                                 recordValue = new CollectionView(recordValue);
                                 break;
@@ -99,26 +95,21 @@ export const useTransactionsQueue = defineStore('q', () => {
                                 recordValue = new CollectionViewPage(recordValue);
                                 break;
                             }
-                            case "page": {
-                                recordValue = new Page(recordValue);
-                                break;
-                            }
                             default : {
                                 break;
                             }
                         }
                         recordValue.defer = 1;
 
-                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
                         break;
                     }
 
                     case "collection": {
-                        let recordValue = record.value.value;
-                        recordValue = new Collection(recordValue);
-                        recordValue.defer = 1;
+                        const { value: { value }, spaceId } = record;
+                        value.defer = 1;
 
-                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        setRecordValue(pointerId, table, value, spaceId);
                         break;
                     }
 
@@ -127,7 +118,7 @@ export const useTransactionsQueue = defineStore('q', () => {
                         recordValue = new CollectionView(recordValue);
                         recordValue.defer = 1;
 
-                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
                         break;
                     }
 
@@ -136,7 +127,7 @@ export const useTransactionsQueue = defineStore('q', () => {
                         recordValue = new CollectionViewPage(recordValue);
                         recordValue.defer = 1;
 
-                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
                         break;
                     }
 
@@ -145,7 +136,7 @@ export const useTransactionsQueue = defineStore('q', () => {
                         recordValue = new Discussion(recordValue);
                         recordValue.defer = 1;
                         
-                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
                         break;
                     }
 
@@ -154,7 +145,7 @@ export const useTransactionsQueue = defineStore('q', () => {
                         recordValue = new Comment(recordValue);
                         recordValue.defer = 1;
 
-                        setRecordValue(pointerId, table, recordValue, recordValue.spaceId);
+                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
                         break;
                     }
                 }

@@ -9,6 +9,6 @@ export function setParent(args, path, pointer) {
 
     let targetNode = recordInStore;
 
-    targetNode.parentId = args.parentId;
-    targetNode.parentTable = args.parentTable;
+    targetNode.parent_id = args.parentId;
+    targetNode.parent_table = args.parentTable;
 }

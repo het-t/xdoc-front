@@ -111,7 +111,7 @@ const pageParentCollectionRecordValueInStore = recordValuesStore.getRecordValue(
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 );
 
-const propertyOptions = pageParentCollectionRecordValueInStore.getSchema()[props.propertyId].options;
+const propertyOptions = pageParentCollectionRecordValueInStore?.schema[props.propertyId].options;
 
 const propertyValue = recordValuesStore.getRecordValue(
     props.pageId,

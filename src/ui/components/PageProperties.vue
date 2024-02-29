@@ -8,7 +8,7 @@
                         style="margin: 0px;"
                     >
                         <div style="display: flex; flex-direction: column;">
-                            <div v-for="(value, propertyId) in pagePropertiesRecordValueInStore"
+                            <div v-for="(value, propertyId) in pageCollectionRecordValueInStore.schema"
                                 :key="propertyId" 
                                 role="row" aria-labelledby="aria-labelledby"
                                 style="display: flex; width: 100%; padding-bottom: 4px;"
@@ -47,7 +47,7 @@
                                     <div style="display: flex; align-items: center; margin-left: 4px; height: 100%; flex: 1 1 auto; min-width: 0px;">
                                         <div role="button" tabindex="0" data-testid="property-value" style="user-select: none; transition: background 20ms ease-in 0s; cursor: pointer; position: relative; font-size: 14px; overflow: hidden; display: inline-block; border-radius: 3px; width: 100%; min-height: 34px; padding: 7px 8px;">
                                             <div style="display: flex; flex-wrap: wrap; gap: 6px 8px;">
-                                                {{ value }}
+                                                {{ pagePropertiesRecordValueInStore[propertyId] }}
                                             </div>
                                         </div>
                                     </div>
@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+import { Collection } from '@/entities/Collection';
 import { handlePropertyValueOverlay } from '@/helpers/globals/handlePropertyValueOverlay';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { computed, defineProps } from 'vue';
@@ -114,7 +115,7 @@ const pageCollectionRecordValueInStore = recordValuesStore.getRecordValue(
 )
 
 function propertyNameFromId(id) {
-    return pageCollectionRecordValueInStore.getPropertyById(id).name
+    return Collection.prototype.getPropertyById.call(pageCollectionRecordValueInStore, ...[id]).name;
 }
 
 function handlePropertyEdit(e, propertyId) {    

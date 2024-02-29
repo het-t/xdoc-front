@@ -159,7 +159,7 @@ const collectionSchema = recordValuesStore.getRecordValue(
     props.collectionId,
     "collection",
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-).getSchema();
+).schema;
 
 const collectionViewRecordValue = recordValuesStore.getRecordValue(
     props.collectionViewId,

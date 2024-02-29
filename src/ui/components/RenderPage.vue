@@ -116,20 +116,19 @@
                     </div>
                 </div>
 
-                <div class="layout-content layout-content-with-divider">
+                <div v-if="pageParentTable === 'collection'" class="layout-content layout-content-with-divider">
                     <div contenteditable="false" data-content-editable-void="true">
-                        <page-properties 
-                            v-if="pageParentTable === 'collection'"
+                        <page-properties
                             :page-id="props.blockId"
                             :collection-id="pageParentId"
                         />
                     </div>
                 </div>
 
-                <div class="layout-content layout-content-with-divider"> 
-                    <div v-if="pageParentTable === 'collection'" 
-                        contenteditable="false" data-content-editable-void="true"
-                    >
+                <div v-if="pageParentTable === 'collection'"
+                    class="layout-content layout-content-with-divider"
+                > 
+                    <div contenteditable="false" data-content-editable-void="true">
                         <base-data-provider
                             v-for="discussionId in discussions"
                             :block-id="discussionId"
@@ -149,6 +148,7 @@
                 <div class="layout-content layout-editor" style="min-height: 170px;">
                     <page-content 
                         :block-id="props.blockId"
+                        space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                     />
                 </div>
             </div>
@@ -189,10 +189,11 @@ const pageRecordValue = recordValuesStore.getRecordValue(
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 )
 
-const pageHeadingText = pageRecordValue?.properties?.title?.[0]?.[0]
+const pageHeadingText = pageRecordValue?.properties?.title?.[0]?.[0];
+
 const { 
-    parentTable: pageParentTable, 
-    parentId: pageParentId,
+    parent_table: pageParentTable, 
+    parent_id: pageParentId,
     discussions,
     content
 } = pageRecordValue;
@@ -265,10 +266,12 @@ if (pageParentTable === "collection") {
 .layout-content {
     grid: inherit;
     grid-column: content;
+    min-width: 0;
 }
 
-.layout-content {
-    min-width: 0;
+.layout-content-with-divider {
+    border-bottom: solid 1px rgba(55, 53, 47, 0.09);
+    margin-bottom: 8px;
 }
 
 .layout-nested-grid {

@@ -11,7 +11,9 @@ export function update(args, path, pointer) {
 
     path.forEach(node => {
         targetNode = targetNode[node];
-    })
+    })  
+    
+    if (!targetNode) targetNode = {};
 
     for(const targetNodeProperty in args) {
         const targetNodePropertyValue = targetNode[targetNodeProperty];

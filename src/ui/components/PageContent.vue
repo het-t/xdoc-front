@@ -26,6 +26,7 @@
             v-for="blockId in pageContentInStore"
             :key="blockId"
             :block-id="blockId"
+            :space-id="props.spaceId"
         >
         </block-render>
     </div>
@@ -34,7 +35,6 @@
 <script setup lang="ts">
 import BlockRender from "./BlockRender.vue";
 import { computed, defineProps } from "vue";
-// import { useKeyStrokeStore } from "@/stores/keyStrokes";
 import { useRecordValuesStore } from "@/stores/recordValues";
 import uuid from "@/helpers/globals/uuid";
 
@@ -42,6 +42,10 @@ const props = defineProps({
     blockId: {
         type: String,
         required: true,
+    },
+    spaceId: {
+        type: String,
+        required: true
     }
 })
 

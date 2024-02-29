@@ -234,7 +234,7 @@ function handleClickNew() {
     recordValuesStore.setRecordValue(
         blockId,
         "block",
-        {},
+        { id: blockId },
         spaceId
     );
 
@@ -255,8 +255,8 @@ function handleClickNew() {
 
     setParentUsecase(
         {
-            parent_id: collectionId,
-            parent_table: "collection"
+            parentId: collectionId,
+            parentTable: "collection"
         },
         [],
         {
