@@ -1,5 +1,4 @@
 <template>
-    
     <div 
         v-if="collectionViewPageRecordValue?.defer === 1"
         class="xdoc-scroller vertical horizontal"
@@ -93,9 +92,10 @@
                             </base-button>
 
                             <base-button
-                                style="width: 24px; align-self: stretch; border-radius: 0; border-top-right-radius: 3px; border-bottom-right-radius: 3px; box-shadow: rgba(55, 53, 47, 0.16) 1px 0px 0px inset;"
+                                @click.stop="handleDisplayTemplatesList"
                                 :hover-style="{background: 'rgb(0, 119, 212)'}"
                                 :default-style="{background: 'rgb(35, 131, 226)'}"
+                                style="width: 24px; align-self: stretch; border-radius: 0; border-top-right-radius: 3px; border-bottom-right-radius: 3px; box-shadow: rgba(55, 53, 47, 0.16) 1px 0px 0px inset;"
                             >
                                 <svg role="graphics-symbol" viewBox="0 0 30 30" class="chevronDown" style="width: 10px; height: 100%; display: block; fill: white; flex-shrink: 0; margin-top: 2px;"><polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon></svg>
                             </base-button>
@@ -176,6 +176,7 @@ import { set as setUsecase } from '@/usecases/set';
 import { setParent as setParentUsecase } from '@/usecases/setParent';
 import { listBefore as listBeforeUsecase } from '@/usecases/listBefore';
 import { update as updateUsecase } from '@/usecases/update';
+import { useGeneralStore } from '@/stores/general';
 
 const props = defineProps({
     pageId: {
@@ -297,6 +298,22 @@ function handleClickNew() {
             spaceId
         }
     );
+}
+
+function handleDisplayTemplatesList(e) {
+    const generalStore = useGeneralStore();
+
+    generalStore.setCurrentComponentInDefaultOverlay("collection_templates_list", {
+        collectionId,
+        collectionViewId: currentCollectionViewId,
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    });
+
+    const measures = e.target.getBoundingClientRect();
+
+    generalStore.dialog.width = measures?.width;
+    generalStore.dialog.top = measures?.top;
+    generalStore.dialog.left = measures?.left;
 }
 </script>
 

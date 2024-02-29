@@ -88,7 +88,10 @@
 import { defineProps } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
 import BaseCollectionSideMenuHeader from './BaseCollectionSideMenuHeader.vue';
-import { collectionSideMenuPropertyCreate as addPropertyHelper } from '../../helpers/globals/collectionSideMenuPropertyCreate';
+import { update as updateUsecase } from "@/usecases/update";
+import { useRecordValuesStore } from '@/stores/recordValues';
+import uuid from '@/helpers/globals/uuid';
+import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 
 const props = defineProps({
     collectionId: {
@@ -102,16 +105,48 @@ const props = defineProps({
 })
 
 function handleCollectionSelection() {
-
-    const propertyId = addPropertyHelper(
-        props.collectionId,
+    const collectionViewPropertiesInRecordValueStore = useRecordValuesStore().getRecordValue(
         props.collectionViewId,
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446",
-        {
-            type: "relation",
-            name: "Relation"
+        "collection_view",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    ).table_properties;
+
+    const updatedCollectionViewProperties = [];
+
+    for (const property of collectionViewPropertiesInRecordValueStore) {
+        if (property.id !== props.propertyId) {
+            updatedCollectionViewProperties.push(property);
         }
-    )
+    }
+
+    updateUsecase(
+        {
+            table_properties: updatedCollectionViewProperties,
+        },
+        ["format"],
+        {
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId: props.spaceId
+        }
+    );
+
+    const propertyId = transformToStandardUUIDFormat(uuid());
+
+    updateUsecase(
+        {    
+            [propertyId]: {
+                type: "relation",
+                name: "relation"
+            }
+        },
+        ["schema"],
+        {
+            id: props.collectionId,
+            table: "collection",
+            spaceId: props.spaceId
+        }
+    );
 
     const collectionStore = useCollectionsStore();
     

@@ -60,6 +60,13 @@
             :property-id="currentComponentProps.propertyId"
             :space-id="currentComponentProps.spaceId"
           />
+
+          <collection-templates-list 
+            v-if="currentComponent === 'collection_templates_list'"
+            :collection-id="currentComponentProps.collectionId"
+            :collection-view-id="currentComponentProps.collectionViewId"
+            :space-id="currentComponentProps.spaceId"
+          />
         </div>
       
         <base-slash-menu :pos=slashMenuPosition v-if="showSlashMenu === true"></base-slash-menu>
@@ -92,6 +99,7 @@ import { useRoute } from 'vue-router';
 import { transformToStandardUUIDFormat } from './helpers/router/transformToStandardUUIDFormat';
 import { useGeneralStore } from '@/stores/general';
 import OptionEditView from './views/OptionEditView.vue';
+import CollectionTemplatesList from './components/CollectionTemplatesList.vue';
 
 const route = useRoute();
 
