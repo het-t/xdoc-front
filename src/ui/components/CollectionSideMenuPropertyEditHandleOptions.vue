@@ -45,11 +45,10 @@
                     <div style="display: flex; align-items: center; min-height: 28px; font-size: 14px; width: 100%; line-height: 120%;">
                         <div style="margin-right: 6px; margin-left: 12px; min-width: 0px; flex: 1 1 auto;">
                             <div style="display: flex; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <base-tag
+                                <page-property-tag-value
                                     :tag="option"
                                     style="padding-left: 6px; padding-right: 6px; border-radius: 4px;"
-                                >
-                                </base-tag>
+                                />
                             </div>
                         </div>
                     </div>
@@ -62,7 +61,7 @@
 <script setup>
 import uuid from '@/helpers/globals/uuid';
 import BaseButton from './BaseButton.vue';
-import BaseTag from "./BaseTag.vue";
+import PagePropertyTagValue from "./PagePropertyTagValue.vue";
 import { defineProps, reactive } from 'vue';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import { keyedObjectListBefore as keyedObjectListBeforeUsecase } from "../../usecases/keyedObjectListBefore";
