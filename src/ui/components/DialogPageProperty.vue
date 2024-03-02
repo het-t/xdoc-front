@@ -16,8 +16,7 @@
                     <div style="display: flex; align-items: center; position: relative; flex-direction: column-reverse; transform-origin: 0% top; left: 0; top: 0;">
                         <div role="dialog" style="border-radius: 6px; background: white; backdrop-filter: none; position: relative; max-width: calc(-24px + 100vw); box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: visible; width: 272.2px; min-height: 54px; max-height: 710px; display: flex; flex-direction: column;">
                             <div style="display: flex; flex-direction: column; overflow-y: auto; flex-grow: 1; height: 100%;">
-                                <!-- for multiselect -->
-                                <page-property-value-edit-multiselect 
+                                <dialog-page-property-multiselect 
                                     v-if="propertyType === 'multi_select' || propertyType === 'select'"
                                     :multiselect="propertyType === 'multi_select' ? true : false"
                                     :page-id="props.pageId"
@@ -25,15 +24,28 @@
                                     :collection-id="props.collectionId"
                                 />
 
-                                <!-- for relation -->
-                                <page-property-value-edit-relation
+                                <dialog-page-property-relation
                                     v-if="propertyType === 'relation'"
                                     :page-id="props.pageId"
                                     :property-id="props.propertyId"
                                     :collection-id="props.collectionId"
                                 />
 
-                                <!-- for text value -->
+                                <dialog-page-property-status
+                                    v-if="propertyType === 'status'"
+                                    :page-id="props.pageId"
+                                    :property-id="props.propertyId"
+                                    :collection-id="props.collectionId"
+                                    space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                                />
+
+                                <dialog-page-property-person
+                                    v-if="propertyType === 'person'"
+                                    :page-id="props.pageId"
+                                    :property-id="props.propertyId"
+                                    :collection-id="props.collectionId"
+                                />
+
                                 <div v-else style="padding: 6px 9px; font-size: 14px; min-height: 34px; display: flex; height: 100%; flex-direction: column; justify-content: space-between; flex-grow: 1; font-weight: 500;">
                                     <div 
                                         class="notranslate"
@@ -56,8 +68,10 @@
 
 <script setup>
 import { Collection } from '@/entities/Collection';
-import PagePropertyValueEditMultiselect from './PagePropertyValueEditMultiselect.vue';
-import PagePropertyValueEditRelation from './PagePropertyValueEditRelation.vue';
+import DialogPagePropertyMultiselect from './DialogPagePropertyMultiselect.vue';
+import DialogPagePropertyRelation from './DialogPagePropertyRelation.vue';
+import DialogPagePropertyStatus from './DialogPagePropertyStatus.vue';
+import DialogPagePropertyPerson from './DialogPagePropertyPerson.vue';
 import { handlePropertyValueOverlay } from '@/helpers/globals/handlePropertyValueOverlay';
 import { useGeneralStore } from '@/stores/general';
 import { useRecordValuesStore } from '@/stores/recordValues';

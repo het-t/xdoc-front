@@ -46,7 +46,7 @@
             peek-mode="c"
           />
 
-          <page-property-value-edit
+          <dialog-page-property
             v-if="currentComponent === 'page_property_value_edit'"
             :property-id="currentComponentProps.propertyId"
             :page-id="currentComponentProps.pageId"
@@ -90,7 +90,7 @@ import MenuLeft from './components/MenuLeft.vue';
 import MenuTop from './components/MenuTop.vue';
 import BaseSlashMenu from './components/BaseSlashMenu.vue';
 import PagePeekSide from './components/PagePeekSide.vue';
-import PagePropertyValueEdit from './components/PagePropertyValueEdit.vue';
+import DialogPageProperty from './components/DialogPageProperty.vue';
 import { useMenuLeftStore } from '../stores/menuLeft';
 import { useTransactionsQueue } from '@/stores/transactionsQueue';
 import { useKeyStrokeStore } from '@/stores/keyStrokes';

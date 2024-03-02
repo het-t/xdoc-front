@@ -6,7 +6,7 @@
             <div class="xdoc-scroller vertical horizontal"
                 style="z-index: 1; display: flex; flex-wrap: wrap; align-items: flex-start; background: rgba(242, 241, 238, 0.6); cursor: text; overflow: auto; padding: 8px 9px 1px; width: 100%; min-height: 34px; font-size: 14px; margin-right: 0px; margin-bottom: 0px;"
             >
-                <base-tag
+                <page-property-tag-value
                     style="padding-left: 6px; padding-right: 0px; margin: 0px 6px 6px 0px;"
                     v-for="option in propertyValue"
                     :tag=option
@@ -18,7 +18,7 @@
                     >
                         <svg role="graphics-symbol" viewBox="0 0 8 8" class="closeThick" style="width: 8px; height: 8px; display: block; fill: inherit; flex-shrink: 0; opacity: 0.5;"><polygon points="8 1.01818182 6.98181818 0 4 2.98181818 1.01818182 0 0 1.01818182 2.98181818 4 0 6.98181818 1.01818182 8 4 5.01818182 6.98181818 8 8 6.98181818 5.01818182 4"></polygon></svg>
                     </base-button>
-                </base-tag>
+                </page-property-tag-value>
 
                 <div style="display: flex; flex-grow: 1; height: 20px; align-items: center; min-width: 0px; max-width: 100%; margin: 0px 6px 6px 0px;">
                     <input 
@@ -54,11 +54,11 @@
                                     <svg role="graphics-symbol" viewBox="0 0 10 10" class="dragHandle" style="width: 12px; height: 12px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><path d="M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z"></path></svg>
                                 </div>
 
-                                <base-tag 
+                                <page-property-tag-value
                                     style="margin-left: 12px; padding-right: 6px; padding-left: 6px;"
                                     :tag=option
                                 >
-                                </base-tag>
+                                </page-property-tag-value>
 
                                 <div style="margin-left: auto; margin-right: 12px; min-width: 0px; flex-shrink: 0;">
                                     <base-button style="height: 24px; width: 24px; user-select: none; cursor: pointer; transition: background 20ms ease-in 0s; opacity: 1; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; margin-right: -6px;">
@@ -78,7 +78,7 @@
 
 <script setup>
 import { useRecordValuesStore } from '@/stores/recordValues';
-import BaseTag from './BaseTag.vue';
+import PagePropertyTagValue from './PagePropertyTagValue.vue';
 import BaseButton from './BaseButton.vue';
 import { computed, defineProps, ref } from 'vue';
 
