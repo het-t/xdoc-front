@@ -73,9 +73,7 @@
         </div>
     </div>
 
-    <footer style="flex-shrink: 0;">
-        {{ propertyValue }}
-    </footer>
+    <footer style="flex-shrink: 0;"></footer>
 </template>
 
 <script setup>
@@ -125,6 +123,6 @@ const filterOptionString = ref("");
 
 const filteredOptions = computed(function() {
     if (!filterOptionString.value) return [...propertyOptions];
-    return [...propertyOptions.filter(option => option.value.indexOf(filterOptionString.value) !== -1)];
+    return [...propertyOptions.filter(option => option.value.toLowerCase().indexOf(filterOptionString.value?.toLowerCase()) !== -1)];
 })
 </script>

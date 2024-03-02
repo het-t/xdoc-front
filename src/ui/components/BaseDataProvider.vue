@@ -1,5 +1,8 @@
 <template>
-    <slot :recordValueDeferInStore="recordValueDeferInStore"></slot>
+    <slot 
+        :recordValueDeferInStore="recordValueDeferInStore" 
+        :recordValueInStore="recordValueInStore"
+    ></slot>
 </template>
 
 <script setup>
@@ -39,11 +42,15 @@ if (!recordValueIsAvailable) {
     )
 }
 
-const recordValueDeferInStore = computed(function() {
+const recordValueInStore = computed(function() {
     return recordValuesStore.getRecordValue(
         props.blockId,
         props.table,
         props.spaceId
-    )?.defer
-})
+    )
+});
+
+const recordValueDeferInStore = computed(function() {
+    return recordValueInStore.value?.defer
+});
 </script>
