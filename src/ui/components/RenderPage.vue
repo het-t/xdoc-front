@@ -142,6 +142,11 @@
                                 :discussion-id="discussionId"
                             />
                         </base-data-provider>
+
+                        <page-discussion 
+                            v-if="!discussions?.length"
+                            :page-id="props.blockId"
+                        />
                     </div>
                 </div>
 
@@ -204,14 +209,6 @@ if (pageParentTable === "collection") {
         pageParentId,
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
     )
-
-    discussions?.forEach((id: string) => {
-        syncRecordValueFromApi(
-            "discussion",
-            id,
-            "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        )
-    });
 
     content?.forEach((id: string) => {
         syncRecordValueFromApi(

@@ -33,27 +33,27 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div style="margin: 0;">
-            <div 
-                @click.stop="handleOptionEdit($event, option.id)"
-                v-for="option in props.options"
-                :key="option.id"
-                style="display: flex; flex-direction: column;"
-            >
-                <base-button style="margin-left: 4px; margin-right: 4px;">
-                    <div style="display: flex; align-items: center; min-height: 28px; font-size: 14px; width: 100%; line-height: 120%;">
-                        <div style="margin-right: 6px; margin-left: 12px; min-width: 0px; flex: 1 1 auto;">
-                            <div style="display: flex; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <page-property-tag-value
-                                    :tag="option"
-                                    style="padding-left: 6px; padding-right: 6px; border-radius: 4px;"
-                                />
-                            </div>
+    <div style="margin: 0;">
+        <div 
+            @click.stop="handleOptionEdit($event, option.id)"
+            v-for="option in props.options"
+            :key="option.id"
+            style="display: flex; flex-direction: column;"
+        >
+            <base-button style="margin-left: 4px; margin-right: 4px;">
+                <div style="display: flex; align-items: center; min-height: 28px; font-size: 14px; width: 100%; line-height: 120%;">
+                    <div style="margin-right: 6px; margin-left: 12px; min-width: 0px; flex: 1 1 auto;">
+                        <div style="display: flex; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <page-property-tag-value
+                                :tag="option"
+                                style="padding-left: 6px; padding-right: 6px; border-radius: 4px;"
+                            />
                         </div>
                     </div>
-                </base-button>
-            </div>
+                </div>
+            </base-button>
         </div>
     </div>
 </template>

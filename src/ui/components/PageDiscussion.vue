@@ -11,7 +11,7 @@
                     <div>
 
                         <base-data-provider
-                            v-for="commentId in discussionRecordValueInStore.comments"
+                            v-for="commentId in discussionRecordValueInStore?.comments"
                             :block-id="commentId"
                             :key="commentId"
                             space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
@@ -68,7 +68,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -92,7 +91,11 @@ import PageDiscussionComment from "@/ui/components/PageDiscussionComment.vue";
 const props = defineProps({
     discussionId: {
         type: String,
-        required: true
+        required: false
+    },
+    pageId: {
+        type: String,
+        required: false
     }
 })
 
@@ -112,9 +115,28 @@ function newCommentUpdated(e) {
 
 const newCommentDiv = ref("");
 
+function createNewDiscussion() {
+    const id = transformToStandardUUIDFormat(uuid());
+
+    recordValuesStore.getRecordValue(
+        props.blockId,
+        "block",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    ).discussions = [id];
+
+    return id;
+}
+
 function handleNewComment() {
     const id = transformToStandardUUIDFormat(uuid());
-    discussionRecordValueInStore.addNewComment(id);
+
+    if(!props.discussionId) {
+        const discussionId = createNewDiscussion();
+        console.log(discussionId)
+    }
+    else {
+        discussionRecordValueInStore.addNewComment(id);
+    }
 
     const comment = new Comment({
         id,
