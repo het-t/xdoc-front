@@ -19,7 +19,11 @@ export const queryCollection = async function(
     }
 ) {
     try {
-        return await axios.post("/api/v1/queryCollection");
+        return await axios.post("/api/v1/queryCollection", {
+            collectionView,
+            loader,
+            source
+        });
     }
     catch (error: any) {
         throw new Error(error);
