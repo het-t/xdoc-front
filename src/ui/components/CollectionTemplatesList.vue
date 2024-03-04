@@ -19,15 +19,15 @@
                         <div style="margin: 0px;">
                             <div style="display: flex; flex-direction: column; cursor: grab;">
                                 <base-data-provider
-                                    v-for="templatePageId in collectionRecordValueInStore.template_pages"
-                                    :key="templatePageId"
-                                    :block-id="templatePageId"
+                                    v-for="template in templates"
+                                    :key="template.id"
+                                    :block-id="template.id"
                                     :space-id="props.spaceId"
                                     table="block"
                                     v-slot="{ recordValueDeferInStore}"
                                 >
                                     <base-button 
-                                        @click.stop="handleTemplateSelect(templatePageId)"
+                                        @click.stop="handleTemplateSelect(template.id)"
                                         style="margin-right: 4px; margin-left: 4px;"
                                         v-if="recordValueDeferInStore"
                                     >
@@ -52,7 +52,7 @@
                                                 <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                                         <div class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                            {{ getTemplatePageTitle(templatePageId) }}
+                                                            {{ getTemplatePageTitle(template.id) }}
                                                         </div>
                                                         
                                                         <span style="display: flex; justify-content: space-between; align-items: center;"></span>
@@ -133,13 +133,14 @@
 </template>
 
 <script setup>
-import { useRecordValuesStore } from '@/stores/recordValues';
 import BaseButton from './BaseButton.vue';
 import BaseMenuItem from './BaseMenuItem.vue';
 import DialogView from './DialogView.vue';
-import { useGeneralStore } from '@/stores/general';
-import { defineProps } from 'vue';
 import BaseDataProvider from './BaseDataProvider.vue';
+import { useRecordValuesStore } from '@/stores/recordValues';
+import { useGeneralStore } from '@/stores/general';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { defineProps, onMounted } from 'vue';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import uuid from '@/helpers/globals/uuid';
 import { set as setUsecase } from "@/usecases/set";
@@ -147,6 +148,7 @@ import { setParent as setParentUsecase } from "@/usecases/setParent";
 import { listBefore as listBeforeUsecase } from "@/usecases/listBefore";
 import { update as updateUsecase } from "@/usecases/update";
 import { useRouter } from 'vue-router';
+import { ref } from "vue";
 
 const router = useRouter();
 
@@ -165,13 +167,17 @@ const props = defineProps({
     }
 })
 
-const recordValueStore = useRecordValuesStore();
+const templates = ref([]);
 
-const collectionRecordValueInStore = recordValueStore.getRecordValue(
-    props.collectionId,
-    "collection",
-    props.spaceId
-)
+onMounted(async function() {
+    const searchResults = await useTransactionsQueue().performSearch({
+        type: "BlocksInCollection"
+    })
+
+    templates.value = searchResults.results;
+})
+
+const recordValueStore = useRecordValuesStore();
 
 function getTemplatePageById(templatePageId) {
     return recordValueStore.getRecordValue(

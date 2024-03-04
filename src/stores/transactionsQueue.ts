@@ -14,6 +14,8 @@ import { CollectionViewPage } from "@/entities/CollectionViewPage";
 import { Discussion } from "@/entities/Discussion";
 import { Comment } from "@/entities/Comment";
 import { AxiosResponse } from "axios";
+import { search } from "@/services/api/search";
+import { SearchProps } from "./interfaces/SearchProps";
 
 const DELAY_DEFAULT: number = 5 * 1000;
 const BATCH_SIZE_DEFAULT: number = 10;
@@ -255,6 +257,23 @@ export const useTransactionsQueue = defineStore('q', () => {
         setRecordValuesFromRecordMap(queryCollectionResults.data.recordMap);
     }
 
+    async function performSearch(args: SearchProps) {
+        const searchResults: AxiosResponse = await search(args);
+
+        const {
+            recordMap,
+            total,
+            results
+        } = searchResults.data;
+
+        setRecordValuesFromRecordMap(recordMap);
+
+        return {
+            total,
+            results
+        }
+    }
+
     function setDelayDefault(): void {
         setDelay(DELAY_DEFAULT);
     }
@@ -269,6 +288,7 @@ export const useTransactionsQueue = defineStore('q', () => {
         setBatchSize,
         setBatchSizeDefault,
         enqueue,
-        performQueryCollection
+        performQueryCollection,
+        performSearch
     }
 })
