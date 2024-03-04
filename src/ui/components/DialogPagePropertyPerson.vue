@@ -29,13 +29,7 @@
 
                     <base-menu-item>
                         <div style="display: flex; align-items: center; line-height: 120%; width: 100%; user-select: none; min-height: 28px; font-size: 14px;">
-                            <div style="display: flex; align-items: center; justify-content: center; margin-left: 10px; margin-right: 4px;">
-                            
-                            </div>
-
-                            <div style="margin-left: 6px; margin-right: 12px; min-width: 0px; flex: 1 1 auto;">
-                                <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Het Tarkhala</div>
-                            </div>
+                            <page-property-person-value />
                         </div>
                     </base-menu-item>
                 </div>
@@ -43,3 +37,8 @@
         </div>
     </div>
 </template>
+
+<script setup>
+import BaseMenuItem from './BaseMenuItem.vue';
+import PagePropertyPersonValue from './PagePropertyPersonValue.vue';
+</script>
