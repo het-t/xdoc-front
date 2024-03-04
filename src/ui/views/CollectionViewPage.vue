@@ -132,28 +132,30 @@
                 </transition>
             </div>
 
+            <!-- collection view -->
             <div contenteditable="false"
                 data-content-editable-void="true"
                 style="flex-grow: 1; flex-shrink: 0; display: flex; flex-direction: column; position: relative;"
             >
                 <div class="xdoc-scroller xdoc-collection-view-body"
                     style="z-index: 1; flex-grow: 1; flex-shrink: 0; margin-right: 0px; margin-bottom: 0px;"
+                    v-if="isQueryCollectionRequestComplete"
                 >
 
-                        <base-data-provider
-                            :block-id="currentCollectionViewId"
-                            table="collection_view"
-                            space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
-                            v-slot="{recordValueDeferInStore: collectionViewRecordValueDeferInStore}"
-                        >
-                            <template v-if="collectionViewRecordValueDeferInStore">          
-                                <collection-view-table 
-                                    v-if="currentCollectionViewRecordValueInStore.type === 'table'"  
-                                    :collection-id="collectionId"
-                                    :collection-view-id="currentCollectionViewId"
-                                ></collection-view-table>
-                            </template>
-                        </base-data-provider>
+                    <base-data-provider
+                        :block-id="currentCollectionViewId"
+                        table="collection_view"
+                        space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                        v-slot="{recordValueDeferInStore: collectionViewRecordValueDeferInStore}"
+                    >
+                        <template v-if="collectionViewRecordValueDeferInStore">          
+                            <collection-view-table 
+                                v-if="currentCollectionViewRecordValueInStore.type === 'table'"  
+                                :collection-id="collectionId"
+                                :collection-view-id="currentCollectionViewId"
+                            ></collection-view-table>
+                        </template>
+                    </base-data-provider>
                 </div>
             </div>
 
@@ -175,7 +177,7 @@ import CollectionViewTable from '../components/CollectionViewTable.vue';
 import BaseButton from '../components/BaseButton.vue';
 import CollectionSideMenuView from './CollectionSideMenuView.vue';
 import CollectionViewsTabsList from "../components/CollectionViewsTabsList.vue"
-import { reactive, ref, defineProps, computed } from 'vue';
+import { reactive, ref, defineProps, computed, onMounted } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
@@ -185,6 +187,7 @@ import { setParent as setParentUsecase } from '@/usecases/setParent';
 import { listBefore as listBeforeUsecase } from '@/usecases/listBefore';
 import { update as updateUsecase } from '@/usecases/update';
 import { useGeneralStore } from '@/stores/general';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
 
 const props = defineProps({
     pageId: {
@@ -202,6 +205,13 @@ const collectionViewPageRecordValue = recordValuesStore.getRecordValue(
 )
 
 const collectionId = collectionViewPageRecordValue.collection_id;
+
+const isQueryCollectionRequestComplete = ref(false);
+
+onMounted(async function() {
+    await useTransactionsQueue().performQueryCollection(collectionId);
+    isQueryCollectionRequestComplete.value = true;
+});
 
 const currentCollectionViewId = ref(collectionViewPageRecordValue.view_ids[0]);
 

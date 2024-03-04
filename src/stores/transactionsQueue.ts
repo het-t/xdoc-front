@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { Ref, ref } from "vue";
 import { QEle } from "./interfaces/Q";
+import { queryCollection as queryCollectionRequest } from '@/services/api/queryCollection';
 import { IOperation } from "./interfaces/Operation";
 import { TransactionApi } from "@/services/api/TransactionsApi";
 import { Transaction } from "./interfaces/Transaction";
@@ -8,12 +9,11 @@ import { SyncrecordValuesApi } from "@/services/api/SyncRecordValuesApi";
 import { SyncRecordValuesRequest } from "./interfaces/SyncRecordValuesRequest";
 import { useRecordValuesStore } from "@/stores/recordValues";
 import { Text } from "@/entities/Text";
-import { Collection } from "@/entities/Collection";
 import { CollectionView } from "@/entities/CollectionView";
 import { CollectionViewPage } from "@/entities/CollectionViewPage";
-import { Page } from "@/entities/Page";
 import { Discussion } from "@/entities/Discussion";
 import { Comment } from "@/entities/Comment";
+import { AxiosResponse } from "axios";
 
 const DELAY_DEFAULT: number = 5 * 1000;
 const BATCH_SIZE_DEFAULT: number = 10;
@@ -25,9 +25,9 @@ export const useTransactionsQueue = defineStore('q', () => {
     const CURRENT_SET_TIMEOUTS: Ref<number> = ref(0);
     const CURRENT_WORKERS: Ref<number> = ref(0);
     const REQUEST_TIME_OUT_MS: Ref<number> = ref(0);
-
-    const Q: QEle[] = [];
     
+    const Q: QEle[] = [];
+
     function setDelay(tms: number): void {
         DELAY.value = tms;
     }
@@ -196,7 +196,6 @@ export const useTransactionsQueue = defineStore('q', () => {
                 Q.splice(i, 1);
                 k += 1;
             }
-
             i += 1;
         }
 
@@ -224,6 +223,38 @@ export const useTransactionsQueue = defineStore('q', () => {
         }
     }
 
+    async function performQueryCollection(collectionViewId: string) {
+        const queryCollectionResults: AxiosResponse = await queryCollectionRequest(
+            {
+                id: collectionViewId,
+                spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+            },
+            {
+                reducers: {
+                    collection_group_results: {
+                        type: "results",
+                        limit: 50
+                    }
+                },
+                searchQuery: "",
+                sort: [],
+                userId: "",
+                userTimeZone: ""
+            },
+            {
+                id: collectionViewId,
+                type: "collection_view",
+                spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+            }
+        );
+
+        if(queryCollectionResults.data?.error) {
+            console.log(queryCollectionResults.data.error);
+        }
+
+        setRecordValuesFromRecordMap(queryCollectionResults.data.recordMap);
+    }
+
     function setDelayDefault(): void {
         setDelay(DELAY_DEFAULT);
     }
@@ -238,5 +269,6 @@ export const useTransactionsQueue = defineStore('q', () => {
         setBatchSize,
         setBatchSizeDefault,
         enqueue,
+        performQueryCollection
     }
 })
