@@ -26,6 +26,10 @@ export const useCollectionsStore = defineStore('collections', {
                 label: "Date"
             },
             {
+                type: "status",
+                label: "Status"
+            },
+            {
                 type: "select",
                 label: "Select"
             },

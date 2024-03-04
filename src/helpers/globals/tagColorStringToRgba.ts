@@ -2,7 +2,7 @@ export const tagColorStringToRgba = function(colorStr: string): {background: str
     switch(colorStr) {  
         case "light gray":
             return {
-                background: "rgb(232, 222, 238)",
+                background: "rgba(227, 226, 224, 0.5)",
                 color: "rgb(50, 48, 44)",
                 fill: "rgb(50, 48, 44)"
             };
@@ -62,9 +62,9 @@ export const tagColorStringToRgba = function(colorStr: string): {background: str
             };
         default:
             return {
-                background: "inherit",
-                color: "inherit",
-                fill: "inherit"
+                background: "rgb(232, 222, 238)",
+                color: "rgb(50, 48, 44)",
+                fill: "rgb(50, 48, 44)"
             };
     }
 } 

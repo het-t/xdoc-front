@@ -15,24 +15,24 @@ Collection.prototype.getTemplatePages = function() {
     return this.templatePages;
 }
 
+Collection.prototype.getPropertyByName = function(name) {
+    return Object.values(this.schema).find(property => property.name === name);
+}
+
 Collection.prototype.getPropertyNamePostfixed = function(id, name, type) {
     let postfix = 1;
     let postfixedName = name;
-    let property = this.getPropertyByName(name);
+    let property = Collection.prototype.getPropertyByName.call(this, ...[name]);
 
     while(property && property.id !== id && property.type === type) {
         postfixedName = name + " " + postfix;
-        if(!this.getPropertyByName(postfixedName)) {
+        if(!Collection.prototype.getPropertyByName.call(this, ...[postfixedName])) {
             break;
         }
         postfix++;
     }
 
     return postfixedName;
-}
-
-Collection.prototype.getPropertyByName = function(name) {
-    return Object.values(this.schema).find(property => property.name === name);
 }
 
 Collection.prototype.addProperty = function(id, property) {
