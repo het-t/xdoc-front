@@ -58,6 +58,13 @@
                     :collection-id="props.collectionId"
                 />
 
+                <collection-side-menu-property-edit-handle-groups
+                    v-if="property.type === 'status'"
+                    :collection-id="props.collectionId"
+                    :property-id="props.propertyId"
+                    space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                />
+
                 <collection-side-menu-property-edit-relation
                     v-if="property.type === 'relation'"
                 />
@@ -83,6 +90,7 @@ import BaseCollectionSideMenu from '@/ui/components/BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuItemCol3 from '@/ui/components/BaseCollectionSideMenuItemCol3.vue';
 import CollectionSideMenuPropertyEditHandleOptions from '@/ui/components/CollectionSideMenuPropertyEditHandleOptions.vue';
 import CollectionSideMenuPropertyEditRelation from "@/ui/components/CollectionSideMenuPropertyEditRelation.vue";
+import CollectionSideMenuPropertyEditHandleGroups from '../components/CollectionSideMenuPropertyEditHandleGroups.vue';
 import CollectionSideMenuPropertyEditFooter from '@/ui/components/CollectionSideMenuPropertyEditFooter.vue';
 import { set as setUsecase } from '@/usecases/set';
 import { update as updateUsecase } from '@/usecases/update';
@@ -148,7 +156,7 @@ function handlePropertyDelete() {
     }
 
     collectionRecordInStore.schema = updatedSchema;
-    
+
     updateUsecase(
         {
             schema: updatedSchema
@@ -168,7 +176,7 @@ function getPropertyLabelFromType(_type) {
     if (_type === "title") {
         return "Title"
     }
-
+    
     return collectionStore.types.find(({type}) => type === _type).label;
 }
 </script>
