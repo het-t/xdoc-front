@@ -255,6 +255,8 @@ export const useTransactionsQueue = defineStore('q', () => {
         }
 
         setRecordValuesFromRecordMap(queryCollectionResults.data.recordMap);
+
+        return queryCollectionResults.data;
     }
 
     async function performSearch(args: SearchProps) {

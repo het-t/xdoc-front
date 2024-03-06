@@ -151,6 +151,9 @@
                         <template v-if="collectionViewRecordValueDeferInStore">          
                             <collection-view-table 
                                 v-if="currentCollectionViewRecordValueInStore.type === 'table'"  
+                                @add-items="addRecordInItemsList($event)"
+                                @remove-items="removeItems"
+                                :items-ids="collectionItemsIds"
                                 :collection-id="collectionId"
                                 :collection-view-id="currentCollectionViewId"
                             ></collection-view-table>
@@ -207,9 +210,12 @@ const collectionViewPageRecordValue = recordValuesStore.getRecordValue(
 const collectionId = collectionViewPageRecordValue.collection_id;
 
 const isQueryCollectionRequestComplete = ref(false);
+const collectionItemsIds = ref([]);
 
 onMounted(async function() {
-    await useTransactionsQueue().performQueryCollection(collectionId);
+    const queryCollectionResults = await useTransactionsQueue().performQueryCollection(collectionId);
+    collectionItemsIds.value = queryCollectionResults.result.reducerResults.collection_group_results.blockIds;
+
     isQueryCollectionRequestComplete.value = true;
 });
 
@@ -225,6 +231,7 @@ const currentCollectionViewRecordValueInStore = computed(function() {
 
 const collectionStore = useCollectionsStore();
 
+//
 const state = reactive({
     displayCollectionSideMenu: false,
     sideMenuHeight: ''
@@ -244,6 +251,31 @@ function changeCollectionMenuVisibilityAndHeight(value) {
 
 function setSideMenuHeight() {
     state.sideMenuHeight = window.innerHeight - propertyMenuTopParent.value.getBoundingClientRect().top;
+}
+//
+
+// functionality to handle new record in collection
+function addRecordInItemsList({ids, index = null}) {
+    if (index === null || index === undefined) {
+        collectionItemsIds.value.push(...ids);
+        return;
+    }
+
+    const before = collectionItemsIds.value.slice(0, index);
+    const after = collectionItemsIds.value.slice(index);
+
+    collectionItemsIds.value = [
+        ...before,
+        ...ids,
+        ...after
+    ];
+}
+
+function removeItems(ids) {
+    collectionItemsIds.value = [...collectionItemsIds.value.filter((id) => {
+        if (ids.indexOf(id) === -1) return true;
+        return false;
+    })];
 }
 
 function handleClickNew() {
@@ -318,6 +350,7 @@ function handleClickNew() {
     );
 }
 
+//fetches templates
 function handleDisplayTemplatesList(e) {
     const generalStore = useGeneralStore();
 

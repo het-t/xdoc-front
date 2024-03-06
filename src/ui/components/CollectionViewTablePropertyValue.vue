@@ -3,7 +3,7 @@
         @click.prevent="handleClickTableViewCell"
         :hover-style="{ background: 'none' }"
         data-testid="property-value"
-        style="position: relative; width: 100%; display: block; font-size: 14px; overflow: clip;border-right: none; white-space: normal; min-height: 32px; padding: 6px 8px; border-radius: unset; align-items: unset; justify-content: unset;"
+        style="flex-shrink: unset; position: relative; width: 100%; display: block; font-size: 14px; overflow: clip;border-right: none; white-space: normal; min-height: 32px; padding: 6px 8px; border-radius: unset; align-items: unset; justify-content: unset;"
     >
         <div v-if="props.propertyId === 'title' && props.displayOpenBtn"
             style="display: flex; justify-content: end; position: absolute; top: 4px; right: 0px; left: 0px; z-index: 2; margin: 0px 6px; pointer-events: none;"
@@ -13,7 +13,7 @@
                     <base-button
                         :hover-style="{background: 'rgb(239, 239, 238)'}"
                         :default-style="{background: 'white'}"
-                        style="font-weight: 500; white-space: nowrap; border-radius: 4px; height: 24px; padding-left: 6px; padding-right: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: rgba(15, 15, 15, 0.1); font-size: 12px; line-height: 1.2; color: rgba(55, 53, 47, 0.65); fill: rgba(55, 53, 47, 0.65); box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 26, 15, 0.1) 0px 2px 4px;"
+                        style="flex-shrink: 1; font-weight: 500; white-space: nowrap; border-radius: 4px; height: 24px; padding-left: 6px; padding-right: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: rgba(15, 15, 15, 0.1); font-size: 12px; line-height: 1.2; color: rgba(55, 53, 47, 0.65); fill: rgba(55, 53, 47, 0.65); box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 26, 15, 0.1) 0px 2px 4px;"
                         @click.stop="emits('open_record')"
                     >   
                         Open

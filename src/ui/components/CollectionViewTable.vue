@@ -11,21 +11,19 @@
             >
                 <div style="position: sticky; left: 0px; z-index: 83;">
                     <div style="background: white; border-bottom: rgb(233, 233, 231); height: 100%; opacity: 0; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
-                        <label style="height: 100%; margin-right: -8px; align-items: flex-start; justify-content: center; display: flex; cursor: pointer; z-index: 1; opacity: 0; padding-left: 0px; padding-right: 0px; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
+                        <label style="height: 100%; align-items: flex-start; justify-content: center; display: flex; cursor: pointer; z-index: 1; opacity: 0; padding-left: 0px; padding-right: 0px; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
                             <div style="width: 32px; height: 31px; display: flex; justify-content: center; align-items: center; padding-right: 0px;">
                                 <input type="checkbox"
                                     style="width: 14px; height: 14px; cursor: pointer; position: relative; right: 2px;"
                                 >
                             </div>
                         </label>
-                        
-                        <div style="position: absolute; top: 0px; right: -3px; width: 3px; height: 100%; background: linear-gradient(to right, rgba(135, 131, 120, 0.15), rgba(135, 131, 120, 0.1), transparent); opacity: 0; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"></div>
                     </div>
                 </div>
 
                 <div style="display: inline-flex; margin: 0px;">
                     <div 
-                        v-for="propertyObject in collectionViewPropertiesRecordValueInStore"
+                        v-for="(propertyObject) in collectionViewPropertiesRecordValueInStore"
                         :key="propertyObject.property"
                         style="display: flex; flex-direction: row;"
                     >
@@ -91,66 +89,71 @@
                     </div>
                 </div>
 
-                <div 
-                    v-for="(pageId, rowIndex) in collectionViewPagesRecordValueInStore"
+                <template
+                    v-for="(pageId, rowIndex) in props.itemsIds"
                     :key="pageId"
-                    :data-block-id="pageId" 
-                    class="xdoc-selectable xdoc-page-block xdoc-collection-item"
-                    style="display: flex; height: calc(100% + 2px); border-bottom: 1px solid rgb(233, 233, 231);"
                 >
-                    <base-data-provider
-                        :block-id="pageId"
-                        table="block"
-                        space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
-                        v-slot="{ recordValueDeferInStore }"
+                    <div 
+                        :data-block-id="pageId" 
+                        class="xdoc-selectable xdoc-page-block xdoc-collection-item"
+                        style="display: flex; height: calc(100% + 2px); border-bottom: 1px solid rgb(233, 233, 231);"
+                        :style="rowSelectStatus[pageId] ? { position: 'relative' } : {}"
                     >
-                        <div    
-                            v-if="recordValueDeferInStore" 
-                            class="xdoc-table-view-row"
-                            style="display: flex;"
-                            @mouseover="updatePointerRowIndex(rowIndex)"
-                            @mouseleave="updatePointerRowIndex(-1)"
+                        <base-data-provider
+                            :block-id="pageId"
+                            table="block"
+                            space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                            v-slot="{ recordValueDeferInStore }"
                         >
-                            <div style="display: flex;">   
-                                <div style="position: sticky; left: 0px; z-index: 85; display: flex;">
-                                    <div style="display: flex; opacity: 1; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
-                                        <div style="background: white; border-bottom: rgb(233, 233, 231); height: 100%; opacity: 0; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
-                                            <label style="height: 100%; margin-right: -8px; align-items: flex-start; justify-content: center; display: flex; cursor: pointer; z-index: 1; opacity: 0; padding-left: 0px; padding-right: 0px; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;">
-                                                <div style="height: 31px; width: 32px; display: flex; justify-content: center; align-items: center; padding-right: 0px;">
-                                                    <input type="checkbox"
-                                                        style="width: 14px; height: 14px; cursor: pointer; position: relative; right: 2px;"
-                                                    >
-                                                </div>
-                                            </label>
-        
-                                            <div style="position: absolute; top: 0px; right: -3px; width: 3px; height: 100%; background: linear-gradient(to right, rgba(135, 131, 120, 0.15), rgba(135, 131, 120, 0.1), transparent); opacity: 0; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                
+                            <collection-view-table-row
+                                v-if="recordValueDeferInStore"
+                                @table-view-row-selected="setRowSelectStatus(pageId, $event.value === true ? 2 : 3)"
+                                @mouseover="setRowSelectStatus(pageId, 1)"
+                                @mouseleave="setRowSelectStatus(pageId, 0)"
+                                :select-checkbox-opacity="rowSelectStatus[pageId] ? 1 : 0"
+                            >
                                 <collection-view-table-cell v-for="(propertyFormat, colIndex) in collectionViewPropertiesRecordValueInStore" :key="`r${rowIndex}c${colIndex}`" class="xdoc-table-view-cell"
                                     :data-row-index="rowIndex"
                                     :data-col-index="colIndex"
-                                >
+                                >    
+                                    <div v-if="colIndex === 0" style="padding-top: 4px; display: flex; margin-right: 4px;">
+                                        <base-button style="height: 24px; width: 24px;"
+                                            @click.stop="handleCollectionItemExpand(pageId, rowIndex+1)"
+                                        >
+                                            <svg v-if="rowSelectStatus[pageId] === 1"
+                                                :style="expandedItemsIds[pageId] ? { transform: 'rotateZ(180deg)' } : { transform: 'rotateZ(90deg)' }"
+                                                role="graphics-symbol" viewBox="0 0 100 100" class="triangle" style="width: 0.6875em; height: 0.6875em; display: block; fill: rgba(55, 53, 47, 0.85); flex-shrink: 0; transition: transform 200ms ease-out 0s; opacity: 1;"><polygon points="5.9,88.2 50,11.8 94.1,88.2 "></polygon></svg>
+                                        </base-button>
+                                    </div>
+
                                     <collection-view-table-property-value
                                         @open_record="handleOpenRecord(pageId)"
                                         :page-id="pageId"
                                         :collection-id="props.collectionId"
                                         :property-id="propertyFormat.property"
                                         :type="getCollectionPropertyById(propertyFormat.property).type"
-                                        :display-open-btn="pointerRowIndex === rowIndex"
+                                        :display-open-btn="rowSelectStatus[pageId] === 1"
+                                        :style="colIndex === 0 ? { 'padding-left': 0 } : {}"
+                                        style="flex-grow: 1; width: unset;"
                                     />
-                                </collection-view-table-cell>
-                            </div>
+                                </collection-view-table-cell>      
+                            </collection-view-table-row>
                             
-                            <!-- <div class="xdoc-selectable-halo"
-                                style="position: absolute; pointer-events: none; inset: 0; background: rgba(35, 131, 226, 0.14); z-index: 84; border-radius: 0px; opacity: 1; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"
-                            ></div> -->
-                        </div>
-                    </base-data-provider>
+                            <div class="xdoc-selectable-halo"
+                                v-if="rowSelectStatus[pageId] === 2"
+                                style="position: absolute; pointer-events: none; inset: 0; background: rgba(35, 131, 226, 0.14); z-index: 86; border-radius: 0px; opacity: 1; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"
+                            ></div>
+                        </base-data-provider>
+                        <div style="display: flex; justify-content: flex-start; flex-grow: 1; width: 64px;"></div>
+                    </div>
 
-                    <div style="display: flex; justify-content: flex-start; flex-grow: 1; width: 64px;"></div>
-                </div>
+                    <div
+                        :data-block-id="pageId"
+                        class="xdoc-selectable xdoc-page-block xdoc-collection-item"
+                        style="display: flex; height: calc(100% + 2px); border-bottom: 1px solid rgb(233, 233, 231);"
+                        :style="rowSelectStatus[pageId] ? { position: 'relative' } : {}"
+                    ></div>
+                </template>
             </div>
 
 
@@ -159,7 +162,7 @@
             <base-button
                 @click.stop="handleAddNewRecord"
                 :hover-style="{'background': 'rgba(55, 53, 47, 0.08)', width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', left: 0, right: 0}"
-                :default-style="{width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', 'background': 'white', left: 0, right: 0}"
+                :default-style="{width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', 'background': 'white', left: 0, right: 0 }"
                 class="xdoc-table-view-add-row"
             >
                 <span style="display: inline-flex; position: sticky; align-items: center; left: 104px; color: rgba(55, 53, 47, 0.5);">
@@ -182,9 +185,10 @@
 </template>
 
 <script setup>
+import CollectionViewTableRow from './CollectionViewTableRow.vue';
 import BaseDataProvider from './BaseDataProvider.vue';
 import BaseButton from './BaseButton.vue';
-import { computed, defineProps, ref } from 'vue';
+import { computed, defineProps, defineEmits, ref } from 'vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import CollectionViewTableCell from './CollectionViewTableCell.vue';
 import CollectionViewTablePropertyValue from './CollectionViewTablePropertyValue.vue';
@@ -194,6 +198,11 @@ import uuid from '@/helpers/globals/uuid';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import { CollectionView } from '@/entities/CollectionView';
 
+const emits = defineEmits([
+    "add-items",
+    "remove-items"
+]);
+
 const props = defineProps({
     collectionId: {
         type: String,
@@ -201,6 +210,10 @@ const props = defineProps({
     },
     collectionViewId: {
         type: String,
+        required: true
+    },
+    itemsIds: {
+        type: Array,
         required: true
     }
 })
@@ -241,11 +254,20 @@ const collectionViewPagesRecordValueInStore = computed(function() {
     )?.page_sort
 })
 
+function emitAddItems(ids, index = null) {
+    emits("add-items", {
+        ids,
+        index
+    });
+}
+
 function handleAddNewRecord() {
+    const id = transformToStandardUUIDFormat(uuid());
+    
     listAfterUsecase(
         {
             after: collectionViewPagesRecordValueInStore.value[collectionViewPagesRecordValueInStore.value.length-1],
-            id: transformToStandardUUIDFormat(uuid())
+            id
         },
         ['page_sort'],
         {
@@ -253,18 +275,49 @@ function handleAddNewRecord() {
             table: "collection_view",
             spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
         }
-    )
+    );
+
+        
+    emitAddItems([id]);
 }
 
-/** open button */
-const pointerRowIndex = ref(0);
+
+// 1-hover 2-selected 3-unselect
+const rowSelectStatus = ref({});
 const router = useRouter();
 
-function updatePointerRowIndex(rowIndex) {
-    pointerRowIndex.value = rowIndex;
+function setRowSelectStatus(pageId, status) {
+    if (rowSelectStatus.value[pageId] === 2) {
+        if (status === 0 || status === 1) return;
+    }
+    rowSelectStatus.value[pageId] = status;
 }
 
 function handleOpenRecord(pageId) {
     router.push({ query: { p: pageId.replaceAll("-", ""), pm: 's' } });
+}
+
+const expandedItemsIds = ref({});
+
+function handleCollectionItemExpand(pageId, index) {
+    const subItemsIds = recordValuesStore.getRecordValue(
+        pageId,
+        "block",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    ).content;
+
+
+    if (expandedItemsIds.value[pageId]) {
+        expandedItemsIds.value[pageId] = false;
+        emits("remove-items", subItemsIds.length >= 0 ? subItemsIds : []);
+        return;
+    }
+
+    expandedItemsIds.value[pageId] = true;
+
+    emits("add-items", {
+        ids: subItemsIds.length >= 0 ? subItemsIds : [],
+        index
+    });
 }
 </script>
