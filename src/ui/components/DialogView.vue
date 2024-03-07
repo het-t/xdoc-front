@@ -41,11 +41,14 @@ const pos = ref({});
 const dialog = ref();
 
 onMounted(() => {
-    const adjustment = window.innerHeight - generalStore.dialog.top - dialog.value.getBoundingClientRect().height - 36;
-    
+    const { height: dialogHeight, width: dialogWidth } = dialog.value.getBoundingClientRect();
+
+    const adjustmentY = window.innerHeight - generalStore.dialog.top - dialogHeight - 36;
+    const adjustmentX = window.innerWidth - generalStore.dialog.left - dialogWidth - 36;
+
     pos.value = {
-        top: adjustment < 0 ? generalStore.dialog.top + adjustment : generalStore.dialog.top,
-        left: generalStore.dialog.left
+        top: adjustmentY < 0 ? generalStore.dialog.top + adjustmentY : generalStore.dialog.top,
+        left: adjustmentX < 0 ? generalStore.dialog.left + adjustmentX : generalStore.dialog.left
     };
 })
 </script>
