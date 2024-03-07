@@ -153,7 +153,7 @@
                                 v-if="currentCollectionViewRecordValueInStore.type === 'table'"  
                                 @add-items="addRecordInItemsList($event)"
                                 @remove-items="removeItems"
-                                :items-ids="collectionItemsIds"
+                                :items="collectionItems"
                                 :collection-id="collectionId"
                                 :collection-view-id="currentCollectionViewId"
                             ></collection-view-table>
@@ -210,11 +210,16 @@ const collectionViewPageRecordValue = recordValuesStore.getRecordValue(
 const collectionId = collectionViewPageRecordValue.collection_id;
 
 const isQueryCollectionRequestComplete = ref(false);
-const collectionItemsIds = ref([]);
+const collectionItems = ref([]);
 
 onMounted(async function() {
     const queryCollectionResults = await useTransactionsQueue().performQueryCollection(collectionId);
-    collectionItemsIds.value = queryCollectionResults.result.reducerResults.collection_group_results.blockIds;
+    collectionItems.value = queryCollectionResults.result.reducerResults.collection_group_results.blockIds.map((id) => {
+        return {
+            id,
+            nestingLevel: 0
+        }
+    });
 
     isQueryCollectionRequestComplete.value = true;
 });
@@ -255,24 +260,24 @@ function setSideMenuHeight() {
 //
 
 // functionality to handle new record in collection
-function addRecordInItemsList({ids, index = null}) {
+function addRecordInItemsList({items, index = null}) {
     if (index === null || index === undefined) {
-        collectionItemsIds.value.push(...ids);
+        collectionItems.value.push(...items);
         return;
     }
 
-    const before = collectionItemsIds.value.slice(0, index);
-    const after = collectionItemsIds.value.slice(index);
+    const before = collectionItems.value.slice(0, index);
+    const after = collectionItems.value.slice(index);
 
-    collectionItemsIds.value = [
+    collectionItems.value = [
         ...before,
-        ...ids,
+        ...items,
         ...after
     ];
 }
 
 function removeItems(ids) {
-    collectionItemsIds.value = [...collectionItemsIds.value.filter((id) => {
+    collectionItems.value = [...collectionItems.value.filter(({id}) => {
         if (ids.indexOf(id) === -1) return true;
         return false;
     })];

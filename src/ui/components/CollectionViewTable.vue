@@ -90,7 +90,7 @@
                 </div>
 
                 <template
-                    v-for="(pageId, rowIndex) in props.itemsIds"
+                    v-for="({id: pageId, nestingLevel}, rowIndex) in props.items"
                     :key="pageId"
                 >
                     <div 
@@ -117,8 +117,11 @@
                                     :data-col-index="colIndex"
                                 >    
                                     <div v-if="colIndex === 0" style="padding-top: 4px; display: flex; margin-right: 4px;">
+                                        <div v-if="nestingLevel > 0"
+                                            :style="{ width: `${nestingLevel*28}px`}"    
+                                        ></div>
                                         <base-button style="height: 24px; width: 24px;"
-                                            @click.stop="handleCollectionItemExpand(pageId, rowIndex+1)"
+                                            @click.stop="handleCollectionItemExpand(pageId, rowIndex+1, nestingLevel+1)"
                                         >
                                             <svg v-if="rowSelectStatus[pageId] === 1"
                                                 :style="expandedItemsIds[pageId] ? { transform: 'rotateZ(180deg)' } : { transform: 'rotateZ(90deg)' }"
@@ -212,7 +215,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    itemsIds: {
+    items: {
         type: Array,
         required: true
     }
@@ -254,9 +257,9 @@ const collectionViewPagesRecordValueInStore = computed(function() {
     )?.page_sort
 })
 
-function emitAddItems(ids, index = null) {
+function emitAddItems(items, index = null) {
     emits("add-items", {
-        ids,
+        items,
         index
     });
 }
@@ -278,7 +281,7 @@ function handleAddNewRecord() {
     );
 
         
-    emitAddItems([id]);
+    emitAddItems([{ id, nestingLevel: 0 }]);
 }
 
 
@@ -299,13 +302,12 @@ function handleOpenRecord(pageId) {
 
 const expandedItemsIds = ref({});
 
-function handleCollectionItemExpand(pageId, index) {
+function handleCollectionItemExpand(pageId, index, nestingLevel) {
     const subItemsIds = recordValuesStore.getRecordValue(
         pageId,
         "block",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
     ).content;
-
 
     if (expandedItemsIds.value[pageId]) {
         expandedItemsIds.value[pageId] = false;
@@ -315,9 +317,16 @@ function handleCollectionItemExpand(pageId, index) {
 
     expandedItemsIds.value[pageId] = true;
 
-    emits("add-items", {
-        ids: subItemsIds.length >= 0 ? subItemsIds : [],
-        index
+    const subItems = subItemsIds.map((id) => {
+        return {
+            id,
+            nestingLevel
+        }
     });
+
+    emitAddItems(
+        subItems.length >= 0 ? subItems : [],
+        index
+    );
 }
 </script>
