@@ -8,9 +8,8 @@
                     style="z-index: 1; display: flex; align-items: flex-start; cursor: text; flex-wrap: wrap; padding: 8px 9px 1px; overflow: auto; background: rgba(242, 241, 238, 0.6); width: 100%; min-height: 34px; font-size: 14px; margin-right: 0px; margin-bottom: 0px;"
                 >
                     <page-property-status-value
-                        v-for="status in porpertyValue"
-                        :key="status"
-                        :status="status"
+                        :key="propertyValueParsed[0].id"
+                        :status="propertyValueParsed[0]"
                     />
                 </div>
             </div>
@@ -30,6 +29,7 @@
                     >{{ group.name }}</div>
                     
                     <base-menu-item v-for="(optionId) in group.optionIds"
+                        @click.stop="handleStatusSelect(optionId)"
                         :key="optionId"
                     >
                         <div style="display: flex; align-items: center; line-height: 120%; width: 100%; user-select: none; min-height: 28px; font-size: 14px;">
@@ -53,8 +53,13 @@
 <script setup>
 import BaseMenuItem from './BaseMenuItem.vue';
 import PagePropertyStatusValue from './PagePropertyStatusValue.vue';
-import { useRecordValuesStore } from '@/stores/recordValues';
-import { computed, defineProps } from 'vue';
+import { defineProps, defineEmits, toRef, ref } from 'vue';
+import { usePropertyData } from "@/ui/composables/usePropertyData";
+import { parseCommaSeparatedPropertyValues } from "@/helpers/globals/parseCommaSeparatedPropertyValues";
+
+const emits = defineEmits([
+    "value-change"
+]);
 
 const props = defineProps({
     pageId: {
@@ -75,23 +80,28 @@ const props = defineProps({
     }
 })
 
-const recordValuesStore = useRecordValuesStore();
+const { propertyValue = "", property } = usePropertyData(
+    toRef(() => props),
+    () => {}
+);
 
-const porpertyValue = computed(function() {
-    return recordValuesStore.getRecordValue(
-        props.pageId,
-        "block",
-        props.spaceId
-    )?.properties?.[props.propertyId];
-})
+const propertyValueParsed = ref([]);
 
-const property = recordValuesStore.getRecordValue(
-    props.collectionId,
-    "collection",
-    props.spaceId
-).schema[props.propertyId];
+parseCommaSeparatedPropertyValues(
+    "status",
+    propertyValueParsed,
+    property,
+    propertyValue
+);
 
 function getOptionById(_id) {
     return property.options.find(({id}) => id === _id);
+}
+
+function handleStatusSelect(optionId) {
+    emits("value-change", {
+        value: [[getOptionById(optionId).value]],
+        dialogShow: false
+    });
 }
 </script>

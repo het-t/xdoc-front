@@ -52,7 +52,7 @@
                             <div style="margin-right: 6px; margin-left: 12px; min-width: 0px; flex: 1 1 auto;">
                                 <div style="display: flex; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     <page-property-status-value 
-                                        :status="getOptionById(optionId)"
+                                        :status="getOptionValueById(optionId)"
                                         :group-color="group.color"
                                     />
                                 </div>
@@ -99,7 +99,7 @@ const property = recordValuesStore.getRecordValue(
     props.spaceId
 ).schema[props.propertyId];
 
-function getOptionById(optionId) {
-    return property.options.find(({id}) => id === optionId);
+function getOptionValueById(optionId) {
+    return property.options.find(({id}) => id === optionId).value;
 }
 </script>

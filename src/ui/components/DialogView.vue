@@ -28,8 +28,24 @@
 
 <script setup>
 import { useGeneralStore } from '@/stores/general';
-import { ref, onMounted } from "vue";
- 
+import { ref, onMounted, watch, defineProps } from "vue";
+
+const props = defineProps({
+    show: {
+        type: Boolean,
+        default: true
+    }
+})
+
+watch(
+    () => props.show,
+    (value) => {
+        if(value === false) {
+            handleClickOutside();
+        }
+    }
+)
+
 const generalStore = useGeneralStore();
 
 function handleClickOutside() {

@@ -28,7 +28,7 @@ const props = defineProps({
     },
     groupColor: {
         type: String,
-        required: true
+        default: ""
     }
 })
 

@@ -8,14 +8,14 @@
             contenteditable="true"
             style="width: 100%; height: 100%; white-space: pre-wrap; word-break: break-word; caret-color: rgb(55, 53, 47);"
         >
-            {{ propertyValueInStore }}
+            {{ propertyValue }}
         </div>
     </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, onBeforeUnmount } from 'vue';
-import { useRecordValuesStore } from '@/stores/recordValues';
+import { defineProps, defineEmits, ref, toRef } from 'vue';
+import { usePropertyData } from "@/ui/composables/usePropertyData";
 
 const emits = defineEmits([
     "value-change"
@@ -26,23 +26,26 @@ const props = defineProps({
         type: String,
         required: true
     },
+    propertyId: {
+        type: String,
+        default: "title"
+    },
     collectionId: {
         type: String,
         required: true
+    },
+    spaceId: {
+        type: String,
+        required: true
     }
-})
-
-const recordValuesStore = useRecordValuesStore();
-
-let propertyValueInStore = recordValuesStore.getRecordValue(
-    props.pageId,
-    "block",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-).properties?.['title']?.[0]?.[0]
+});
 
 const propertyValueDialog = ref(null);
 
-onBeforeUnmount(() => {
-    emits('value-change', [[propertyValueDialog.value.innerText]]);
-});
+const { propertyValue } = usePropertyData(
+    toRef(() => props),
+    () => emits("value-change", {
+        value: [[propertyValueDialog.value.innerText]]
+    })
+);
 </script>

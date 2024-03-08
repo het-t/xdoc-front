@@ -130,12 +130,13 @@
                                     </div>
 
                                     <collection-view-table-property-value
-                                        @open_record="handleOpenRecord(pageId)"
+                                        @open-record="handleOpenRecord(pageId)"
                                         :page-id="pageId"
                                         :collection-id="props.collectionId"
                                         :property-id="propertyFormat.property"
                                         :type="getCollectionPropertyById(propertyFormat.property).type"
                                         :display-open-btn="rowSelectStatus[pageId] === 1"
+                                        space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                                         :style="colIndex === 0 ? { 'padding-left': 0 } : {}"
                                         style="flex-grow: 1; width: unset;"
                                         :key="pageId === dialogPropertyValue.pageId && propertyFormat.property === dialogPropertyValue.propertyId 
@@ -329,7 +330,7 @@ function handleCollectionItemExpand(pageId, index, nestingLevel) {
         pageId,
         "block",
         "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    ).content;
+    )?.content || [];
 
     if (expandedItemsIds.value[pageId]) {
         expandedItemsIds.value[pageId] = false;

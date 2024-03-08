@@ -1,12 +1,14 @@
 <template>
-    <dialog-view>
+    <dialog-view :show="showDialogView">
         <div style="display: flex; flex-direction: column; overflow-y: auto; flex-grow: 1; height: 100%;">
             <dialog-page-property-multiselect 
                 v-if="propertyType === 'multi_select' || propertyType === 'select'"
+                @value-change="handlePropertyValueChange"
                 :multiselect="propertyType === 'multi_select' ? true : false"
                 :page-id="props.pageId"
                 :property-id="props.propertyId"
                 :collection-id="props.collectionId"
+                :space-id="props.spaceId"
             />
 
             <dialog-page-property-relation
@@ -18,10 +20,11 @@
 
             <dialog-page-property-status
                 v-else-if="propertyType === 'status'"
+                @value-change="handlePropertyValueChange"
                 :page-id="props.pageId"
                 :property-id="props.propertyId"
                 :collection-id="props.collectionId"
-                space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                :space-id="props.spaceId"
             />
 
             <dialog-page-property-person
@@ -36,6 +39,7 @@
                 @value-change="handlePropertyValueChange"
                 :page-id="props.pageId"
                 :collection-id="props.collectionId"
+                :space-id="props.spaceId"
             />
         </div>
     </dialog-view>
@@ -50,7 +54,7 @@ import DialogPagePropertyRelation from './DialogPagePropertyRelation.vue';
 import DialogPagePropertyStatus from './DialogPagePropertyStatus.vue';
 import DialogPagePropertyPerson from './DialogPagePropertyPerson.vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
-import { defineProps } from 'vue';
+import { defineProps, ref } from 'vue';
 import { set as setUsecase } from '@/usecases/set';
 import { useGeneralStore } from '@/stores/general';
 
@@ -66,6 +70,10 @@ const props = defineProps({
     pageId: {
         type: String,
         required: true
+    },
+    spaceId: {
+        type: String,
+        default: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
     }
 })
 
@@ -75,19 +83,20 @@ const propertyType = Collection.prototype.getPropertyById.call(
     recordValuesStore.getRecordValue(
         props.collectionId,
         "collection",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        props.spaceId
     ),
     ...[props.propertyId]
 ).type;
 
-function handlePropertyValueChange(value) {
+const showDialogView = ref(true);
+function handlePropertyValueChange({value, dialogShow=true}) {
     setUsecase(
         value,
         ['properties', props.propertyId],
         {
             table: "block",
             id: props.pageId,
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+            spaceId: props.spaceId
         }
     );
 
@@ -95,5 +104,7 @@ function handlePropertyValueChange(value) {
         pageId: props.pageId,
         propertyId: props.propertyId
     };
+
+    showDialogView.value = dialogShow;
 }
 </script>

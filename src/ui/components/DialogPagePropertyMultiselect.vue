@@ -8,9 +8,9 @@
             >
                 <page-property-tag-value
                     style="padding-left: 6px; padding-right: 0px; margin: 0px 6px 6px 0px;"
-                    v-for="option in propertyValue"
+                    v-for="option in propertyValueParsed"
                     :tag=option
-                    :key="option.id"
+                    :key="option.value"
                 >
                     <base-button
                         :hover-style="{ fill: 'rgb(55, 53, 47, 0.8)' }"
@@ -48,6 +48,7 @@
                         <div role="menuitem" tabindex="-1" style="user-select: none; margin-right: 4px; margin-left: 4px; width: calc(100% - 8px); cursor: pointer; border-radius: 4px; transition: background 20ms ease-in 0s;">
                             <div style="display: flex; align-items: center; user-select: none; font-size: 14px; min-height: 28px;"
                                 v-for="option in filteredOptions"
+                                @click.stop="handleOptionSelect(option.id)"
                                 :key="option.id"
                             >
                                 <div style="display: flex; align-items: center; justify-content: center; width: 18px; height: 24px; flex-shrink: 0; cursor: -webkit-grab; margin-left: 8px; margin-right: -4px;">
@@ -72,15 +73,19 @@
             </div>
         </div>
     </div>
-
     <footer style="flex-shrink: 0;"></footer>
 </template>
 
 <script setup>
-import { useRecordValuesStore } from '@/stores/recordValues';
 import PagePropertyTagValue from './PagePropertyTagValue.vue';
 import BaseButton from './BaseButton.vue';
-import { computed, defineProps, ref } from 'vue';
+import { computed, defineProps, ref, toRef, defineEmits } from 'vue';
+import { usePropertyData } from '../composables/usePropertyData';
+import { parseCommaSeparatedPropertyValues } from '@/helpers/globals/parseCommaSeparatedPropertyValues';
+
+const emits = defineEmits([
+    "value-change"
+]);
 
 const props = defineProps({
     multiselect: {
@@ -98,31 +103,51 @@ const props = defineProps({
     pageId: {
         type: String,
         required: true
+    },
+    spaceId: {
+        type: String,
+        required: true
     }
 })
 
-const recordValuesStore = useRecordValuesStore();
-
-const pageParentCollectionRecordValueInStore = recordValuesStore.getRecordValue(
-    props.collectionId,
-    "collection",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+const { property, propertyValue } = usePropertyData(
+    toRef(() => props),
+    () => {}
 );
 
-const propertyOptions = pageParentCollectionRecordValueInStore?.schema[props.propertyId].options;
+const propertyValueParsed = ref([]);
 
-const propertyValue = recordValuesStore.getRecordValue(
-    props.pageId,
-    "block",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-).properties?.[props.propertyId]?.[0]?.map(optionValue => {
-    return propertyOptions.find(option => option.value === optionValue);
-});
+parseCommaSeparatedPropertyValues(
+    props.multiselect ? "multiselect" : "select",
+    propertyValueParsed,
+    property,
+    propertyValue
+);
+
+function getOptionById(_id) {
+    return property.options.find(({id}) => id === _id);
+}
+
+function handleOptionSelect(optionId) {
+    const option = getOptionById(optionId);
+    if(props.multiselect) {
+        propertyValueParsed.value.push(option);
+    }
+    else {
+        propertyValueParsed.value = [option]
+    }
+
+    const commaSeparatedValue = propertyValueParsed.value.map(({value}) => value).join(",");
+
+    emits("value-change", {
+        value: [[commaSeparatedValue]],
+        dialogShow: props.multiselect
+    })
+}
 
 const filterOptionString = ref("");
-
 const filteredOptions = computed(function() {
-    if (!filterOptionString.value) return [...propertyOptions];
-    return [...propertyOptions.filter(option => option.value.toLowerCase().indexOf(filterOptionString.value?.toLowerCase()) !== -1)];
+    if (!filterOptionString.value) return [...property.options];
+    return [...property.options.filter(option => option.value.toLowerCase().indexOf(filterOptionString.value?.toLowerCase()) !== -1)];
 })
 </script>
