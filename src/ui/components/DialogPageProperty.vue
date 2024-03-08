@@ -10,14 +10,14 @@
             />
 
             <dialog-page-property-relation
-                v-if="propertyType === 'relation'"
+                v-else-if="propertyType === 'relation'"
                 :page-id="props.pageId"
                 :property-id="props.propertyId"
                 :collection-id="props.collectionId"
             />
 
             <dialog-page-property-status
-                v-if="propertyType === 'status'"
+                v-else-if="propertyType === 'status'"
                 :page-id="props.pageId"
                 :property-id="props.propertyId"
                 :collection-id="props.collectionId"
@@ -25,23 +25,18 @@
             />
 
             <dialog-page-property-person
-                v-if="propertyType === 'person'"
+                v-else-if="propertyType === 'person'"
                 :page-id="props.pageId"
                 :property-id="props.propertyId"
                 :collection-id="props.collectionId"
             />
 
-            <div v-else style="padding: 6px 9px; font-size: 14px; min-height: 34px; display: flex; height: 100%; flex-direction: column; justify-content: space-between; flex-grow: 1; font-weight: 500;">
-                <div 
-                    class="notranslate"
-                    spellcheck="true"
-                    data-content-editable-leaf="true"
-                    contenteditable="true"
-                    style="width: 100%; height: 100%; white-space: pre-wrap; word-break: break-word; caret-color: rgb(55, 53, 47);"
-                >
-                    {{ props.propertyId }}
-                </div>
-            </div>
+            <dialog-page-property-title 
+                v-else-if="propertyType === 'title'"
+                @value-change="handlePropertyValueChange"
+                :page-id="props.pageId"
+                :collection-id="props.collectionId"
+            />
         </div>
     </dialog-view>
 </template>
@@ -49,12 +44,15 @@
 <script setup>
 import { Collection } from '@/entities/Collection';
 import DialogView from './DialogView.vue';
+import DialogPagePropertyTitle from "./DialogPagePropertyTitle.vue";
 import DialogPagePropertyMultiselect from './DialogPagePropertyMultiselect.vue';
 import DialogPagePropertyRelation from './DialogPagePropertyRelation.vue';
 import DialogPagePropertyStatus from './DialogPagePropertyStatus.vue';
 import DialogPagePropertyPerson from './DialogPagePropertyPerson.vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { defineProps } from 'vue';
+import { set as setUsecase } from '@/usecases/set';
+import { useGeneralStore } from '@/stores/general';
 
 const props = defineProps({
     propertyId: {
@@ -81,4 +79,21 @@ const propertyType = Collection.prototype.getPropertyById.call(
     ),
     ...[props.propertyId]
 ).type;
+
+function handlePropertyValueChange(value) {
+    setUsecase(
+        value,
+        ['properties', props.propertyId],
+        {
+            table: "block",
+            id: props.pageId,
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        }
+    );
+
+    useGeneralStore().propertyValueDialog = {
+        pageId: props.pageId,
+        propertyId: props.propertyId
+    };
+}
 </script>

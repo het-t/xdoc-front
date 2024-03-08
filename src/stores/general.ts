@@ -11,6 +11,11 @@ export const useGeneralStore = defineStore("generalStore", () => {
     const component = ref("");
     const props = ref(Object());
 
+    const propertyValueDialog = ref({
+        pageId: null,
+        propertyId: null
+    });
+
     function setCurrentComponentInDefaultOverlay(
         _component: string, 
         _props: object
@@ -31,6 +36,7 @@ export const useGeneralStore = defineStore("generalStore", () => {
         props,
         setCurrentComponentInDefaultOverlay,
         getCurrentComponentAndProps,
-        dialog
+        dialog,
+        propertyValueDialog
     }
 })

@@ -54,7 +54,7 @@ import PagePropertyStatusValue from './PagePropertyStatusValue.vue';
 import PagePropertyTagValue from './PagePropertyTagValue.vue';
 import PagePropertyPersonValue from "./PagePropertyPersonValue.vue";
 import { useRecordValuesStore } from '@/stores/recordValues';
-import { computed, defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import { handlePropertyValueOverlay } from '@/helpers/globals/handlePropertyValueOverlay';
 
 const emits = defineEmits([
@@ -86,13 +86,11 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const propertyValueRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        props.pageId,
-        "block",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.properties?.[props.propertyId]
-})
+const propertyValueRecordValueInStore = recordValuesStore.getRecordValue(
+    props.pageId,
+    "block",
+    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+)?.properties?.[props.propertyId];
 
 function handleClickTableViewCell(e) {    
     const cellElement = e.target.closest(".xdoc-table-view-cell");

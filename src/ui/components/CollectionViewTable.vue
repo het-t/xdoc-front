@@ -138,6 +138,10 @@
                                         :display-open-btn="rowSelectStatus[pageId] === 1"
                                         :style="colIndex === 0 ? { 'padding-left': 0 } : {}"
                                         style="flex-grow: 1; width: unset;"
+                                        :key="pageId === dialogPropertyValue.pageId && propertyFormat.property === dialogPropertyValue.propertyId 
+                                            ? handlePropertyValueRerender(1) 
+                                            : handlePropertyValueRerender(0)
+                                        "
                                     />
                                 </collection-view-table-cell>      
                             </collection-view-table-row>
@@ -200,6 +204,7 @@ import { listAfter as listAfterUsecase } from "@/usecases/listAfter";
 import uuid from '@/helpers/globals/uuid';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import { CollectionView } from '@/entities/CollectionView';
+import { useGeneralStore } from '@/stores/general';
 
 const emits = defineEmits([
     "add-items",
@@ -248,6 +253,23 @@ const collectionViewPropertiesRecordValueInStore = computed(function() {
         return collectionPropertyIds.indexOf(property) !== -1;
     });
 })
+
+const dialogPropertyValue = computed(function () {
+    return useGeneralStore().propertyValueDialog;
+});
+
+function handlePropertyValueRerender(needRerender) {
+    if(needRerender === 1) {
+        const generalStore = useGeneralStore();
+
+        generalStore.propertyValueDialog = {
+            pageId: null,
+            propertyId: null
+        }
+    }
+
+    return needRerender;
+}
 
 const collectionViewPagesRecordValueInStore = computed(function() {
     return recordValuesStore.getRecordValue(
