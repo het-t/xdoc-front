@@ -93,73 +93,88 @@
                     v-for="({id: pageId, nestingLevel}, rowIndex) in props.items"
                     :key="pageId"
                 >
-                    <div 
-                        :data-block-id="pageId" 
-                        class="xdoc-selectable xdoc-page-block xdoc-collection-item"
-                        style="display: flex; height: calc(100% + 2px); border-bottom: 1px solid rgb(233, 233, 231);"
-                        :style="rowSelectStatus[pageId] ? { position: 'relative' } : {}"
+                    <base-button v-if="pageId == 'btn'"
+                        @click.stop="handleAddNewItem(rowIndex, nestingLevel)"
+                        :hover-style="{'background': 'rgba(55, 53, 47, 0.08)', width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', left: 0, right: 0}"
+                        :default-style="{ width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', 'background': 'white', left: 0, right: 0 }"
+                        :style="{paddingLeft: `${56+nestingLevel*28}px`, borderBottom: '1px solid rgb(233, 233, 231)'}"
+                        class="xdoc-table-view-add-row"
                     >
-                        <base-data-provider
-                            :block-id="pageId"
-                            table="block"
-                            space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
-                            v-slot="{ recordValueDeferInStore }"
+                        <span style="display: inline-flex; position: sticky; align-items: center; left: 104px; color: rgba(55, 53, 47, 0.5);">
+                            <svg role="graphics-symbol" viewBox="0 0 16 16" class="plus" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.35); flex-shrink: 0; margin-left: -1px; margin-right: 6px;"><path d="M7.977 14.963c.407 0 .747-.324.747-.723V8.72h5.362c.399 0 .74-.34.74-.747a.746.746 0 00-.74-.738H8.724V1.706c0-.398-.34-.722-.747-.722a.732.732 0 00-.739.722v5.529h-5.37a.746.746 0 00-.74.738c0 .407.341.747.74.747h5.37v5.52c0 .399.332.723.739.723z"></path></svg>
+                            New sub-item
+                        </span>
+                    </base-button>
+
+                    <template v-else>
+                        <div 
+                            :data-block-id="pageId" 
+                            class="xdoc-selectable xdoc-page-block xdoc-collection-item"
+                            style="display: flex; height: calc(100% + 2px); border-bottom: 1px solid rgb(233, 233, 231);"
+                            :style="rowSelectStatus[pageId] ? { position: 'relative' } : {}"
                         >
-                            <collection-view-table-row
-                                v-if="recordValueDeferInStore"
-                                @table-view-row-selected="setRowSelectStatus(pageId, $event.value === true ? 2 : 3)"
-                                @mouseover="setRowSelectStatus(pageId, 1)"
-                                @mouseleave="setRowSelectStatus(pageId, 0)"
-                                :select-checkbox-opacity="rowSelectStatus[pageId] ? 1 : 0"
+                            <base-data-provider
+                                :block-id="pageId"
+                                table="block"
+                                space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                                v-slot="{ recordValueDeferInStore }"
                             >
-                                <collection-view-table-cell v-for="(propertyFormat, colIndex) in collectionViewPropertiesRecordValueInStore" :key="`r${rowIndex}c${colIndex}`" class="xdoc-table-view-cell"
-                                    :data-row-index="rowIndex"
-                                    :data-col-index="colIndex"
-                                >    
-                                    <div v-if="colIndex === 0" style="padding-top: 4px; display: flex; margin-right: 4px;">
-                                        <div v-if="nestingLevel > 0"
-                                            :style="{ width: `${nestingLevel*28}px`}"    
-                                        ></div>
-                                        <base-button style="height: 24px; width: 24px;"
-                                            @click.stop="handleCollectionItemExpand(pageId, rowIndex+1, nestingLevel+1)"
-                                        >
-                                            <svg v-if="rowSelectStatus[pageId] === 1"
-                                                :style="expandedItemsIds[pageId] ? { transform: 'rotateZ(180deg)' } : { transform: 'rotateZ(90deg)' }"
-                                                role="graphics-symbol" viewBox="0 0 100 100" class="triangle" style="width: 0.6875em; height: 0.6875em; display: block; fill: rgba(55, 53, 47, 0.85); flex-shrink: 0; transition: transform 200ms ease-out 0s; opacity: 1;"><polygon points="5.9,88.2 50,11.8 94.1,88.2 "></polygon></svg>
-                                        </base-button>
-                                    </div>
-
-                                    <collection-view-table-property-value
-                                        @open-record="handleOpenRecord(pageId)"
-                                        :page-id="pageId"
-                                        :collection-id="props.collectionId"
-                                        :property-id="propertyFormat.property"
-                                        :type="getCollectionPropertyById(propertyFormat.property).type"
-                                        space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
-                                        :style="colIndex === 0 ? { 'padding-left': 0 } : {}"
-                                        style="flex-grow: 1; width: unset;"
-                                        :key="pageId === dialogPropertyValue.pageId && propertyFormat.property === dialogPropertyValue.propertyId 
-                                            ? handlePropertyValueRerender(1) 
-                                            : handlePropertyValueRerender(0)
-                                        "
-                                    />
-                                </collection-view-table-cell>      
-                            </collection-view-table-row>
-                            
-                            <div class="xdoc-selectable-halo"
-                                v-if="rowSelectStatus[pageId] === 2"
-                                style="position: absolute; pointer-events: none; inset: 0; background: rgba(35, 131, 226, 0.14); z-index: 86; border-radius: 0px; opacity: 1; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"
-                            ></div>
-                        </base-data-provider>
-                        <div style="display: flex; justify-content: flex-start; flex-grow: 1; width: 64px;"></div>
-                    </div>
-
-                    <div
-                        :data-block-id="pageId"
-                        class="xdoc-selectable xdoc-page-block xdoc-collection-item"
-                        style="display: flex; height: calc(100% + 2px); border-bottom: 1px solid rgb(233, 233, 231);"
-                        :style="rowSelectStatus[pageId] ? { position: 'relative' } : {}"
-                    ></div>
+                                <collection-view-table-row
+                                    v-if="recordValueDeferInStore"
+                                    @table-view-row-selected="setRowSelectStatus(pageId, $event.value === true ? 2 : 3)"
+                                    @mouseover="setRowSelectStatus(pageId, 1)"
+                                    @mouseleave="setRowSelectStatus(pageId, 0)"
+                                    :select-checkbox-opacity="rowSelectStatus[pageId] ? 1 : 0"
+                                >
+                                    <collection-view-table-cell v-for="(propertyFormat, colIndex) in collectionViewPropertiesRecordValueInStore" :key="`r${rowIndex}c${colIndex}`" class="xdoc-table-view-cell"
+                                        :data-row-index="rowIndex"
+                                        :data-col-index="colIndex"
+                                    >    
+                                        <div v-if="colIndex === 0" style="padding-top: 4px; display: flex; margin-right: 4px;">
+                                            <div v-if="nestingLevel > 0"
+                                                :style="{ width: `${nestingLevel*28}px`}"    
+                                            ></div>
+                                            <base-button style="height: 24px; width: 24px;"
+                                                @click.stop="handleCollectionItemExpand(pageId, rowIndex+1, nestingLevel+1)"
+                                            >
+                                                <svg v-if="rowSelectStatus[pageId] === 1"
+                                                    :style="expandedItemsIds[pageId] ? { transform: 'rotateZ(180deg)' } : { transform: 'rotateZ(90deg)' }"
+                                                    role="graphics-symbol" viewBox="0 0 100 100" class="triangle" style="width: 0.6875em; height: 0.6875em; display: block; fill: rgba(55, 53, 47, 0.85); flex-shrink: 0; transition: transform 200ms ease-out 0s; opacity: 1;"><polygon points="5.9,88.2 50,11.8 94.1,88.2 "></polygon></svg>
+                                            </base-button>
+                                        </div>
+    
+                                        <collection-view-table-property-value
+                                            @open-record="handleOpenRecord(pageId)"
+                                            :page-id="pageId"
+                                            :collection-id="props.collectionId"
+                                            :property-id="propertyFormat.property"
+                                            :type="getCollectionPropertyById(propertyFormat.property).type"
+                                            space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                                            :style="colIndex === 0 ? { 'padding-left': 0 } : {}"
+                                            style="flex-grow: 1; width: unset;"
+                                            :key="pageId === dialogPropertyValue.pageId && propertyFormat.property === dialogPropertyValue.propertyId 
+                                                ? handlePropertyValueRerender(1) 
+                                                : handlePropertyValueRerender(0)
+                                            "
+                                        />
+                                    </collection-view-table-cell>      
+                                </collection-view-table-row>
+                                
+                                <div class="xdoc-selectable-halo"
+                                    v-if="rowSelectStatus[pageId] === 2"
+                                    style="position: absolute; pointer-events: none; inset: 0; background: rgba(35, 131, 226, 0.14); z-index: 86; border-radius: 0px; opacity: 1; transition-property: opacity; transition-duration: 270ms; transition-timing-function: ease;"
+                                ></div>
+                            </base-data-provider>
+                            <div style="display: flex; justify-content: flex-start; flex-grow: 1; width: 64px;"></div>
+                        </div>
+    
+                        <div
+                            :data-block-id="pageId"
+                            class="xdoc-selectable xdoc-page-block xdoc-collection-item"
+                            style="display: flex; height: calc(100% + 2px); border-bottom: 1px solid rgb(233, 233, 231);"
+                            :style="rowSelectStatus[pageId] ? { position: 'relative' } : {}"
+                        ></div>
+                    </template>
                 </template>
             </div>
 
@@ -167,7 +182,7 @@
             <div style="width: 1668px;"></div>
 
             <base-button
-                @click.stop="handleAddNewRecord"
+                @click.stop="handleAddNewItem"
                 :hover-style="{'background': 'rgba(55, 53, 47, 0.08)', width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', left: 0, right: 0}"
                 :default-style="{width: '100%', display: 'flex', 'align-items': 'center', 'justify-content': 'unset', height: '32px', 'padding-left': '8px', 'font-size': '14px', 'line-height': '20px', 'background': 'white', left: 0, right: 0 }"
                 class="xdoc-table-view-add-row"
@@ -195,7 +210,7 @@
 import CollectionViewTableRow from './CollectionViewTableRow.vue';
 import BaseDataProvider from './BaseDataProvider.vue';
 import BaseButton from './BaseButton.vue';
-import { computed, defineProps, defineEmits, ref } from 'vue';
+import { computed, defineProps, defineEmits, ref, watch } from 'vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import CollectionViewTableCell from './CollectionViewTableCell.vue';
 import CollectionViewTablePropertyValue from './CollectionViewTablePropertyValue.vue';
@@ -208,7 +223,7 @@ import { useGeneralStore } from '@/stores/general';
 
 const emits = defineEmits([
     "add-items",
-    "remove-items"
+    "collapse"
 ]);
 
 const props = defineProps({
@@ -286,7 +301,7 @@ function emitAddItems(items, index = null) {
     });
 }
 
-function handleAddNewRecord() {
+function handleAddNewItem(index = null, nestingLevel = 0) {
     const id = transformToStandardUUIDFormat(uuid());
     
     listAfterUsecase(
@@ -301,11 +316,59 @@ function handleAddNewRecord() {
             spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
         }
     );
-
         
-    emitAddItems([{ id, nestingLevel: 0 }]);
+
+    emitAddItems(
+        [{ id, nestingLevel }],
+        index
+    );
 }
 
+const expandedItemsIds = ref({});
+
+watch(
+    () => props.items,
+    (newVal) => {
+        for(let itemId in expandedItemsIds.value) {
+            if(newVal.findIndex(({id}) => id === itemId) === -1) expandedItemsIds.value[itemId] = false;
+        }
+    },
+    { deep: true}
+)
+function handleCollectionItemExpand(pageId, index, nestingLevel) {
+    const subItemsIds = recordValuesStore.getRecordValue(
+        pageId,
+        "block",
+        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    )?.content || [];
+
+    if (expandedItemsIds.value[pageId]) {
+        expandedItemsIds.value[pageId] = false;
+        emits("collapse", {
+            itemId: pageId
+        })
+        return;
+    }
+
+    expandedItemsIds.value[pageId] = true;
+
+    const subItems = subItemsIds.map((id) => {
+        return {
+            id,
+            nestingLevel
+        }
+    });
+
+    subItems.push({
+        id: "btn",
+        nestingLevel
+    });
+
+    emitAddItems(
+        subItems.length >= 0 ? subItems : [],
+        index
+    );
+}
 
 // 1-hover 2-selected 3-unselect
 const rowSelectStatus = ref({});
@@ -320,35 +383,5 @@ function setRowSelectStatus(pageId, status) {
 
 function handleOpenRecord(pageId) {
     router.push({ query: { p: pageId.replaceAll("-", ""), pm: 's' } });
-}
-
-const expandedItemsIds = ref({});
-
-function handleCollectionItemExpand(pageId, index, nestingLevel) {
-    const subItemsIds = recordValuesStore.getRecordValue(
-        pageId,
-        "block",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.content || [];
-
-    if (expandedItemsIds.value[pageId]) {
-        expandedItemsIds.value[pageId] = false;
-        emits("remove-items", subItemsIds.length >= 0 ? subItemsIds : []);
-        return;
-    }
-
-    expandedItemsIds.value[pageId] = true;
-
-    const subItems = subItemsIds.map((id) => {
-        return {
-            id,
-            nestingLevel
-        }
-    });
-
-    emitAddItems(
-        subItems.length >= 0 ? subItems : [],
-        index
-    );
 }
 </script>

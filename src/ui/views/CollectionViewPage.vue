@@ -152,7 +152,7 @@
                             <collection-view-table 
                                 v-if="currentCollectionViewRecordValueInStore.type === 'table'"  
                                 @add-items="addRecordInItemsList($event)"
-                                @remove-items="removeItems"
+                                @collapse="handleItemCollapse($event)"
                                 :items="collectionItems"
                                 :collection-id="collectionId"
                                 :collection-view-id="currentCollectionViewId"
@@ -276,11 +276,21 @@ function addRecordInItemsList({items, index = null}) {
     ];
 }
 
-function removeItems(ids) {
-    collectionItems.value = [...collectionItems.value.filter(({id}) => {
-        if (ids.indexOf(id) === -1) return true;
-        return false;
-    })];
+function handleItemCollapse({itemId}) {
+    let index = collectionItems.value.findIndex(({id}) => id === itemId);
+    if (index < 0) return;
+
+    const nestingLevel = collectionItems.value[index].nestingLevel;
+    index++;
+    let item = collectionItems.value[index];
+
+    while(item.nestingLevel > nestingLevel) {
+        if(item.nestingLevel > nestingLevel) {
+            collectionItems.value.splice(index, 1);
+        }
+        else break;
+        item = collectionItems.value[index];
+    }
 }
 
 function handleClickNew() {
