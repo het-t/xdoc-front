@@ -135,7 +135,6 @@
                                         :collection-id="props.collectionId"
                                         :property-id="propertyFormat.property"
                                         :type="getCollectionPropertyById(propertyFormat.property).type"
-                                        :display-open-btn="rowSelectStatus[pageId] === 1"
                                         space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                                         :style="colIndex === 0 ? { 'padding-left': 0 } : {}"
                                         style="flex-grow: 1; width: unset;"

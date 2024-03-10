@@ -15,6 +15,7 @@
                         :default-style="{background: 'white'}"
                         style="flex-shrink: 1; font-weight: 500; white-space: nowrap; border-radius: 4px; height: 24px; padding-left: 6px; padding-right: 6px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: rgba(15, 15, 15, 0.1); font-size: 12px; line-height: 1.2; color: rgba(55, 53, 47, 0.65); fill: rgba(55, 53, 47, 0.65); box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 26, 15, 0.1) 0px 2px 4px;"
                         @click.stop="emits('open-record')"
+                        v-if="props.type === 'title'"
                     >   
                         Open
                     </base-button>
@@ -79,10 +80,6 @@ const props = defineProps({
     type: {
         type: String,
         required: true
-    },
-    displayOpenBtn: {
-        type: Boolean,
-        default: false
     },
     spaceId: {
         type: String,
