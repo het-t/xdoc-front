@@ -1,7 +1,7 @@
 <template>
   <div id="xdoc-app">
     <div class="xdoc-app-inner xdoc-light-theme"
-      style="color: rgb(55, 53, 47); fill: currentColor; line-height: 1.5; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; -webkit-font-smoothing
+      style="color: rgb(55, 53, 47); fill: currentColor; line-height: 1.5; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; -webkit-font-smoothing:
       auto; background-color: white;"
     >
       <div style="height: 100%;">
@@ -10,7 +10,10 @@
           class="xdoc-cursor-listener"
           style="width: 100vw; height: 100%; position: relative; display: flex; flex: 1 1 0%; background: white; cursor: text;"
         >
-          <menu-left />
+          <menu-left 
+            :space-id="spaceId"
+            :space-view-id="spaceViewId"
+          />
     
           <div style="display: flex; flex-direction: column; width: 100%; overflow: hidden;">
             <menu-top />
@@ -100,6 +103,9 @@ import { transformToStandardUUIDFormat } from './helpers/router/transformToStand
 import { useGeneralStore } from '@/stores/general';
 import OptionEditView from './views/OptionEditView.vue';
 import CollectionTemplatesList from './components/CollectionTemplatesList.vue';
+
+const spaceId = "f2cf1fd1-8789-4ddd-9190-49f41966c446";
+const spaceViewId = "dbf9ee2d-ded5-4b35-b63d-de778f9dc19a";
 
 const route = useRoute();
 
@@ -191,7 +197,9 @@ const currentComponent = computed(() => generalStore.getCurrentComponentAndProps
 const currentComponentProps = computed(() => generalStore.getCurrentComponentAndProps()?.props.value);
 
 onMounted(
-  () => window.addEventListener('resize', updateDocumentInnerWidth)
+  async () => {
+    window.addEventListener('resize', updateDocumentInnerWidth);
+  }
 )
 
 onUnmounted(
