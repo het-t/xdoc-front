@@ -53,7 +53,7 @@
                                 </div>
             
                                 <span>
-                                    Settings
+                                    Settings and members
                                 </span>
                             </div>
             
@@ -132,6 +132,7 @@ import { transformToStandardUUIDFormat } from "../helpers/router/transformToStan
 import uuid from "@/helpers/globals/uuid";
 import { update } from "@/usecases/update";
 import { listBefore } from "@/usecases/listBefore";
+import { useGeneralStore } from "@/stores/general";
 
 const route = useRoute();
 const router = useRouter();
@@ -248,8 +249,14 @@ function setMenuLeftMode() {
     menuLeftStore.setMenuLeftMode(null);
 }
 
+const generalStore = useGeneralStore();
+
 function openSettings() {
-    console.log('add logic to open settings')
+    console.log('add logic to open settings');
+    generalStore.setCurrentComponentInDefaultOverlay(
+        "space_settings",
+        {}
+    )
 }
 
 onBeforeMount(async () => {

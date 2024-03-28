@@ -70,6 +70,10 @@
             :collection-view-id="currentComponentProps.collectionViewId"
             :space-id="currentComponentProps.spaceId"
           />
+
+          <space-settings 
+            v-if="currentComponent === 'space_settings'"
+          />
         </div>
       
         <base-slash-menu :pos=slashMenuPosition v-if="showSlashMenu === true"></base-slash-menu>
@@ -94,6 +98,7 @@ import MenuTop from './components/MenuTop.vue';
 import BaseSlashMenu from './components/BaseSlashMenu.vue';
 import PagePeekSide from './components/PagePeekSide.vue';
 import DialogPageProperty from './components/DialogPageProperty.vue';
+import SpaceSettings from "./components/SpaceSettings.vue";
 import { useMenuLeftStore } from '../stores/menuLeft';
 import { useTransactionsQueue } from '@/stores/transactionsQueue';
 import { useKeyStrokeStore } from '@/stores/keyStrokes';
