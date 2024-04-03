@@ -9,7 +9,7 @@
         <div style="box-shadow: rgba(15, 15, 15, 0.05) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 5px 10px, rgba(15, 15, 15, 0.2) 0 15px 40px; background: white; position: relative; z-index: 1; border-radius: 12px; width: 1150px; height: calc(100vh - 100px); max-height: 715px; max-width: calc(100vw - 100px);">
             <div style="height: 100%; display: flex; flex-direction: row;">
                 <!-- menu -->
-                <div style="width: 240px; overflow: hidden auto;">
+                <div style="width: 240px; overflow: hidden auto; flex-shrink: 0;">
                     <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding-top: 10px; padding-left: 4px; padding-right: 4px;">
                         <div style="padding-bottom: 12px; overflow-y: scroll; height: 100%;">
                             <div>
@@ -45,8 +45,8 @@
                         <div class="xdoc-scroller vertical horizontal" 
                             style="overflow: auto; padding: 36px 60px; margin: 0; z-index: 1;"
                         >
-                            <space-settings-content-my-account 
-                                v-if="state.contentComponent === 'myAccount'"
+                            <component
+                                :is="components[state['contentComponent']]"
                             />
                         </div>    
                     </div>
@@ -59,11 +59,17 @@
 <script setup>
 import { reactive } from "vue";
 import { useGeneralStore } from '@/stores/general';
-import SpaceSettingsMenuButton from "@/ui/components/SpaceSettingsMenuButton.vue";
 import SpaceSettingsContentMyAccount from "@/ui/components/SpaceSettingsContentMyAccount.vue";
+import SpaceSettingsMenuButton from "@/ui/components/SpaceSettingsMenuButton.vue";
+import SpaceSettingsContentPeople from "@/ui/components/SpaceSettingsContentPeople.vue";
+
+const components = {
+    SpaceSettingsContentMyAccount,
+    SpaceSettingsContentPeople
+}
 
 const state = reactive({
-    contentComponent: null
+    contentComponent: "SpaceSettingsContentMyAccount"
 });
 
 function closeSpaceSettings() {
@@ -73,11 +79,12 @@ function closeSpaceSettings() {
 
 const menuItems = [
     { type: "heading", value: "Account" },
-    { type: "button", value: "My account", id: "myAccount" },
+    { type: "button", value: "My account", id: "SpaceSettingsContentMyAccount" },
     { type: "separator" },
 
     { type: "heading", value: "Workspace" },
     { type: "button", value: "Members", id: "members" },
+    { type: "button", value: "People", id: "SpaceSettingsContentPeople" },
     { type: "separator" },
 ];
 </script>

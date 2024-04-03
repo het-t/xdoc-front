@@ -6,7 +6,9 @@
         :style="style + ' ' + state.style"
         v-if="props.blockId !== null && props.peekMode !== null"
     >
-        <div style="width: 100%; height: 100%;"></div>
+        <div style="width: 100%; height: 100%;"
+            @click.stop="closeSidePeek" 
+        ></div>
         
         
         <div 
@@ -43,12 +45,12 @@
                 :block-id="props.blockId"
                 space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
                 table="block"
-                v-slot="{ recordValueDeferInStore }"
+                v-slot="{ recordValueInStore }"
                 :key="props.blockId"
             >
             <!-- :peek-mode="props.peekMode"
             :style="props.peekMode === 'c' ? 'transform: translateZ(0);' : ''" -->
-                <RenderPage v-if="recordValueDeferInStore"
+                <RenderPage v-if="recordValueInStore"
                     :block-id="props.blockId"
                 />
             </base-data-provider>

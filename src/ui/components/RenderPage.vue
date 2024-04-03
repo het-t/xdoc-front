@@ -7,7 +7,8 @@
             <div></div>
         </div>
 
-        <div
+        <div 
+            @input.stop="handleInput"
             class="whenContentEditable"
             data-contenteditable-root="true" 
             style="display: flex; flex-direction: column; position: relative; align-items: center; caret-color: rgb(55, 53, 47); width: 100%; flex-grow: 1; --whenContentEditable--WebkitUserModify: read-write-plaintext-only"
@@ -99,10 +100,8 @@
                                                 font-weight: inherit;
                                                 margin: 0px;
                                             "   
-                                            :style="!pageHeadingText?.length ? 'min-height: 1em; color: rgb(55, 53, 47); -webkit-text-fill-color: rgba(55, 53, 47, 0.15); cursor: text;' : ''"
-                                        >
-                                            {{ pageHeadingText }}
-                                        </h1>
+                                        >{{ pageHeadingText }}</h1>
+                                        <!-- :style="!pageHeadingText?.length ? 'min-height: 1em; color: rgb(55, 53, 47); -webkit-text-fill-color: rgba(55, 53, 47, 0.15); cursor: text;' : ''" -->
 
                                         <div style="
                                             margin-left: 4px;
@@ -174,7 +173,7 @@
 import PageProperties from "@/ui/components/PageProperties.vue";
 import PageDiscussion from "@/ui/components/PageDiscussion.vue";
 import PageContent from "@/ui/components/PageContent.vue";
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
 import { useRecordValuesStore } from "@/stores/recordValues";
 import { syncRecordValueFromApi } from "@/helpers/globals/SyncRecordValueFromApi";
 import BaseDataProvider from "./BaseDataProvider.vue";
@@ -194,7 +193,7 @@ const pageRecordValue = recordValuesStore.getRecordValue(
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 )
 
-const pageHeadingText = pageRecordValue?.properties?.title?.[0]?.[0];
+const pageHeadingText = computed(()  => pageRecordValue?.properties?.title?.[0]?.[0]);
 
 const { 
     parent_table: pageParentTable, 
@@ -217,6 +216,10 @@ if (pageParentTable === "collection") {
             "f2cf1fd1-8789-4ddd-9190-49f41966c446"
         )
     })
+}
+
+function handleInput(e: Event) {    
+    console.log(e.target);
 }
 
 // const pageDiscussionRecordValueInStore = computed(function() {

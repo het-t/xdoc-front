@@ -30,7 +30,7 @@
     
           <page-peek-side 
             v-if="state.peekBlockId !== null && state.peekMode === 's'"
-            :block-id="transformToStandardUUIDFormat(state.peekBlockId)"
+            :block-id="state.peekBlockId ? transformToStandardUUIDFormat(state.peekBlockId) : null"
             peek-mode="s"
           />
         </div>
@@ -165,9 +165,6 @@ function updateDocumentInnerWidth() {
   , 200)
 }
 
-const qStore = useTransactionsQueue();
-qStore.setBatchSize(50);
-
 const recordValuesStore = useRecordValuesStore();
 const transactionsQueue = useTransactionsQueue();
 
@@ -175,6 +172,8 @@ function inputHandler(e) {
     const target = e.target;
     const dataBlock = target.closest("[data-block-id]");
 
+    console.log(target);
+    
     if (!dataBlock) return;
 
     const dataBlockId = dataBlock.getAttribute("data-block-id");

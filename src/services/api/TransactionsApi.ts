@@ -1,6 +1,7 @@
-import { Transaction } from "@/stores/interfaces/Transaction";
 import uuid from "@/helpers/globals/uuid";
 import makePostReq from "./makePostReq";
+import { transformToStandardUUIDFormat } from "@/ui/helpers/router/transformToStandardUUIDFormat";
+import { Transaction } from "../transactions/types/Transaction";
 
 export const TransactionApi = {
     execute: async function (
@@ -8,10 +9,9 @@ export const TransactionApi = {
     ) {
         try {
             const res = await makePostReq('/api/v1/saveTransactions', {
-                requestId: uuid(),
+                requestId: transformToStandardUUIDFormat(uuid()),
                 transactions
             });
-            console.log(res);
             return res;
         } catch (error: any) {
             throw new Error(error);

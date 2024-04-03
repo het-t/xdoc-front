@@ -1,6 +1,6 @@
 <template>
     <slot 
-        :recordValueDeferInStore="recordValueDeferInStore" 
+        :recordValueDeferInStore="recordValueInStore !== undefined" 
         :recordValueInStore="recordValueInStore"
     ></slot>
 </template>
@@ -27,30 +27,19 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const recordValueIsAvailable = recordValuesStore.getRecordValue(
+const recordValueInStore = computed(() => recordValuesStore.getRecordValue(
     props.blockId,
     props.table,
     props.spaceId
-)?.defer
+));
 
+console.log(recordValueInStore.value)
 
-if (!recordValueIsAvailable) {
+if (!recordValueInStore.value !== undefined) {
     syncRecordValueFromApi( 
         props.table,
         props.blockId,
         props.spaceId
     )
 }
-
-const recordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        props.blockId,
-        props.table,
-        props.spaceId
-    )
-});
-
-const recordValueDeferInStore = computed(function() {
-    return recordValueInStore.value?.defer
-});
 </script>

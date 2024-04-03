@@ -1,23 +1,24 @@
 import { defineStore } from "pinia";
 import { Ref, ref } from "vue";
-import { QEle } from "./interfaces/Q";
 import { queryCollection as queryCollectionRequest } from '@/services/api/queryCollection';
-import { IOperation } from "./interfaces/Operation";
 import { TransactionApi } from "@/services/api/TransactionsApi";
-import { Transaction } from "./interfaces/Transaction";
 import { SyncrecordValuesApi } from "@/services/api/SyncRecordValuesApi";
-import { SyncRecordValuesRequest } from "./interfaces/SyncRecordValuesRequest";
 import { useRecordValuesStore } from "@/stores/recordValues";
-import { Text } from "@/entities/Text";
-import { CollectionView } from "@/entities/CollectionView";
-import { CollectionViewPage } from "@/entities/CollectionViewPage";
-import { Discussion } from "@/entities/Discussion";
-import { Comment } from "@/entities/Comment";
 import { AxiosResponse } from "axios";
 import { search } from "@/services/api/search";
 import { SearchProps } from "./interfaces/SearchProps";
+import { Transaction } from "@/services/transactions/types/Transaction";
+import { SyncRecordValue } from "@/services/transactions/types/SyncRecordValue";
 
-const DELAY_DEFAULT: number = 5 * 1000;
+type SyncRecordResponse = AxiosResponse<{
+    recordMap: Record<string, object>;
+}>;
+type TransactionResponse = AxiosResponse<{
+    recordMap?: Record<string, object>;
+    error?: string
+}>;
+
+const DELAY_DEFAULT: number = 3 * 1000;
 const BATCH_SIZE_DEFAULT: number = 10;
 const MAX_WORKERS: number = 3;
 
@@ -25,52 +26,17 @@ export const useTransactionsQueue = defineStore('q', () => {
     const DELAY: Ref<number> = ref(DELAY_DEFAULT);
     const BATCH_SIZE: Ref<number> = ref(BATCH_SIZE_DEFAULT);
     const CURRENT_SET_TIMEOUTS: Ref<number> = ref(0);
-    const CURRENT_WORKERS: Ref<number> = ref(0);
     const REQUEST_TIME_OUT_MS: Ref<number> = ref(0);
     
-    const Q: QEle[] = [];
+    const transactionsQueue: Array<Transaction | SyncRecordValue> = [];
 
     function setDelay(tms: number): void {
         DELAY.value = tms;
     }
-    
-    function setBatchSize(size: number): void {
-        BATCH_SIZE.value = size;
-    }
-    
-    function enqueue(o: IOperation): void {
-        const qEle = new QEle({
-            pointer: o.pointer,
-            path: o.path,
-            command: o.command,
-            args: o.args,
-        });
-
-        Q.push(qEle);
+        
+    function enqueue(transaction: Transaction | SyncRecordValue): void {
+        transactionsQueue.push(transaction);
         dequeueAfterTimeout();
-    }
-
-    async function performTransactionsRequests(batch: object, debug: object = {}): Promise<void> {
-        await TransactionApi.execute(batch as Transaction[]);
-    }
-    
-    async function perfromSyncRecordValuesRequests(batch: Array<QEle>): Promise<void> {
-        try{
-            const recordValuesResponse: Record<"recordMap", Record<string, any>> = (await SyncrecordValuesApi.execute(new SyncRecordValuesRequest(batch))).data;
-            setRecordValuesFromRecordMap(recordValuesResponse.recordMap);
-        }
-        catch(error: any) {
-            batch.forEach(({pointer}) => {
-                setRecordValue(
-                    pointer.id,
-                    pointer.table,
-                    {
-                        defer: 0
-                    },
-                    pointer.spaceId
-                )
-            })
-        }
     }
 
     function setRecordValuesFromRecordMap(recordMap: Record<string, any>) {
@@ -80,85 +46,16 @@ export const useTransactionsQueue = defineStore('q', () => {
             for(const pointerId in tableRecordValues) {
                 const record = tableRecordValues[pointerId];
                 
-                switch(table) {
-                    case "block": {  
-                        let recordValue = record.value.value;
-                        
-                        switch(recordValue.type) {
-                            case "text": {
-                                recordValue = new Text(recordValue);
-                                break;
-                            }
-                            case "collection_view" : {
-                                recordValue = new CollectionView(recordValue);
-                                break;
-                            }
-                            case "collection_view_page" : {
-                                recordValue = new CollectionViewPage(recordValue);
-                                break;
-                            }
-                            default : {
-                                break;
-                            }
-                        }
-                        recordValue.defer = 1;
+                const  { value: { value }, spaceId } = record;
 
-                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
-                        break;
-                    }
-
-                    case "collection": {
-                        const { value: { value }, spaceId } = record;
-                        value.defer = 1;
-
-                        setRecordValue(pointerId, table, value, spaceId);
-                        break;
-                    }
-
-                    case "collection_view": {
-                        let recordValue = record.value.value;
-                        recordValue = new CollectionView(recordValue);
-                        recordValue.defer = 1;
-
-                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
-                        break;
-                    }
-
-                    case "collection_view_page": {
-                        let recordValue = record.value.value;
-                        recordValue = new CollectionViewPage(recordValue);
-                        recordValue.defer = 1;
-
-                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
-                        break;
-                    }
-
-                    case "discussion": {
-                        let recordValue = record.value.value;
-                        recordValue = new Discussion(recordValue);
-                        recordValue.defer = 1;
-                        
-                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
-                        break;
-                    }
-
-                    case "comment": {
-                        let recordValue = record.value.value;
-                        recordValue = new Comment(recordValue);
-                        recordValue.defer = 1;
-
-                        setRecordValue(pointerId, table, recordValue, recordValue.space_id);
-                        break;
-                    }
-                }
+                setRecordValue(pointerId, table, value, spaceId);
             }
         }
     }
 
     function setRecordValue(pointerId: string, table: string, recordValue: any, spaceId: string) {
         const recordValueStore = useRecordValuesStore();
-
-        // console.log(pointerId, table, recordValue, spaceId)
+        
         if (spaceId) {
             recordValueStore.setRecordValue(pointerId, table, recordValue, spaceId)
         }
@@ -178,50 +75,45 @@ export const useTransactionsQueue = defineStore('q', () => {
     }
 
     async function dequeue() {
-        if (CURRENT_WORKERS.value >= MAX_WORKERS || Q.length === 0) {
-            return;
-        }
-        CURRENT_WORKERS.value++;
-
-        const syncRecordsBatch = [];
-        const transactionsBatch = [];
-
-        let i = 0, j = 0, k = 0;
-        while(i < Q.length) {
-            if (!Q[i].args && !Q[i].command && !Q[i].path && j < BATCH_SIZE.value) {
-                syncRecordsBatch.push(Q[i]);
-                Q.splice(i, 1);
-                j += 1;
-            } 
-            else if (k <= BATCH_SIZE.value) {
-                transactionsBatch.push(Q[i]);
-                Q.splice(i, 1);
-                k += 1;
-            }
-            i += 1;
-        }
-
-
         try {
             if (REQUEST_TIME_OUT_MS.value) {
                 console.log("timeout")
             }
             else {
-                if (syncRecordsBatch.length) {
-                    await perfromSyncRecordValuesRequests(syncRecordsBatch)
-                }
+                const batch = transactionsQueue.splice(
+                    0, 
+                    Math.min(BATCH_SIZE.value, transactionsQueue.length)
+                );
 
-                if (transactionsBatch.length) {
-                    await performTransactionsRequests(transactionsBatch);
+                const transactions: Transaction[] = [];
+                const syncRecordValues: SyncRecordValue[] = [];
+
+                batch.forEach((t) => {
+                    if((t as SyncRecordValue).pointer !== undefined) {
+                        syncRecordValues.push(t as SyncRecordValue);
+                    }
+                    else {
+                        transactions.push(t as Transaction);
+                    }
+                })
+
+                if (transactions.length) {
+                    const res: TransactionResponse = await TransactionApi.execute(transactions);
+                    
+                }
+                if (syncRecordValues.length) {
+                    const recordValuesResponse: SyncRecordResponse = await SyncrecordValuesApi.execute(syncRecordValues);
+                    setRecordValuesFromRecordMap(recordValuesResponse.data.recordMap);
                 }
             }
         } 
         catch (error: any) {
             console.log(error);
         }
-        finally {
-            CURRENT_WORKERS.value--;
-            Q.length >= BATCH_SIZE.value ? await dequeue() : dequeueAfterTimeout();
+        finally {            
+            transactionsQueue.length >= BATCH_SIZE.value 
+            ? await dequeue() 
+            : dequeueAfterTimeout();
         }
     }
 
@@ -279,16 +171,10 @@ export const useTransactionsQueue = defineStore('q', () => {
     function setDelayDefault(): void {
         setDelay(DELAY_DEFAULT);
     }
-    
-    function setBatchSizeDefault(): void {
-        setBatchSize(BATCH_SIZE_DEFAULT);
-    }
 
     return {
         setDelay,
         setDelayDefault,
-        setBatchSize,
-        setBatchSizeDefault,
         enqueue,
         performQueryCollection,
         performSearch

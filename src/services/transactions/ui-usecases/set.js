@@ -1,6 +1,7 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 
 export function set(args, path, pointer) {
+    console.log(args, path, pointer)
     if(path.length === 0) {
         useRecordValuesStore().setRecordValue(
             pointer.id, 

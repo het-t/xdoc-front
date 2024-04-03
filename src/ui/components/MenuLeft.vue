@@ -119,7 +119,7 @@
     </nav>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, computed, defineProps, onBeforeMount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useMenuLeftStore } from "../../stores/menuLeft";
@@ -127,12 +127,12 @@ import MenuPageNavigationSpaceView from "./MenuPageNavigationSpaceView.vue";
 import BaseButton from "./BaseButton.vue";
 import { useRecordValuesStore } from "@/stores/recordValues";
 import { getSpaces } from "@/services/api/getSpaces";
-import { set } from "@/usecases/set";
 import { transformToStandardUUIDFormat } from "../helpers/router/transformToStandardUUIDFormat";
 import uuid from "@/helpers/globals/uuid";
-import { update } from "@/usecases/update";
-import { listBefore } from "@/usecases/listBefore";
 import { useGeneralStore } from "@/stores/general";
+import { makeOperation } from "@/services/transactions/factories/makeOperation";
+import { makeTransaction } from "@/services/transactions/factories/makeTransaction";
+import { useTransactionsQueue } from "@/stores/transactionsQueue";
 
 const route = useRoute();
 const router = useRouter();
@@ -162,79 +162,86 @@ async function createNewPage() {
     const rawId = uuid();
     const id = transformToStandardUUIDFormat(rawId);
 
-    set(
-        {
-            id,
-            type: 'page',
-            space_id: props.spaceId
-        },
-        [],
-        {
-            id,
-            table: "block",
-            spaceId: props.spaceId
-        }
+    const pointer = {
+        id,
+        table: "block",
+        spaceId: props.spaceId
+    };
+
+    const operations = [
+        makeOperation(
+            "set",
+            {
+                id,
+                type: 'page',
+                space_id: props.spaceId
+            },
+            [],
+            pointer
+        ),
+        
+        makeOperation(
+            "update",
+            {
+                permissions: [{
+                    type: "user_permission",
+                    role: "editor",
+                    user_id: "user_id"  
+                }]
+            },
+            [],
+            pointer
+        ),
+
+        makeOperation(
+            "update",
+            {
+                parent_id: props.spaceId,
+                parent_table: "space",
+                alive: true
+            },
+            [],
+            pointer
+        ),
+
+        makeOperation(
+            "listBefore",
+            {
+                id
+            },
+            ["private_pages"],
+            {
+                id: props.spaceViewId,
+                table: "space_view",
+                spaceId: props.spaceId
+            }
+        ),
+
+        makeOperation(
+            "update",
+            {
+                created_by_id: "user_id",
+                created_by_table: "xdoc_user",
+                created_time: Date.now(),
+                last_edited_by_id: "user_id",
+                last_edited_by_table: "xdoc_user",
+                last_edited_time: Date.now()
+            },
+            [],
+            pointer
+        )
+    ]
+
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            debug: {
+                userAction: "MenuLeft.createNewPage"
+            },
+            spaceId: props.spaceId,
+            operations
+        })
     );
 
-    update(
-        {
-            permissions: [{
-                type: "user_permission",
-                role: "editor",
-                user_id: "user_id"  
-            }]
-        },
-        [],
-        {
-            id,
-            table: "block",
-            spaceId: props.spaceId
-        }
-    );
-
-    update(
-        {
-            parent_id: props.spaceId,
-            parent_table: "space",
-            alive: true
-        },
-        [],
-        {
-            id,
-            table: "block",
-            spaceId: props.spaceId
-        }
-    );
-
-    listBefore(
-        {
-            before: privatePagesIds.value[0],
-            id
-        },
-        ['private_pages'],
-        {
-            id: props.spaceViewId,
-            table: "space_view",
-            spaceId: props.spaceId
-        }
-    );
-
-    update(
-        {
-            created_by_id: "user_id",
-            created_by_table: "xdoc_user",
-            created_time: Date.now(),
-            last_edited_by_id: "user_id",
-            last_edited_by_table: "xdoc_user",
-            last_edited_time: Date.now()
-        },
-        [],
-        {
-            id,
-            table: "block",
-            spaceId: props.spaceId
-        }
-    )
 
     if (route.name === "render-page") {
         router.push({ query: { p: rawId, pm: 'c' } });
@@ -389,4 +396,4 @@ onBeforeMount(async () => {
     font-weight: 500;
     font-size: 14px;
 }
-</style>
+</style>@/services/transactions/types/Transaction
