@@ -80,11 +80,11 @@ const props = defineProps({
 const recordValuesStore = useRecordValuesStore();
 
 const propertyType = Collection.prototype.getPropertyById.call(
-    recordValuesStore.getRecordValue(
-        props.collectionId,
-        "collection",
-        props.spaceId
-    ),
+    recordValuesStore.getRecordValue({
+        id: props.collectionId,
+        table: "collection",
+        spaceId: props.spaceId
+    }),
     ...[props.propertyId]
 ).type;
 

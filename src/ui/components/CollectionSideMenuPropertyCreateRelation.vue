@@ -92,6 +92,7 @@ import { update as updateUsecase } from "@/usecases/update";
 import { useRecordValuesStore } from '@/stores/recordValues';
 import uuid from '@/helpers/globals/uuid';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
+import { CollectionView } from '@/entities/CollectionView';
 
 const props = defineProps({
     collectionId: {
@@ -105,11 +106,13 @@ const props = defineProps({
 })
 
 function handleCollectionSelection() {
-    const collectionViewPropertiesInRecordValueStore = useRecordValuesStore().getRecordValue(
-        props.collectionViewId,
-        "collection_view",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    ).table_properties;
+    const collectionViewPropertiesInRecordValueStore = CollectionView.prototype.getProperties.call(
+        useRecordValuesStore().getRecordValue({
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        })
+    )
 
     const updatedCollectionViewProperties = [];
 

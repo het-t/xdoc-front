@@ -12,17 +12,13 @@ export function CollectionView(props) {
     this.page_sort = props.page_sort;
 }
 
-CollectionView.prototype.getType = function() {
-    return this.type;
-}
-
 CollectionView.prototype.getProperties = function() {
     switch(this.type) {
         case "table": {
-            return this.format.table_properties;
+            return this.format.table_properties || [];
         }
         case "list": {
-            return this.format.list_properties;
+            return this.format.list_properties || [];
         }
     }
 }
@@ -33,7 +29,7 @@ CollectionView.prototype.getName = function() {
 }
 
 CollectionView.prototype.addProperty = function(id) {
-    const properties = this.getProperties();
+    const properties = CollectionView.prototype.getProperties.call(this);
     
     properties.push({
         visible: true,
@@ -42,7 +38,7 @@ CollectionView.prototype.addProperty = function(id) {
 }
 
 CollectionView.prototype.removePropertyById = function(id) {
-    const properties = this.getProperties();
+    const properties = CollectionView.prototype.getProperties.call(this);
 
     for(let i = 0; i<properties.length; i++) {
         if (properties[i].property === id) {

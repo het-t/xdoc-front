@@ -116,11 +116,11 @@ const recordValuesStore = useRecordValuesStore();
 
 const collectionStore = useCollectionsStore();
 
-const collectionRecordInStore = recordValuesStore.getRecordValue(
-    props.collectionId,
-    "collection",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-);
+const collectionRecordInStore = recordValuesStore.getRecordValue({
+    id: props.collectionId,
+    table: "collection",
+    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+});
 
 const property = Collection.prototype.getPropertyById.call(
     collectionRecordInStore,

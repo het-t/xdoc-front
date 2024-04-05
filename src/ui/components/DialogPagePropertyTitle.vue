@@ -7,9 +7,7 @@
             data-content-editable-leaf="true"
             contenteditable="true"
             style="width: 100%; height: 100%; white-space: pre-wrap; word-break: break-word; caret-color: rgb(55, 53, 47);"
-        >
-            {{ propertyValue }}
-        </div>
+        >{{ propertyValue }}</div>
     </div>
 </template>
 

@@ -13,9 +13,7 @@
                 </path>
             </svg>
 
-            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
-                {{ collectionViewTabRecordValueInStore.getName() }}
-            </span>
+            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">{{ CollectionView.prototype.getName.call(collectionViewTabRecordValueInStore) }}</span>
         </div>
     </div>
 </template>
@@ -23,7 +21,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
-
+import { CollectionView } from '@/entities/CollectionView';
 const emits = defineEmits([
     "view-change"
 ])
@@ -41,11 +39,11 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const collectionViewTabRecordValueInStore = recordValuesStore.getRecordValue(
-    props.blockId,
-    "collection_view",
-    props.spaceId
-)
+const collectionViewTabRecordValueInStore = recordValuesStore.getRecordValue({
+    id: props.blockId,
+    table: "collection_view",
+    spaceId: props.spaceId
+})
 
 function handleViewBtnClick() {
     console.log(collectionViewTabRecordValueInStore.id)

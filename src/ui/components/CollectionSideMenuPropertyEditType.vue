@@ -74,11 +74,11 @@ const collectionStore = useCollectionsStore();
 
 function handlePropertyTypeSelect({type}) {
     const propertyName = Collection.prototype.getPropertyById.call(
-        useRecordValuesStore().getRecordValue(
-            props.collectionId,
-            "collection",
-            "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        ),
+        useRecordValuesStore().getRecordValue({
+            id: props.collectionId,
+            table: "collection",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        }),
         ...[props.propertyId]
     ).name;
 

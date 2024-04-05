@@ -1,7 +1,6 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 
 export function set(args, path, pointer) {
-    console.log(args, path, pointer)
     if(path.length === 0) {
         useRecordValuesStore().setRecordValue(
             pointer.id, 
@@ -13,11 +12,11 @@ export function set(args, path, pointer) {
         return;
     }
 
-    const recordInStore = useRecordValuesStore().getRecordValue(
-        pointer.id,
-        pointer.table,
-        pointer.spaceId
-    );
+    const recordInStore = useRecordValuesStore().getRecordValue({
+        id: pointer.id,
+        table: pointer.table,
+        spaceId: pointer.spaceId
+    });
 
     let targetNode = recordInStore;
 

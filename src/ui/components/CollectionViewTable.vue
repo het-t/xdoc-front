@@ -114,9 +114,11 @@
                             :style="rowSelectStatus[pageId] ? { position: 'relative' } : {}"
                         >
                             <base-data-provider
-                                :block-id="pageId"
-                                table="block"
-                                space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                                :pointer="{
+                                    id: pageId,
+                                    table: 'table',
+                                    spaceId: 'f2cf1fd1-8789-4ddd-9190-49f41966c446'
+                                }"
                                 v-slot="{ recordValueDeferInStore }"
                             >
                                 <collection-view-table-row
@@ -244,11 +246,11 @@ const props = defineProps({
 const recordValuesStore = useRecordValuesStore();
 
 const collectionSchemaRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        props.collectionId,
-        "collection",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    ).schema
+    return recordValuesStore.getRecordValue({
+        id: props.collectionId,
+        table: "collection",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    }).schema
 })
 
 function getCollectionPropertyById(id) {
@@ -259,11 +261,11 @@ const collectionViewPropertiesRecordValueInStore = computed(function() {
     const collectionPropertyIds = Object.keys(collectionSchemaRecordValueInStore.value);
 
     return CollectionView.prototype.getProperties.call(
-        recordValuesStore.getRecordValue(
-            props.collectionViewId,
-            "collection_view",
-            "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        )
+        recordValuesStore.getRecordValue({
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        })
     ).filter(({property}) => {
         return collectionPropertyIds.indexOf(property) !== -1;
     });
@@ -287,11 +289,11 @@ function handlePropertyValueRerender(needRerender) {
 }
 
 const collectionViewPagesRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        props.collectionViewId,
-        "collection_view",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.page_sort
+    return recordValuesStore.getRecordValue({
+        id: props.collectionViewId,
+        table: "collection_view",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    })?.page_sort
 })
 
 function emitAddItems(items, index = null) {
@@ -336,11 +338,11 @@ watch(
     { deep: true}
 )
 function handleCollectionItemExpand(pageId, index, nestingLevel) {
-    const subItemsIds = recordValuesStore.getRecordValue(
-        pageId,
-        "block",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )?.content || [];
+    const subItemsIds = recordValuesStore.getRecordValue({
+        id: pageId,
+        table: "block",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    })?.content || [];
 
     if (expandedItemsIds.value[pageId]) {
         expandedItemsIds.value[pageId] = false;

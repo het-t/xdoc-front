@@ -12,11 +12,11 @@ export function set(args, path, pointer) {
         return;
     }
 
-    const recordInStore = useRecordValuesStore().getRecordValue(
-        pointer.id,
-        pointer.table,
-        pointer.spaceId
-    );
+    const recordInStore = useRecordValuesStore().getRecordValue({
+        id: pointer.id,
+        table: pointer.table,
+        spaceId: pointer.spaceId
+    });
 
     let targetNode = recordInStore;
 

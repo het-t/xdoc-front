@@ -1,11 +1,11 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 
 export function setParent(args, path, pointer) {
-    const recordInStore = useRecordValuesStore().getRecordValue(
-        pointer.id,
-        pointer.table,
-        pointer.spaceId
-    );
+    const recordInStore = useRecordValuesStore().getRecordValue({
+        id: pointer.id,
+        table: pointer.table,
+        spaceId: pointer.spaceId
+    });
 
     let targetNode = recordInStore;
 

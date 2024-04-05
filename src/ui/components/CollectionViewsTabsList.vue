@@ -5,16 +5,18 @@
     >
         <base-data-provider
             v-for="viewId in collectionViewsIdsRecordValueInStore" 
+            :pointer="{
+                id: viewId,
+                table: 'collection_view',
+                spaceId: props.spaceId
+            }"
             :key="viewId"
-            :block-id="viewId"
-            table="collection_view"
-            :space-id="props.spaceId"
-            v-slot="{ recordValueDeferInStore }"
+            v-slot="{ recordValueInStore }"
         >
             <div style="display: inline-flex; margin: 0px; height: 100%;">
                 <div style="display: flex; flex-direction: row;">
                     <collection-view-tab
-                        v-if="recordValueDeferInStore"
+                        v-if="recordValueInStore"
                         :block-id="viewId"
                         :space-id="props.spaceId"
                     ></collection-view-tab>
@@ -53,10 +55,10 @@ const props = defineProps({
 const recordValuesStore = useRecordValuesStore();
 
 const collectionViewsIdsRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        props.collectionId,
-        "collection",
-        props.spaceId
-    ).view_ids;
+    return recordValuesStore.getRecordValue({
+        id: props.collectionId,
+        table: "collection",
+        spaceId: props.spaceId
+    }).view_ids;
 })
 </script>

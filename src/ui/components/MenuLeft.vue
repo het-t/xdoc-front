@@ -283,11 +283,11 @@ onBeforeMount(async () => {
       );
     }
 
-    const { bookmarked_pages, private_pages } = recordValuesStore.getRecordValue(
-        props.spaceViewId,
-        "space_view",
-        props.spaceId
-    );
+    const { bookmarked_pages, private_pages } = recordValuesStore.getRecordValue({
+        id: props.spaceViewId,
+        table: "space_view",
+        spaceId: props.spaceId
+    });
 
     privatePagesIds.value = private_pages;
     favoritesPagesIds.value = bookmarked_pages;

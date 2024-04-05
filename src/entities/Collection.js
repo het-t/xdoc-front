@@ -11,10 +11,6 @@ export function Collection(props) {
     this.template_pages = props.template_pages;
 }
 
-Collection.prototype.getTemplatePages = function() {
-    return this.templatePages;
-}
-
 Collection.prototype.getPropertyByName = function(name) {
     return Object.values(this.schema).find(property => property.name === name);
 }
@@ -38,7 +34,11 @@ Collection.prototype.getPropertyNamePostfixed = function(id, name, type) {
 Collection.prototype.addProperty = function(id, property) {
     const schema = this.schema;
 
-    const postfixedName = this.getPropertyNamePostfixed(id, property.name, property.type);
+    const postfixedName = Collection.prototype.getPropertyNamePostfixed.call(this, [
+        id, 
+        property.name, 
+        property.type
+    ]);
 
     schema[id] = {
         ...property,

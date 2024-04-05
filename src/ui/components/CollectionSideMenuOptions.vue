@@ -61,6 +61,7 @@ import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuItemCol3 from './BaseCollectionSideMenuItemCol3.vue';
 import { useCollectionsStore } from '@/stores/collections';
 import { useRecordValuesStore } from '@/stores/recordValues';
+import { CollectionView } from '@/entities/CollectionView';
 
 const props = defineProps({
     collectionViewId: {
@@ -80,11 +81,13 @@ let totalPropertiesVisible = -1;
 onBeforeMount(() => {
     const recordsValueStore = useRecordValuesStore();
 
-    totalPropertiesVisible = recordsValueStore.getRecordValue(
-        props.collectionViewId,
-        "collection_view",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    ).getProperties().length;
+    totalPropertiesVisible = CollectionView.prototype.getProperties.call(
+        recordsValueStore.getRecordValue({
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        })
+    ).length;
 
     if (isNaN(totalPropertiesVisible)) totalPropertiesVisible = 0;
 })

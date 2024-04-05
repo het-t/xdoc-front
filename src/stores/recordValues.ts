@@ -18,8 +18,8 @@ export const useRecordValuesStore = defineStore('recordValues', () => {
         return Array.from(spaces.value);
     }
     
-    function getRecordValue(id: string, table: string, spaceId: string = currentSpaceId.value) {
-        return recordValues.value?.[spaceId]?.[id];
+    function getRecordValue(pointer: {id: string, table: string, spaceId: string}) {
+        return recordValues.value?.[pointer.spaceId]?.[pointer.id];
     }
 
     function checkSpacePresenceById(id: string): boolean {

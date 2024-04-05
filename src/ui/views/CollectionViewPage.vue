@@ -1,8 +1,10 @@
 <template>
     <base-data-provider
-        :block-id="collectionId"
-        table="collection"
-        space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        :pointer="{
+            id: collectionId,
+            table: 'collection',
+            spaceId: 'f2cf1fd1-8789-4ddd-9190-49f41966c446'
+        }"
         v-slot="{recordValueDeferInStore, recordValueInStore: collectionRecordValueInStore}"
     >
         <div 
@@ -41,7 +43,7 @@
                                     <h1 contenteditable="true"
                                         placeholder="Untitled"
                                         style="max-width: 100%; width: 100%; font-size: 1em; white-space: pre-wrap; word-break: break-word; caret-color: rgb(55, 53, 47); font-weight: inherit; margin: 0;"
-                                    >{{ collectionRecordValueInStore.name[0][0] }}</h1>
+                                    >{{ collectionRecordValueInStore.name?.[0]?.[0] }}</h1>
                                 </div>
                             </div>
                         </div>
@@ -143,14 +145,16 @@
                 >
 
                     <base-data-provider
-                        :block-id="currentCollectionViewId"
-                        table="collection_view"
-                        space-id="f2cf1fd1-8789-4ddd-9190-49f41966c446"
-                        v-slot="{recordValueDeferInStore: collectionViewRecordValueDeferInStore}"
+                        :pointer="{
+                            id: currentCollectionViewId,
+                            table: 'collection_view',
+                            spaceId: 'f2cf1fd1-8789-4ddd-9190-49f41966c446'
+                        }"
+                        v-slot="{ recordValueInStore}"
                     >
-                        <template v-if="collectionViewRecordValueDeferInStore">          
+                        <template v-if="recordValueInStore">          
                             <collection-view-table 
-                                v-if="currentCollectionViewRecordValueInStore.type === 'table'"  
+                                v-if="recordValueInStore.type === 'table'"  
                                 @add-items="addRecordInItemsList($event)"
                                 @collapse="handleItemCollapse($event)"
                                 :items="collectionItems"
@@ -201,11 +205,11 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const collectionViewPageRecordValue = recordValuesStore.getRecordValue(
-    props.pageId,
-    "block",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-)
+const collectionViewPageRecordValue = recordValuesStore.getRecordValue({
+    id: props.pageId,
+    table: "block",
+    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+})
 
 const collectionId = collectionViewPageRecordValue.collection_id;
 
@@ -227,11 +231,11 @@ onMounted(async function() {
 const currentCollectionViewId = ref(collectionViewPageRecordValue.view_ids[0]);
 
 const currentCollectionViewRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue(
-        currentCollectionViewId.value,
-        "collection_view",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    )
+    return recordValuesStore.getRecordValue({
+        id: currentCollectionViewId.value,
+        table: "collection_view",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    })
 })
 
 const collectionStore = useCollectionsStore();

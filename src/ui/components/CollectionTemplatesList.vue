@@ -180,11 +180,12 @@ onMounted(async function() {
 const recordValueStore = useRecordValuesStore();
 
 function getTemplatePageById(templatePageId) {
-    return recordValueStore.getRecordValue(
-        templatePageId,
-        'block',
-        props.spaceId
-    )}
+    return recordValueStore.getRecordValue({
+        id: templatePageId,
+        table: 'block',
+        spceId: props.spaceId
+    })
+}
 
 function getTemplatePageTitle(templatePageId) {
     return getTemplatePageById(templatePageId).properties.title[0][0];
@@ -204,6 +205,12 @@ function handleTemplateSelect(templatePageId) {
             props.spaceId
         );
         
+        const blockPointer = {
+            table: "block",
+            id: blockId,
+            spaceId: props.spaceId
+        };
+
         setUsecase(
             {
                 type: "page",
@@ -212,11 +219,7 @@ function handleTemplateSelect(templatePageId) {
                 // version: 1
             },
             [],
-            {
-                table: "block",
-                id: blockId,
-                spaceId: props.spaceId
-            }
+            blockPointer
         );
         
         setParentUsecase(
@@ -225,18 +228,14 @@ function handleTemplateSelect(templatePageId) {
                 parentTable: "collection"
             },
             [],
-            {
-                table: "block",
-                id: blockId,
-                spaceId: props.spaceId
-            }
+            blockPointer
         );
 
-        const collectionViewRecordValueInStore = recordValueStore.getRecordValue(
-            props.collectionViewId,
-            "collection_view",
-            props.spaceId
-        );
+        const collectionViewRecordValueInStore = recordValueStore.getRecordValue({
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId: props.spaceId
+        });
 
         listBeforeUsecase(
             {
@@ -254,11 +253,7 @@ function handleTemplateSelect(templatePageId) {
         setUsecase(
             getTemplatePageTitle(templatePageId),
             [],
-            {
-                table: "block",
-                id: blockId,
-                spaceId: props.spaceId
-            }
+            blockPointer
         );
 
         updateUsecase(
@@ -266,11 +261,7 @@ function handleTemplateSelect(templatePageId) {
                 copied_from: templatePageId
             },
             [],
-            {
-                table: "block",
-                id: blockId,
-                spaceId: props.spaceId
-            }
+            blockPointer
         );
 
         updateUsecase(
@@ -281,11 +272,7 @@ function handleTemplateSelect(templatePageId) {
                 }
             },
             ["format"],
-            {
-                id: blockId,
-                table: "block",
-                spaceId: props.spaceId
-            }
+            blockPointer
         );
 
         updateUsecase(
@@ -293,11 +280,7 @@ function handleTemplateSelect(templatePageId) {
                 is_template: null
             },
             [],
-            {
-                id: blockId,
-                table: "block",
-                spaceId: props.spaceId
-            }
+            blockPointer
         );
 
         const currentTime = Date.now();
@@ -312,11 +295,7 @@ function handleTemplateSelect(templatePageId) {
                 last_edited_by_table: "xdoc_user"
             },
             [],
-            {
-                id: blockId,
-                table: "block",
-                spaceId: props.spaceId
-            }
+            blockPointer
         );
 
         router.push({ query: { p: blockId.replaceAll('-', ''), pm: 's' } });

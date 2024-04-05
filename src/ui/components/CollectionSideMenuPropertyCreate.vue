@@ -55,9 +55,11 @@ import { useRecordValuesStore } from '@/stores/recordValues';
 import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
-import { update as updateUsecase } from '@/usecases/update';
 import { CollectionProperty } from "@/entities/CollectionProperty";
 import { Collection } from '@/entities/Collection';
+import { CollectionView } from '@/entities/CollectionView';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
 
 const props = defineProps({
     collectionId: {
@@ -82,17 +84,19 @@ function handlePropertyTypeSelect({type, userInput}) {
         return;
     }
 
-    const collectionViewPropertiesRecordValueInStore = useRecordValuesStore().getRecordValue(
-        props.collectionViewId,
-        "collection_view",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    ).format.table_properties;
-
-    const collectionRecordValueInStore = useRecordValuesStore().getRecordValue(
-        props.collectionId,
-        "collection",
-        "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    const collectionViewPropertiesRecordValueInStore = CollectionView.prototype.getProperties.call(
+        useRecordValuesStore().getRecordValue({
+            id: props.collectionViewId,
+            table: "collection_view",
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        })
     );
+
+    const collectionRecordValueInStore = useRecordValuesStore().getRecordValue({
+        id: props.collectionId,
+        table: "collection",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    });
 
     const [propertyId, {name: propertyName}] = Object.entries(
         new CollectionProperty({
@@ -124,28 +128,40 @@ function handlePropertyTypeSelect({type, userInput}) {
     }
 
     updatedCollectionViewProperties.push(property);
+    
+    const operations = [
+        makeOperation(
+            "update",
+            {
+                table_properties: updatedCollectionViewProperties,
+            },
+            ["format"],
+            {
+                id: props.collectionViewId,
+                table: "collection_view",
+                spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+            }
+        ),
+        
+        makeOperation(
+            "update",
+            property,
+            ["schema"],
+            {
+                id: props.collectionId,
+                table: "collection",
+                spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+            }
+        )
+    ];
 
-    updateUsecase(
-        {
-            table_properties: updatedCollectionViewProperties,
+    makeTransaction({
+        spaceId: props.spaceId,
+        debug: {
+            userAction: "CollectionSideMenuPropertyCreate.handlePropertyTypeSelect"
         },
-        ["format"],
-        {
-            id: props.collectionViewId,
-            table: "collection_view",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        }
-    );
-
-    updateUsecase(
-        property,
-        ["schema"],
-        {
-            id: props.collectionId,
-            table: "collection",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        }
-    );
+        operations
+    });
 
     collectionStore.setCurrentComponent('propertyEdit',{
         id: propertyId

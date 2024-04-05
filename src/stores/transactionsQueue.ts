@@ -45,10 +45,8 @@ export const useTransactionsQueue = defineStore('q', () => {
 
             for(const pointerId in tableRecordValues) {
                 const record = tableRecordValues[pointerId];
-                
-                const  { value: { value }, spaceId } = record;
-
-                setRecordValue(pointerId, table, value, spaceId);
+                const { value, spaceId } = record;
+                setRecordValue(pointerId, table, value.value, spaceId);
             }
         }
     }

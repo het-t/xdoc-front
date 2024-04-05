@@ -93,11 +93,11 @@ const state = reactive({
 
 const recordValuesStore = useRecordValuesStore();
 
-const property = recordValuesStore.getRecordValue(
-    props.collectionId,
-    "collection",
-    props.spaceId
-).schema[props.propertyId];
+const property = recordValuesStore.getRecordValue({
+    id: props.collectionId,
+    table: "collection",
+    spaceId: props.spaceId
+}).schema[props.propertyId];
 
 function getOptionValueById(optionId) {
     return property.options.find(({id}) => id === optionId).value;

@@ -23,9 +23,8 @@
             </div>
         </div>
         
-        <span v-if="props.type === 'title'" style="line-height: 1.5; white-space: pre-wrap; word-break: break-word; display: inline; font-weight: 500; background-image: linear-gradient(to right, rgba(55, 53, 47, 0.16) 0%, rgba(55, 53, 47, 0.1) 100%); background-repeat: repeat-x; background-position: 0px 100%; background-size: 100% 1px;">
-            {{ propertyValue }}
-        </span>
+        <span v-if="props.type === 'title'" style="line-height: 1.5; white-space: pre-wrap; word-break: break-word; display: inline; font-weight: 500; background-image: linear-gradient(to right, rgba(55, 53, 47, 0.16) 0%, rgba(55, 53, 47, 0.1) 100%); background-repeat: repeat-x; background-position: 0px 100%; background-size: 100% 1px;"
+        >{{ propertyValue }}</span>
 
         <page-property-status-value
             v-else-if="props.type === 'status'"
