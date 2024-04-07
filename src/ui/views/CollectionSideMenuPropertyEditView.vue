@@ -92,10 +92,12 @@ import CollectionSideMenuPropertyEditHandleOptions from '@/ui/components/Collect
 import CollectionSideMenuPropertyEditRelation from "@/ui/components/CollectionSideMenuPropertyEditRelation.vue";
 import CollectionSideMenuPropertyEditHandleGroups from '../components/CollectionSideMenuPropertyEditHandleGroups.vue';
 import CollectionSideMenuPropertyEditFooter from '@/ui/components/CollectionSideMenuPropertyEditFooter.vue';
-import { set as setUsecase } from '@/usecases/set';
-import { update as updateUsecase } from '@/usecases/update';
 import { useCollectionsStore } from '@/stores/collections';
 import { useRecordValuesStore } from '@/stores/recordValues';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { CollectionView } from '@/entities/CollectionView';
 
 const props = defineProps({
     collectionId: {
@@ -135,14 +137,25 @@ function displayTypesList() {
 }
 
 function handlePropertyNameChange(e) {  
-    setUsecase(
-        e.target.value,
-        ['schema', props.propertyId, "name"],
-        {
-            id: props.collectionId,
-            table: "collection",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        }
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446",
+            debug: {
+                userAction: "CollectionSideMenuPropertyEditView->handlePropertyDelete"
+            },
+            operations: [                
+                makeOperation(
+                    "set",
+                    e.target.value,
+                    ['schema', props.propertyId, "name"],        
+                    {
+                        id: props.collectionId,
+                        table: "collection",
+                        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                    }
+                )
+            ]
+        })
     );
 }
 
@@ -155,18 +168,50 @@ function handlePropertyDelete() {
         }
     }
 
-    collectionRecordInStore.schema = updatedSchema;
+    const collectionViewRecordValueInStore = recordValuesStore.getRecordValue({
+        id: props.collectionViewId,
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446",
+        table: "collection_view"
+    });
 
-    updateUsecase(
-        {
-            schema: updatedSchema
-        },
-        [],
-        {
-            id: props.collectionId,
-            table: "collection",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        }
+    const collectionViewProperties = CollectionView.prototype.getProperties.call(collectionViewRecordValueInStore);
+    const targetIndex = collectionViewProperties.findIndex(({property: propertyId}) => propertyId === props.propertyId);
+
+    if(targetIndex !== -1) collectionViewProperties.splice(targetIndex, 1);
+
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446",
+            debug: {
+                userAction: "CollectionSideMenuPropertyEditView->handlePropertyDelete"
+            },
+            operations: [
+                makeOperation(
+                    "update",
+                    {
+                        schema: updatedSchema
+                    },
+                    [],
+                    {
+                        id: props.collectionId,
+                        table: "collection",
+                        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                    }
+                ),
+                makeOperation(
+                    "update",
+                    {
+                        format: collectionViewRecordValueInStore.format
+                    },
+                    [],
+                    {
+                        id: props.collectionViewId,
+                        table: "collection_view",
+                        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                    }
+                )
+            ]
+        })
     );
 
     collectionStore.removeCurrentComponent();

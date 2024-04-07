@@ -189,12 +189,10 @@ import { useCollectionsStore } from '@/stores/collections';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import uuid from '@/helpers/globals/uuid';
-import { set as setUsecase } from '@/usecases/set';
-import { setParent as setParentUsecase } from '@/usecases/setParent';
-import { listBefore as listBeforeUsecase } from '@/usecases/listBefore';
-import { update as updateUsecase } from '@/usecases/update';
 import { useGeneralStore } from '@/stores/general';
 import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
 
 const props = defineProps({
     pageId: {
@@ -240,7 +238,6 @@ const currentCollectionViewRecordValueInStore = computed(function() {
 
 const collectionStore = useCollectionsStore();
 
-//
 const state = reactive({
     displayCollectionSideMenu: false,
     sideMenuHeight: ''
@@ -308,64 +305,67 @@ function handleClickNew() {
         spaceId
     );
 
-    setUsecase(
-        {
-            type: "page",
-            space_id: spaceId,
-            id: blockId,
-            // version: 1
-        },
-        [],
-        {
-            table: "block",
-            id: blockId,
-            spaceId
-        }
-    );
+    const blockPointer = {
+        id: blockId,
+        table: "block",
+        spaceId
+    };
 
-    setParentUsecase(
-        {
-            parentId: collectionId,
-            parentTable: "collection"
-        },
-        [],
-        {
-            table: "block",
-            id: blockId,
-            spaceId
-        }
-    );
-
-    listBeforeUsecase(
-        {
-            id: blockId,
-            before: currentCollectionViewRecordValueInStore.value.page_sort[0]
-        },
-        ["page_sort"],
-        {
-            id: currentCollectionViewId.value,
-            table: "collection_view",
-            spaceId
-        }
-    );
-
-    const currentTime = Date.now();
-
-    updateUsecase(
-        {
-            created_by_id: "",
-            created_by_table: "xdoc_user",
-            created_time: currentTime,
-            last_edited_time: currentTime,
-            last_edited_by_id: "",
-            last_edited_by_table: "xdoc_user"
-        },
-        [],
-        {
-            id: blockId,
-            table: "block",
-            spaceId
-        }
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: "",
+            debug: {
+                userAction: "CollectionViewPage->handleClickNew"
+            },
+            operations: [
+                makeOperation(
+                    "set",
+                    {
+                        type: "page",
+                        space_id: spaceId,
+                        id: blockId,
+                        // version: 1
+                    },
+                    [],
+                    blockPointer
+                ),
+                makeOperation(
+                    "setParent",
+                    {
+                        parentId: collectionId,
+                        parentTable: "collection"
+                    },
+                    [],
+                    blockPointer
+                ),
+                makeOperation(
+                    "listBefore",
+                    {
+                        id: blockId,
+                        before: currentCollectionViewRecordValueInStore.value.page_sort[0]
+                    },
+                    ["page_sort"],
+                    {
+                        id: currentCollectionViewId.value,
+                        table: "collection_view",
+                        spaceId
+                    }
+                ),
+                makeOperation(
+                    "update",
+                    {
+                        created_by_id: "",
+                        created_by_table: "xdoc_user",
+                        created_time: Date.now(),
+                        last_edited_time: Date.now(),
+                        last_edited_by_id: "",
+                        last_edited_by_table: "xdoc_user"
+                    },
+                    [],
+                    blockPointer
+                )
+            ]
+        })
     );
 }
 

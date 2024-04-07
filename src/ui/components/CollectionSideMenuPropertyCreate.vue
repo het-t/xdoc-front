@@ -60,6 +60,7 @@ import { Collection } from '@/entities/Collection';
 import { CollectionView } from '@/entities/CollectionView';
 import { makeOperation } from '@/services/transactions/factories/makeOperation';
 import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
 
 const props = defineProps({
     collectionId: {
@@ -77,6 +78,8 @@ const state = reactive({
 })
 
 function handlePropertyTypeSelect({type, userInput}) {
+    const transactionsStore = useTransactionsQueue();
+
     const collectionStore = useCollectionsStore();
 
     if (type === 'relation') {
@@ -112,22 +115,19 @@ function handlePropertyTypeSelect({type, userInput}) {
         type
     ]);
 
-    const propertyValue = Object.values(new CollectionProperty({
-        bannedIds: Object.keys(collectionRecordValueInStore.schema),
-        name: propertyNamePostfixed,
-        type 
-    }))[0];
+    const propertyValue = Object.values(
+        new CollectionProperty({
+            bannedIds: Object.keys(collectionRecordValueInStore.schema),
+            name: propertyNamePostfixed,
+            type 
+        })
+    )[0];
 
-    const property = {
-        [propertyId]: propertyValue
-    }
-
-    const updatedCollectionViewProperties = [];
-    for (const existingProperty of collectionViewPropertiesRecordValueInStore) {
-        updatedCollectionViewProperties.push(existingProperty);
-    }
-
-    updatedCollectionViewProperties.push(property);
+    const updatedCollectionViewProperties = [...collectionViewPropertiesRecordValueInStore]
+    updatedCollectionViewProperties.push({
+        property: propertyId,
+        visible: false
+    });
     
     const operations = [
         makeOperation(
@@ -145,7 +145,9 @@ function handlePropertyTypeSelect({type, userInput}) {
         
         makeOperation(
             "update",
-            property,
+            {
+                [propertyId]: propertyValue
+            },
             ["schema"],
             {
                 id: props.collectionId,
@@ -155,13 +157,15 @@ function handlePropertyTypeSelect({type, userInput}) {
         )
     ];
 
-    makeTransaction({
-        spaceId: props.spaceId,
-        debug: {
-            userAction: "CollectionSideMenuPropertyCreate.handlePropertyTypeSelect"
-        },
-        operations
-    });
+    transactionsStore.enqueue(
+        makeTransaction({
+            spaceId: props.spaceId,
+            debug: {
+                userAction: "CollectionSideMenuPropertyCreate.handlePropertyTypeSelect"
+            },
+            operations
+        })
+    );
 
     collectionStore.setCurrentComponent('propertyEdit',{
         id: propertyId

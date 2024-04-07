@@ -45,12 +45,12 @@
 
                     <div style="margin: 0px;">
                         <base-collection-side-menu-property-item 
-                            v-for="(property) in visibleProperties" 
-                            :key="property.id" 
-                            @click.stop="handleUserSelectPropertyEdit(property.id)"
+                            v-for="(id) in visiblePropertiesIds" 
+                            :key="id" 
+                            @click.stop="handleUserSelectPropertyEdit(id)"
                             @property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
-                            :name="property.name"
-                            :id="property.id"
+                            :name="collectionSchema[id].name"
+                            :id="id"
                             :visible=true
                             :collection-view-id="props.collectionViewId"
                         />
@@ -74,12 +74,12 @@
                         </div>
 
                         <base-collection-side-menu-property-item 
-                            v-for="(property) in hiddenProperties" 
-                            :key="property.id" 
-                            @click.stop="handleUserSelectPropertyEdit(property.id)"
+                            v-for="(id) in hiddenPropertiesIds" 
+                            :key="id" 
+                            @click.stop="handleUserSelectPropertyEdit(id)"
                             @property-visibility-change="handlePropertyVisibilityChange($event.id, $event.visible)"
-                            :name="property.name"
-                            :id="property.id"
+                            :name="collectionSchema[id].name"
+                            :id="id"
                             :visible=false
                             :collection-view-id="props.collectionViewId"
                         />
@@ -134,13 +134,16 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue';
+import { computed, defineProps } from 'vue';
 import BaseButton from './BaseButton.vue';
 import BaseCollectionSideMenu from './BaseCollectionSideMenu.vue';
 import BaseCollectionSideMenuPropertyItem from './BaseCollectionSideMenuPropertiesItem.vue';
 import { useCollectionsStore } from '@/stores/collections';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { CollectionView } from '@/entities/CollectionView';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
 
 const props = defineProps({
     collectionId: {
@@ -162,70 +165,60 @@ const collectionSchema = recordValuesStore.getRecordValue({
     spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 }).schema;
 
-const collectionViewRecordValue = recordValuesStore.getRecordValue({
-    id: props.collectionViewId,
-    table: "collection_view",
-    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+const collectionViewRecordValue = computed(
+    () => recordValuesStore.getRecordValue({
+        id: props.collectionViewId,
+        table: "collection_view",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    })
+);
+
+const collectionViewType = collectionViewRecordValue.value.type;
+
+const visiblePropertiesIds = computed(() => {
+    return CollectionView.prototype.getProperties.call(
+        collectionViewRecordValue.value
+    ).filter(property => property.visible === true).map(o => o.property);
 });
 
-const collectionViewType = collectionViewRecordValue.type;
-console.log(collectionViewRecordValue)
-const visiblePropertyIds = CollectionView.prototype.getProperties.call(
-    collectionViewRecordValue
-).map(o => o.property);
-
-const hiddenPropertyIds = [];
-for(let propertyId in collectionSchema) {
-    if (visiblePropertyIds.includes(propertyId)) continue;
-    hiddenPropertyIds.push(propertyId);
-}
-
-const visibleProperties = ref(
-    visiblePropertyIds.map(id => {
-        const property = collectionSchema[id];
-
-        if (property) return {
-            id,
-            name: property.name,
-            type: property.type
-        }
-    }).filter(property => property !== undefined)
-)
-
-let hiddenProperties = ref(
-    hiddenPropertyIds.map(id => {
-        const property = collectionSchema[id];
-
-        if (property) return {
-            id,
-            name: property.name,
-            type: property.type
-        }
-    }).filter(property => property !== undefined)
-)
+const hiddenPropertiesIds = computed(
+    () => {
+        const collectionProperties = new Set(Object.keys(collectionSchema));
+        return collectionProperties.difference(new Set(visiblePropertiesIds.value));
+    }
+);
 
 //
-function handlePropertyVisibilityChange(id, visibile) {
-    if (visibile === true) {
-        for(let i = 0; i<hiddenProperties.value.length; i++) {
-            if (hiddenProperties.value[i].id === id) {
-                const property = hiddenProperties.value.splice(i, 1)[0];
-                visibleProperties.value.push(property);
-                CollectionView.prototype.addProperty.call(collectionViewRecordValue, property.id);
-                break;
-            }
-        }
-    }
-    else if (visibile === false) {
-        for(let i = 0; i<visibleProperties.value.length; i++) {
-            if (visibleProperties.value[i].id === id) {
-                const property = visibleProperties.value.splice(i, 1);
-                hiddenProperties.value.push(property[0]);
-                CollectionView.prototype.removePropertyById.call(collectionViewRecordValue, property[0].id);
-                break;
-            }
-        }
-    }
+function handlePropertyVisibilityChange(id, visible) {
+    const properties = CollectionView.prototype.getProperties.call(collectionViewRecordValue.value);
+    const targetPropertyIndex = properties.findIndex(({property}) => property === id);
+
+    if(targetPropertyIndex === -1) return;
+
+    properties[targetPropertyIndex].visible = visible;
+
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: "",
+            debug: {
+                userAction: "ColelctionSideMenuProperties->handlePropertyVisibilityChange"
+            },
+            operations: [
+                makeOperation(
+                    "update",
+                    {
+                        "format": collectionViewRecordValue.value.format
+                    },
+                    [],
+                    {
+                        id: props.collectionViewId,
+                        table: "collection_view",
+                        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                    }
+                )
+            ]
+        })
+    )
 }
 
 // handling side menu visible component

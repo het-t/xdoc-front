@@ -1,4 +1,4 @@
-let corpus: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghidjklmnopqrstuvwxyz=[],@#$^&*";
+let corpus: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghidjklmnopqrstuvwxyz";
 
 function shuffleCorpus(): void {
     corpus = corpus.split("").sort(() => 0.5 - Math.random()).join("");

@@ -57,8 +57,9 @@ import { captializeFirstCharacter } from '@/helpers/globals/captitalizeFirstChar
 import colors from "@/assets/colors.json";
 import { defineProps } from 'vue';
 import { useGeneralStore } from '@/stores/general';
-import { keyedObjectListUpdate as keyedObjectListUpdateUsecase } from "@/usecases/keyedObjectListUpdate";
-import { keyedObjectListRemove as keyedObjectListRemoveUsecase } from '@/usecases/keyedObjectListRemove';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
 
 const props = defineProps({
     spaceId: {
@@ -82,35 +83,51 @@ const props = defineProps({
 const generalStore = useGeneralStore();
 
 function handleOptionDelete() {
-    keyedObjectListRemoveUsecase(
-        {
-            remove: {
-                id: props.optionId
-            }
-        },
-        ['schema', props.propertyId, 'options'],
-        {
-            id: props.collectionId,
-            table: "collection",
-            spaceId: props.spaceId
-        }
+    useTransactionsQueue().enqueue(
+        makeTransaction(
+            makeOperation(
+                "keyedObjectListRemove",
+                {
+                    remove: {
+                        id: props.optionId
+                    }
+                },
+                ['schema', props.propertyId, 'options'],
+                {
+                    id: props.collectionId,
+                    table: "collection",
+                    spaceId: props.spaceId
+                }
+            )
+        )
     );
 
     generalStore.setCurrentComponentInDefaultOverlay(null, {});
 }
 
 function handleStyleSelect(color) {
-    keyedObjectListUpdateUsecase(
-        {
-            id: props.optionId,
-            color
-        },
-        ['schema', props.propertyId, 'options'],
-        {
-            table: "collection",
-            id: props.collectionId,
-            spaceId: props.spaceId
-        }
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: "",
+            debug: {
+                userAction: "OptionEditView->handleStyleSelect"
+            },
+            operations: [
+                makeOperation(
+                    "keyedOjectListUpdate",
+                    {
+                        id: props.optionId,
+                        color
+                    },
+                    ['schema', props.propertyId, 'options'],
+                    {
+                        table: "collection",
+                        id: props.collectionId,
+                        spaceId: props.spaceId
+                    }
+                )
+            ]
+        })
     );
 }
 </script>

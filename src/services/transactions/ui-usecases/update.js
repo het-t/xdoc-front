@@ -15,18 +15,20 @@ export function update(args, path, pointer) {
     
     if (!targetNode) targetNode = {};
 
+    if (typeof args !== 'object') {
+        targetNode = args;
+        return;
+    }
+    
     for(const targetNodeProperty in args) {
-        const targetNodePropertyValue = targetNode[targetNodeProperty];
+        // const targetNodePropertyValue = targetNode[targetNodeProperty];
+        targetNode[targetNodeProperty] = args[targetNodeProperty];
 
-        if(!targetNodePropertyValue) {
-            targetNode[targetNodeProperty] = args[targetNodeProperty];
-        }
-
-        for (const key in targetNodePropertyValue) {
-            if (args[targetNodeProperty][key]) {
-                targetNodePropertyValue[key] = args[targetNodeProperty][key];
-            }
-        }
+        // for (const key in targetNodePropertyValue) {
+        //     if (args[targetNodeProperty][key]) {
+        //         targetNodePropertyValue[key] = args[targetNodeProperty][key];
+        //     }
+        // }
     }
 }
 

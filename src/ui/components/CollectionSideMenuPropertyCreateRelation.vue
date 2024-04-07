@@ -88,11 +88,13 @@
 import { defineProps } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
 import BaseCollectionSideMenuHeader from './BaseCollectionSideMenuHeader.vue';
-import { update as updateUsecase } from "@/usecases/update";
 import { useRecordValuesStore } from '@/stores/recordValues';
 import uuid from '@/helpers/globals/uuid';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import { CollectionView } from '@/entities/CollectionView';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
 
 const props = defineProps({
     collectionId: {
@@ -122,33 +124,44 @@ function handleCollectionSelection() {
         }
     }
 
-    updateUsecase(
-        {
-            table_properties: updatedCollectionViewProperties,
-        },
-        ["format"],
-        {
-            id: props.collectionViewId,
-            table: "collection_view",
-            spaceId: props.spaceId
-        }
-    );
-
     const propertyId = transformToStandardUUIDFormat(uuid());
 
-    updateUsecase(
-        {    
-            [propertyId]: {
-                type: "relation",
-                name: "relation"
-            }
-        },
-        ["schema"],
-        {
-            id: props.collectionId,
-            table: "collection",
-            spaceId: props.spaceId
-        }
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: "",
+            debug: {
+                userAction: "CollectionSideMenuPropertyCreateRelation->handleCollectionSelection"
+            },
+            operations: [
+                makeOperation(
+                    "update",
+                    {
+                        table_properties: updatedCollectionViewProperties,
+                    },
+                    ["format"],
+                    {
+                        id: props.collectionViewId,
+                        table: "collection_view",
+                        spaceId: props.spaceId
+                    }
+                ),
+                makeOperation(
+                    "update",
+                    {    
+                        [propertyId]: {
+                            type: "relation",
+                            name: "relation"
+                        }
+                    },
+                    ["schema"],
+                    {
+                        id: props.collectionId,
+                        table: "collection",
+                        spaceId: props.spaceId
+                    }
+                )
+            ]
+        })
     );
 
     const collectionStore = useCollectionsStore();

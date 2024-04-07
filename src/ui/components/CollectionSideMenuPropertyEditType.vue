@@ -51,9 +51,11 @@ import BaseCollectionPropertyTypes from './BaseCollectionPropertyTypes.vue';
 import CollectionSideMenuCategory from './CollectionSideMenuCategory.vue';
 import { reactive, defineProps } from 'vue';
 import { useCollectionsStore } from '@/stores/collections';
-import { update as updateUsecase } from "@/usecases/update";
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { Collection } from '@/entities/Collection';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
 
 const props = defineProps({
     collectionId: {
@@ -82,20 +84,31 @@ function handlePropertyTypeSelect({type}) {
         ...[props.propertyId]
     ).name;
 
-    updateUsecase(
-        {
-            [props.propertyId]: {
-                name: propertyName, 
-                type
-            }
-        },
-        ['schema'],
-        {
-            id: props.collectionId,
-            table: "collection",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        }
-    )
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: "",
+            debug: {
+                userAction: "CollectionSideMenuPropertyEditType->handlePropertyTypeSelect"
+            },
+            operations: [
+                makeOperation(
+                    "update",
+                    {
+                        [props.propertyId]: {
+                            name: propertyName, 
+                            type
+                        }
+                    },
+                    ['schema'],
+                    {
+                        id: props.collectionId,
+                        table: "collection",
+                        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                    }
+                )
+            ]
+        })
+    );
     
     collectionStore.removeCurrentComponent();
 }

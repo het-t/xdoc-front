@@ -64,9 +64,11 @@ import BaseButton from './BaseButton.vue';
 import PagePropertyTagValue from "./PagePropertyTagValue.vue";
 import { defineProps, reactive } from 'vue';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
-import { keyedObjectListBefore as keyedObjectListBeforeUsecase } from "../../usecases/keyedObjectListBefore";
 import { tagColorStringToRgbaRandom } from '@/helpers/globals/tagColorStringToRgbaRandom';
 import { useGeneralStore } from '@/stores/general';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
 
 const props = defineProps({
     spaceId: {
@@ -113,22 +115,32 @@ function handleCreateNewOption(e) {
     // keyCode 13 represets "enter"(keyboards) and "go"(phones) keys
     if (e.keyCode === 13) {
         if (targetDiv.value) {
-
-            keyedObjectListBeforeUsecase(
-                {
-                    value: {
-                        id: transformToStandardUUIDFormat(uuid()),
-                        color: tagColorStringToRgbaRandom(),
-                        value: targetDiv.value
-                    }
-                },
-                ["schema", props.propertyId, "options"],
-                {
-                    id: props.collectionId,
-                    table: "collection",
-                    spaceId: props.spaceId
-                }
-            )
+            useTransactionsQueue().enqueue(
+                makeTransaction({
+                    spaceId: "",
+                    debug: {
+                        userAction: "CollectionSideMenuPropertyEditHandleOptions->handleCreateNewOption"
+                    },
+                    operations: [
+                        makeOperation(
+                            "keyedObjectListBefore",
+                            {
+                                value: {
+                                    id: transformToStandardUUIDFormat(uuid()),
+                                    color: tagColorStringToRgbaRandom(),
+                                    value: targetDiv.value
+                                }
+                            },
+                            ["schema", props.propertyId, "options"],
+                            {
+                                id: props.collectionId,
+                                table: "collection",
+                                spaceId: props.spaceId
+                            }
+                        )
+                    ]
+                })
+            );
 
             targetDiv.value = "";
         }

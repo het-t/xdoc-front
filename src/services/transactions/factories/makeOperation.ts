@@ -1,12 +1,13 @@
-import { listBefore } from "@/usecases/listBefore";
-import { Operation } from "../types/Operation";
 import { Pointer } from "../types/Pointer";
+import { Operation } from "../types/Operation";
+import { listBefore } from "../ui-usecases/listBefore";
 import { set } from "../ui-usecases/set";
 import { update } from "../ui-usecases/update";
-import { listAfter } from "@/usecases/listAfter";
+import { listAfter } from "../ui-usecases/listAfter";
+import { setParent } from "../ui-usecases/setParent";
 
 export function makeOperation(
-    command: "set" | "update" | "listBefore" | "listAfter",
+    command: "set" | "update" | "listBefore" | "listAfter" | "setParent",
     args: any,
     path: string[],
     pointer: Pointer
@@ -24,6 +25,9 @@ export function makeOperation(
             break;
         case "update": 
             update(args, path, pointer);
+            break;
+        case "setParent":
+            setParent(args, path, pointer);
             break;
         case "listBefore":
             listBefore(args, path, pointer);
