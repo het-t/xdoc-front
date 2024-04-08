@@ -9,6 +9,8 @@ export function keyedObjectListBefore(args, path, pointer) {
 
     let targetNode = recordInStore;
 
+    console.log(targetNode);
+    
     path.forEach(node => {
         targetNode = targetNode[node];
     })

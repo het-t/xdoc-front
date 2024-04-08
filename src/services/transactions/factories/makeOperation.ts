@@ -5,9 +5,21 @@ import { set } from "../ui-usecases/set";
 import { update } from "../ui-usecases/update";
 import { listAfter } from "../ui-usecases/listAfter";
 import { setParent } from "../ui-usecases/setParent";
+import { keyedObjectListBefore } from "../ui-usecases/keyedObjectListBefore";
+import { keyedObjectListRemove } from "../ui-usecases/keyedObjectListRemove";
+import { keyedObjectListUpdate } from "../ui-usecases/keyedObjectListUpdate";
 
 export function makeOperation(
-    command: "set" | "update" | "listBefore" | "listAfter" | "setParent",
+    command: 
+        "set" 
+        | "update" 
+        | "listBefore" 
+        | "listAfter" 
+        | "setParent" 
+        | "keyedObjectListBefore"
+        | "keyedObjectListAfter"
+        | "keyedObjectListRemove"
+        | "keyedObjectListUpdate",
     args: any,
     path: string[],
     pointer: Pointer
@@ -20,11 +32,11 @@ export function makeOperation(
     }   
 
     switch(command) {
-        case "set": 
-            set(args, path, pointer);
-            break;
         case "update": 
             update(args, path, pointer);
+            break;
+        case "set": 
+            set(args, path, pointer);
             break;
         case "setParent":
             setParent(args, path, pointer);
@@ -34,6 +46,15 @@ export function makeOperation(
             break;
         case "listAfter":
             listAfter(args, path, pointer);
+            break;
+        case "keyedObjectListBefore": 
+            keyedObjectListBefore(args, path, pointer);
+            break;
+        case "keyedObjectListUpdate":
+            keyedObjectListUpdate(args, path, pointer);
+            break;
+        case "keyedObjectListRemove":
+            keyedObjectListRemove(args, path, pointer);
             break;
     }
 

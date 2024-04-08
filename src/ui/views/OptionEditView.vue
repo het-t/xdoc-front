@@ -84,22 +84,28 @@ const generalStore = useGeneralStore();
 
 function handleOptionDelete() {
     useTransactionsQueue().enqueue(
-        makeTransaction(
-            makeOperation(
-                "keyedObjectListRemove",
-                {
-                    remove: {
-                        id: props.optionId
+        makeTransaction({
+            spaceId: "",
+            debug: {
+                userAction: "OptionEditView->handleOptionDelete"
+            },
+            operations: [
+                makeOperation(
+                    "keyedObjectListRemove",
+                    {
+                        remove: {
+                            id: props.optionId
+                        }
+                    },
+                    ['schema', props.propertyId, 'options'],
+                    {
+                        id: props.collectionId,
+                        table: "collection",
+                        spaceId: props.spaceId
                     }
-                },
-                ['schema', props.propertyId, 'options'],
-                {
-                    id: props.collectionId,
-                    table: "collection",
-                    spaceId: props.spaceId
-                }
-            )
-        )
+                )
+            ]
+        })
     );
 
     generalStore.setCurrentComponentInDefaultOverlay(null, {});
@@ -114,7 +120,7 @@ function handleStyleSelect(color) {
             },
             operations: [
                 makeOperation(
-                    "keyedOjectListUpdate",
+                    "keyedObjectListUpdate",
                     {
                         id: props.optionId,
                         color
