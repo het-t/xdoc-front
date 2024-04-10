@@ -1,6 +1,6 @@
 <template>
     <dialog-view>
-        <div style="display: flex; flex-direction: column; width: 360px; min-width: 180px; max-width: calc(-24px + 100vw); height: 100%; max-height: 70vh;">
+        <div style="display: flex; flex-direction: column; min-width: 180px; max-width: calc(-24px + 100vw); height: 100%; max-height: 70vh;">
             <div style="flex-shrink: 0;">
                 <div style="display: flex; align-items: center; line-height: 120%; width: 100%; user-select: none; min-height: 28px; font-size: 14px; margin-top: 6px;">
                     <div style="margin-left: 12px; margin-right: 6px; min-width: 0px; flex: 1 1 auto;">
@@ -21,15 +21,17 @@
                                 <base-data-provider
                                     v-for="template in templates"
                                     :key="template.id"
-                                    :block-id="template.id"
-                                    :space-id="props.spaceId"
-                                    table="block"
-                                    v-slot="{ recordValueDeferInStore}"
+                                    :pointer="{
+                                        id: template.id,
+                                        table: 'block',
+                                        spaceId: props.spaceId
+                                    }"
+                                    v-slot="{ recordValueInStore}"
                                 >
                                     <base-button 
                                         @click.stop="handleTemplateSelect(template.id)"
                                         style="margin-right: 4px; margin-left: 4px;"
-                                        v-if="recordValueDeferInStore"
+                                        v-if="recordValueInStore"
                                     >
                                         <div style="display: flex; align-items: center; line-height: 120%; width: 100%; user-select: none; min-height: 28px; font-size: 14px;">
                                             <div style="display: flex; align-items: center; justify-content: center; width: 18px; height: 24px; flex-shrink: 0; cursor: -webkit-grab; margin-left: 8px; margin-right: -4px;">
@@ -61,7 +63,7 @@
                                             </div>
                                             
                                             <div style="margin-left: auto; margin-right: 12px; min-width: 0px; flex-shrink: 0;">
-                                                <base-button class="notion-template-picker-item-action-menu notion-fadein" style="border-radius: 4px; width: 24px; height: 24px; margin-right: -6px; padding: 4px;">
+                                                <base-button class="xdoc-template-picker-item-action-menu xdoc-fadein" style="border-radius: 4px; width: 24px; height: 24px; margin-right: -6px; padding: 4px;">
                                                     <svg role="graphics-symbol" viewBox="0 0 13 3" class="dots" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><g><path d="M3,1.5A1.5,1.5,0,1,1,1.5,0,1.5,1.5,0,0,1,3,1.5Z"></path><path d="M8,1.5A1.5,1.5,0,1,1,6.5,0,1.5,1.5,0,0,1,8,1.5Z"></path><path d="M13,1.5A1.5,1.5,0,1,1,11.5,0,1.5,1.5,0,0,1,13,1.5Z"></path></g></svg>
                                                 </base-button>
                                             </div>
@@ -103,7 +105,7 @@
                                 </div>
                                 
                                 <div style="margin-left: auto; margin-right: 12px; min-width: 0px; flex-shrink: 0;">
-                                    <base-button class="notion-template-picker-item-action-menu notion-fadein" style="border-radius: 4px; width: 24px; height: 24px; margin-right: -6px; padding: 4px;">
+                                    <base-button class="xdoc-template-picker-item-action-menu xdoc-fadein" style="border-radius: 4px; width: 24px; height: 24px; margin-right: -6px; padding: 4px;">
                                         <svg role="graphics-symbol" viewBox="0 0 13 3" class="dots" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><g><path d="M3,1.5A1.5,1.5,0,1,1,1.5,0,1.5,1.5,0,0,1,3,1.5Z"></path><path d="M8,1.5A1.5,1.5,0,1,1,6.5,0,1.5,1.5,0,0,1,8,1.5Z"></path><path d="M13,1.5A1.5,1.5,0,1,1,11.5,0,1.5,1.5,0,0,1,13,1.5Z"></path></g></svg>
                                     </base-button>
                                 </div>
@@ -188,7 +190,7 @@ function getTemplatePageById(templatePageId) {
 }
 
 function getTemplatePageTitle(templatePageId) {
-    return getTemplatePageById(templatePageId).properties.title[0][0];
+    return getTemplatePageById(templatePageId)?.properties?.title?.[0]?.[0];
 }
 
 function handleTemplateSelect(templatePageId) {

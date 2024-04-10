@@ -116,7 +116,7 @@
                             <base-data-provider
                                 :pointer="{
                                     id: pageId,
-                                    table: 'table',
+                                    table: 'block',
                                     spaceId: 'f2cf1fd1-8789-4ddd-9190-49f41966c446'
                                 }"
                                 v-slot="{ recordValueDeferInStore }"
@@ -217,7 +217,6 @@ import { useRecordValuesStore } from '@/stores/recordValues';
 import CollectionViewTableCell from './CollectionViewTableCell.vue';
 import CollectionViewTablePropertyValue from './CollectionViewTablePropertyValue.vue';
 import { useRouter } from 'vue-router';
-import { listAfter as listAfterUsecase } from "@/usecases/listAfter";
 import uuid from '@/helpers/globals/uuid';
 import { transformToStandardUUIDFormat } from '../helpers/router/transformToStandardUUIDFormat';
 import { CollectionView } from '@/entities/CollectionView';
@@ -288,38 +287,17 @@ function handlePropertyValueRerender(needRerender) {
     return needRerender;
 }
 
-const collectionViewPagesRecordValueInStore = computed(function() {
-    return recordValuesStore.getRecordValue({
-        id: props.collectionViewId,
-        table: "collection_view",
-        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    })?.page_sort
-})
-
-function emitAddItems(items, index = null) {
+function emitAddItems(items, index = null, makeApiCallToSetRecord = true) {
     emits("add-items", {
         items,
-        index
+        index,
+        makeApiCallToSetRecord
     });
 }
 
 function handleAddNewItem(index = null, nestingLevel = 0) {
     const id = transformToStandardUUIDFormat(uuid());
     
-    listAfterUsecase(
-        {
-            after: collectionViewPagesRecordValueInStore.value[collectionViewPagesRecordValueInStore.value.length-1],
-            id
-        },
-        ['page_sort'],
-        {
-            id: props.collectionViewId,
-            table: "collection_view",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        }
-    );
-        
-
     emitAddItems(
         [{ id, nestingLevel }],
         index
@@ -336,7 +314,8 @@ watch(
         }
     },
     { deep: true}
-)
+);
+
 function handleCollectionItemExpand(pageId, index, nestingLevel) {
     const subItemsIds = recordValuesStore.getRecordValue({
         id: pageId,
@@ -363,12 +342,14 @@ function handleCollectionItemExpand(pageId, index, nestingLevel) {
 
     subItems.push({
         id: "btn",
+        pageId,
         nestingLevel
     });
 
     emitAddItems(
         subItems.length >= 0 ? subItems : [],
-        index
+        index,
+        false
     );
 }
 

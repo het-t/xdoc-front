@@ -55,10 +55,19 @@ export const useTransactionsQueue = defineStore('q', () => {
         const recordValueStore = useRecordValuesStore();
         
         if (spaceId) {
-            recordValueStore.setRecordValue(pointerId, table, recordValue, spaceId)
+            recordValueStore.setRecordValue({
+                id: pointerId, 
+                table, 
+                record: recordValue, 
+                spaceId
+            })
         }
         else {
-            recordValueStore.setRecordValue(pointerId, table, recordValue)
+            recordValueStore.setRecordValue({
+                id: pointerId, 
+                table, 
+                record: recordValue
+            })
         }
     }
 

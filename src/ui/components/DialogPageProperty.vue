@@ -55,8 +55,10 @@ import DialogPagePropertyStatus from './DialogPagePropertyStatus.vue';
 import DialogPagePropertyPerson from './DialogPagePropertyPerson.vue';
 import { useRecordValuesStore } from '@/stores/recordValues';
 import { defineProps, ref } from 'vue';
-import { set as setUsecase } from '@/usecases/set';
 import { useGeneralStore } from '@/stores/general';
+import { useTransactionsQueue } from '@/stores/transactionsQueue';
+import { makeTransaction } from '@/services/transactions/factories/makeTransaction';
+import { makeOperation } from '@/services/transactions/factories/makeOperation';
 
 const props = defineProps({
     propertyId: {
@@ -90,14 +92,27 @@ const propertyType = Collection.prototype.getPropertyById.call(
 
 const showDialogView = ref(true);
 function handlePropertyValueChange({value, dialogShow=true}) {
-    setUsecase(
-        value,
-        ['properties', props.propertyId],
-        {
-            table: "block",
-            id: props.pageId,
-            spaceId: props.spaceId
-        }
+    const operations = [
+        makeOperation(
+            "set",
+            value,
+            ["properties", props.propertyId],
+            {
+                table: "block",
+                id: props.pageId,
+                spaceId: props.spaceId
+            }
+        )
+    ];
+    
+    useTransactionsQueue().enqueue(
+        makeTransaction({
+            spaceId: props.spaceId,
+            debug: {
+                userAction: "DialogPageProperty=>handlePropertyValueChange"
+            },
+            operations
+        })
     );
 
     useGeneralStore().propertyValueDialog = {

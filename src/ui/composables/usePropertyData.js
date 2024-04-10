@@ -8,13 +8,13 @@ export const usePropertyData = function(props, emitHandler) {
         id: props.value.pageId,
         table: "block",
         spaceId: props.value.spaceId
-    }).properties[props.value.propertyId]?.[0]?.[0] || "";
+    })?.properties?.[props.value.propertyId]?.[0]?.[0] || "";
     
     const property = recordValuesStore.getRecordValue({
         id: props.value.collectionId,
         table: "collection",
         spaceId: props.value.spaceId
-    }).schema[props.value.propertyId];
+    })?.schema?.[props.value.propertyId];
 
     onBeforeUnmount(() => {
         emitHandler();

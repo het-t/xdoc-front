@@ -1,6 +1,6 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 
-export function update(args, path, pointer) {
+export function update({args, path, pointer}) {
     const recordInStore = useRecordValuesStore().getRecordValue({
         id: pointer.id,
         table: pointer.table,
@@ -19,16 +19,9 @@ export function update(args, path, pointer) {
         targetNode = args;
         return;
     }
-    
-    for(const targetNodeProperty in args) {
-        // const targetNodePropertyValue = targetNode[targetNodeProperty];
-        targetNode[targetNodeProperty] = args[targetNodeProperty];
 
-        // for (const key in targetNodePropertyValue) {
-        //     if (args[targetNodeProperty][key]) {
-        //         targetNodePropertyValue[key] = args[targetNodeProperty][key];
-        //     }
-        // }
+    for(const targetNodeProperty in args) {
+        targetNode[targetNodeProperty] = args[targetNodeProperty];
     }
 }
 

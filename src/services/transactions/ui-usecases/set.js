@@ -1,13 +1,13 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 
-export function set(args, path, pointer) {
+export function set({args, path, pointer}) {
     if(path.length === 0) {
-        useRecordValuesStore().setRecordValue(
-            pointer.id, 
-            pointer.table, 
+        useRecordValuesStore().setRecordValue({
+            id: pointer.id, 
+            table: pointer.table, 
             args, 
-            pointer.spaceId
-        );
+            spaceId: pointer.spaceId
+        });
 
         return;
     }
@@ -27,6 +27,7 @@ export function set(args, path, pointer) {
     
     let i = 0;
     for(i = 0; i!==path.length - 1; i++) {
+        if(!targetNode[path[i]]) targetNode[path[i]] = {};
         targetNode = targetNode[path[i]];
     }
 

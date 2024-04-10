@@ -38,7 +38,12 @@ export const useRecordValuesStore = defineStore('recordValues', () => {
         recordValues.value[id] = {};
     }
 
-    function setRecordValue(id: string, table: string, record: any, spaceId: string = currentSpaceId.value) {   
+    function setRecordValue({id, table, record, spaceId = currentSpaceId.value}: {
+        id: string,
+        table: string,
+        record: any,
+        spaceId?: string
+    }) {   
         addSpaceIfNotPresent(spaceId);
         recordValues.value[spaceId][id] = record;
     }

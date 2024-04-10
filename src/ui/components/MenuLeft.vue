@@ -275,12 +275,12 @@ onBeforeMount(async () => {
     for(const id in spaceViews) {
       const { spaceId, value: { value } } = spaceViews[id];
   
-      recordValuesStore.setRecordValue(
+      recordValuesStore.setRecordValue({
         id,
-        "space_view",
-        value,
+        table: "space_view",
+        record: value,
         spaceId
-      );
+      });
     }
 
     const { bookmarked_pages, private_pages } = recordValuesStore.getRecordValue({

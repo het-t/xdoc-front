@@ -24,19 +24,12 @@ export function makeOperation(
     path: string[],
     pointer: Pointer
 ): Operation {
-    const o = {
-        command,
-        args,
-        path,
-        pointer
-    }   
-
     switch(command) {
         case "update": 
-            update(args, path, pointer);
+            update({args, path, pointer});
             break;
         case "set": 
-            set(args, path, pointer);
+            set({args, path, pointer});
             break;
         case "setParent":
             setParent(args, path, pointer);
@@ -58,5 +51,10 @@ export function makeOperation(
             break;
     }
 
-    return o;
+    return {
+        command,
+        args,
+        pointer,
+        path
+    };
 }

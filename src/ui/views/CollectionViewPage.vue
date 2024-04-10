@@ -5,10 +5,10 @@
             table: 'collection',
             spaceId: 'f2cf1fd1-8789-4ddd-9190-49f41966c446'
         }"
-        v-slot="{recordValueDeferInStore, recordValueInStore: collectionRecordValueInStore}"
+        v-slot="{ recordValueInStore: collectionRecordValueInStore}"
     >
         <div 
-            v-if="recordValueDeferInStore"
+            v-if="collectionRecordValueInStore !== undefined"
             class="xdoc-scroller vertical horizontal"
             style="z-index: 1; display: flex; flex-direction: column; flex-grow: 1; position: relative; margin-bottom: 0;"
             :style="`${state.displayCollectionSideMenu ? 'overflow: auto hidden; margin-right: 10px;' : 'overflow: auto; margin-right: 0;'}`"
@@ -155,7 +155,7 @@
                         <template v-if="recordValueInStore">          
                             <collection-view-table 
                                 v-if="recordValueInStore.type === 'table'"  
-                                @add-items="addRecordInItemsList($event)"
+                                @add-items="addRecordInItemsList"
                                 @collapse="handleItemCollapse($event)"
                                 :items="collectionItems"
                                 :collection-id="collectionId"
@@ -261,7 +261,7 @@ function setSideMenuHeight() {
 //
 
 // functionality to handle new record in collection
-function addRecordInItemsList({items, index = null}) {
+function addRecordInItemsList({ items, index = null, makeApiCallToSetRecord }) {
     if (index === null || index === undefined) {
         collectionItems.value.push(...items);
         return;
@@ -275,6 +275,62 @@ function addRecordInItemsList({items, index = null}) {
         ...items,
         ...after
     ];
+
+    if(makeApiCallToSetRecord) {
+        const transactionQueue = useTransactionsQueue();
+
+        items.forEach((item) => {
+            const itemPointer = {
+                id: item.id,
+                table: "block",
+                spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+            }
+
+            const operations = [
+                makeOperation(
+                    "set",
+                    {
+                        id: item.id,
+                        type: "page",
+                        space_id: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                    },
+                    [],
+                    itemPointer
+                )
+            ];
+
+            if(item.nestingLevel !== 0) {
+                console.log("set parent operation should be performed");
+            }
+
+            operations.push(
+                makeOperation(
+                    "update",
+                    {
+                        created_by_id: "ca5f99c6-879b-4562-bd41-6651fc8d2099",
+                        created_by_table: "xdoc_user",
+                        created_time: 1712676869405,
+                        last_edited_time: 1712676869405,
+                        last_edited_by_id: "ca5f99c6-879b-4562-bd41-6651fc8d2099",
+                        last_edited_by_table: "xdoc_user"
+                    },
+                    [],
+                    itemPointer
+                )
+            );
+            
+            transactionQueue.enqueue(
+                makeTransaction({
+                    spaceId: "",
+                    debug: {
+                        userAction: "CollectionViewPage=>addRecordInItemsList"
+                    },
+                    operations
+                })
+            )
+        })
+    }
+
 }
 
 function handleItemCollapse({itemId}) {
@@ -282,10 +338,9 @@ function handleItemCollapse({itemId}) {
     if (index < 0) return;
 
     const nestingLevel = collectionItems.value[index].nestingLevel;
-    index++;
-    let item = collectionItems.value[index];
+    let item = collectionItems.value[++index];
 
-    while(item.nestingLevel > nestingLevel) {
+    while(item && (item.nestingLevel > nestingLevel)) {
         if(item.nestingLevel > nestingLevel) {
             collectionItems.value.splice(index, 1);
         }
