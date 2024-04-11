@@ -299,11 +299,24 @@ function addRecordInItemsList({ items, index = null, makeApiCallToSetRecord }) {
                 )
             ];
 
+            const setParentOperationArgs = {
+                parentId: collectionId,
+                parentTable: "collection"
+            };
+
             if(item.nestingLevel !== 0) {
-                console.log("set parent operation should be performed");
+                const parent = before.reverse().find((row) => row.id !== "btn" && row.nestingLevel === 0);
+                setParentOperationArgs.parentId = parent.id;
+                setParentOperationArgs.parentTable = "block";
             }
 
             operations.push(
+                makeOperation(
+                    "setParent",
+                    setParentOperationArgs,
+                    [],
+                    itemPointer
+                ),
                 makeOperation(
                     "update",
                     {
