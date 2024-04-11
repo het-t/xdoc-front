@@ -26,10 +26,10 @@ export function makeOperation(
 ): Operation {
     switch(command) {
         case "update": 
-            update({args, path, pointer});
+            update(args, path, pointer);
             break;
         case "set": 
-            set({args, path, pointer});
+            set(args, path, pointer);
             break;
         case "setParent":
             setParent(args, path, pointer);

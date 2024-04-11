@@ -1,11 +1,11 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 
-export function set({args, path, pointer}) {
+export function set(args, path, pointer) {
     if(path.length === 0) {
         useRecordValuesStore().setRecordValue({
             id: pointer.id, 
             table: pointer.table, 
-            args, 
+            record: args, 
             spaceId: pointer.spaceId
         });
 
@@ -19,11 +19,6 @@ export function set({args, path, pointer}) {
     });
 
     let targetNode = recordInStore;
-
-    if(!path.length) {
-        targetNode = args;
-        return;
-    }
     
     let i = 0;
     for(i = 0; i!==path.length - 1; i++) {
@@ -31,23 +26,11 @@ export function set({args, path, pointer}) {
         targetNode = targetNode[path[i]];
     }
 
-    targetNode[path[i]] = args;
-}
+    if (!targetNode) targetNode = {};
 
-/**
- * property name change
- */
-// {
-//     "pointer": {
-//       "id": "2db466a0-b0d9-4dec-809b-a90e3fbaf120",
-//       "table": "collection",
-//       "spaceId": "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-//     },
-//     "path": [
-//       "schema",
-//       "e_rz",
-//       "name"
-//     ],
-//     "command": "set",
-//     "args": "Tags new"
-//   }
+    targetNode[path[i]] = (
+        typeof args === 'object' 
+        ? Object.assign({}, args) 
+        : args
+    );
+}

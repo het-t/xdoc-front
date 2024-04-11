@@ -45,7 +45,7 @@ export const useRecordValuesStore = defineStore('recordValues', () => {
         spaceId?: string
     }) {   
         addSpaceIfNotPresent(spaceId);
-        recordValues.value[spaceId][id] = record;
+        recordValues.value[spaceId][id] = Object.assign({}, record);
     }
 
     function setNewChild(parentBlockId: string, property: string, childBlockId: string, spaceId: string = currentSpaceId.value) {
