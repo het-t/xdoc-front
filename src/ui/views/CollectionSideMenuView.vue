@@ -42,6 +42,12 @@
                         :collection-id="props.collectionId"
                         :property-id="componentInView.props.id"
                     ></collection-side-menu-property-edit-type>
+
+                    <collection-side-menu-sub-items-menu
+                        v-if="componentInView.name === 'subitems'"
+                        :collection-id="props.collectionId"
+                        :collection-view-id="props.collectionViewId"
+                    ></collection-side-menu-sub-items-menu>
                 </div>
             </div>
 
@@ -53,13 +59,14 @@
 
 <script setup>
 import { defineProps, computed } from 'vue';
+import { useCollectionsStore } from '@/stores/collections';
 import CollectionSideMenuProperties from '@/ui/components/CollectionSideMenuProperties.vue';
 import CollectionSideMenuOptions from '@/ui/components/CollectionSideMenuOptions.vue';
 import CollectionSideMenuPropertyCreate from '@/ui/components/CollectionSideMenuPropertyCreate.vue';
 import CollectionSideMenuPropertyCreateRelation from '../components/CollectionSideMenuPropertyCreateRelation.vue';
 import CollectionSideMenuPropertyEditView from '@/ui/views/CollectionSideMenuPropertyEditView.vue';
 import CollectionSideMenuPropertyEditType from '@/ui/components/CollectionSideMenuPropertyEditType.vue';
-import { useCollectionsStore } from '@/stores/collections';
+import CollectionSideMenuSubItemsMenu from '../components/CollectionSideMenuSubItemsMenu.vue';
 
 const props = defineProps({
     height: {

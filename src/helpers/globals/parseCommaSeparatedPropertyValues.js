@@ -13,7 +13,7 @@ export const parseCommaSeparatedPropertyValues = function(
             if(!commaSeparatedStrings.length) commaSeparatedStrings.push(property.defaultOption);
         }
     
-        setParsedValue((_value)=>property.options.find(({value}) => value === _value), propertyValueParsedRef, commaSeparatedStrings);
+        setParsedValue((_value)=>property?.options?.find(({value}) => value === _value), propertyValueParsedRef, commaSeparatedStrings);
     
         if(type === "status") {
             propertyValueParsedRef.value = propertyValueParsedRef.value.map((status) => {
