@@ -243,31 +243,34 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const collectionSchemaRecordValueInStore = computed(function() {
+const collectionRecordValueInStore = computed(function() {
     return recordValuesStore.getRecordValue({
         id: props.collectionId,
         table: "collection",
         spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    }).schema
+    })
 })
 
-function getCollectionPropertyById(id) {
-    return collectionSchemaRecordValueInStore.value[id];
-}
-
+const collectionViewRecordValueInStore = computed(function() {
+    return recordValuesStore.getRecordValue({
+        id: props.collectionViewId,
+        table: "collection_view",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    })
+})
 const collectionViewPropertiesRecordValueInStore = computed(function() {
-    const collectionPropertyIds = Object.keys(collectionSchemaRecordValueInStore.value);
+    const collectionPropertyIds = Object.keys(collectionRecordValueInStore.value.schema);
 
     return CollectionView.prototype.getProperties.call(
-        recordValuesStore.getRecordValue({
-            id: props.collectionViewId,
-            table: "collection_view",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        })
+        collectionViewRecordValueInStore.value
     ).filter(({property}) => {
         return collectionPropertyIds.indexOf(property) !== -1;
     });
 })
+
+function getCollectionPropertyById(id) {
+    return collectionRecordValueInStore.value.schema[id];
+}
 
 const dialogPropertyValue = computed(function () {
     return useGeneralStore().propertyValueDialog;
@@ -316,11 +319,26 @@ watch(
 );
 
 function handleCollectionItemExpand(pageId, index, nestingLevel) {
-    const subItemsIds = recordValuesStore.getRecordValue({
+    const itemRecordValue = recordValuesStore.getRecordValue({
         id: pageId,
         table: "block",
         spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    })?.content || [];
+    });
+
+    const subItemPropertyId = collectionRecordValueInStore.value.format.subitem_property;
+
+    let itemSubItemsPropertyValue = itemRecordValue?.properties?.[subItemPropertyId]
+
+    let subItemsIds = [];
+
+    itemSubItemsPropertyValue?.map((subItemPointer) => {
+        console.log(subItemPointer)
+        if(subItemPointer[0] === '‣') {
+            subItemsIds.push(subItemPointer[1][0][1]);
+        }
+    })
+
+    if(!subItemsIds?.length) subItemsIds = [];
 
     if (expandedItemsIds.value[pageId]) {
         expandedItemsIds.value[pageId] = false;

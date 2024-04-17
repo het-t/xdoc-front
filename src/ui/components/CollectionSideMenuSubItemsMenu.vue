@@ -121,7 +121,6 @@ function handleSubItems() {
                                 name: propertyValue.name,
                                 collection_id: props.collectionId,
                                 collection_pointer: collectionPointer,
-                                // property: ""
                             }
                         },
                         ["schema"],

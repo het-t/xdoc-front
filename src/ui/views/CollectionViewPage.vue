@@ -304,8 +304,9 @@ function addRecordInItemsList({ items, index = null, makeApiCallToSetRecord }) {
                 parentTable: "collection"
             };
 
-            if(item.nestingLevel !== 0) {
-                const parent = before.reverse().find((row) => row.id !== "btn" && row.nestingLevel === 0);
+            const parent = before.reverse().find((row) => row.id !== "btn" && row.nestingLevel === 0);
+            
+            if(parent) {
                 setParentOperationArgs.parentId = parent.id;
                 setParentOperationArgs.parentTable = "block";
             }
@@ -316,7 +317,34 @@ function addRecordInItemsList({ items, index = null, makeApiCallToSetRecord }) {
                     setParentOperationArgs,
                     [],
                     itemPointer
-                ),
+                )
+            );
+
+            if(item.nestingLevel !== 0) {
+                const subItemPropertyId = recordValuesStore.getRecordValue({
+                    id: collectionId,
+                    table: "collection",
+                    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+                })?.format?.subitem_property;
+
+                operations.push(
+                    makeOperation(
+                        "addRelationAfter",
+                        {
+                            id: item.id,
+                            spaceId: itemPointer.spaceId
+                        },
+                        ["properties", subItemPropertyId],
+                        {
+                            id: parent.id,
+                            table: "block",
+                            spaceId: itemPointer.spaceId
+                        }
+                    )
+                )
+            }
+
+            operations.push(
                 makeOperation(
                     "update",
                     {
