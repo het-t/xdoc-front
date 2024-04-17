@@ -7,8 +7,9 @@
             <div style="box-shadow: rgb(233, 233, 231) 0px -1px 0px;">
                 <div style="display: flex; flex-direction: column; min-width: 290px; max-width: 290px; height: 100%; max-height: calc(100% - 16px);">
                     <collection-side-menu-options 
-                        :collection-view-id="props.collectionViewId"
                         v-if="componentInView.name === 'main'"
+                        :collection-id="props.collectionId"
+                        :collection-view-id="props.collectionViewId"
                     ></collection-side-menu-options>
                     
                     <collection-side-menu-properties 

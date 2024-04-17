@@ -42,25 +42,28 @@ const props = defineProps({
 
 const collectionViewRecordValueInStore = useRecordValuesStore().getRecordValue({
     id: props.collectionViewId,
-    table: "collection",
+    table: "collection_view",
     spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 });
 
+const collectionRecordValueInStore = useRecordValuesStore().getRecordValue({
+    id: props.collectionId,
+    table: "collection",
+    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+})
+
 const isSubItemOn = ref(false);
 if (
-    collectionViewRecordValueInStore?.format?.subitem_property === true
+    collectionRecordValueInStore?.format?.subitem_property
 ) isSubItemOn.value = true;
 
 
 function handleSubItems() {
     isSubItemOn.value = !isSubItemOn.value;
+    
     if(isSubItemOn.value) {
         const propertyIds = Object.keys(
-            useRecordValuesStore().getRecordValue({
-                id: props.collectionId,
-                table: "collection",
-                spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-            })?.schema
+            collectionRecordValueInStore?.schema
         )
 
         const [propertyId, propertyValue] = Object.entries(

@@ -332,7 +332,6 @@ function handleCollectionItemExpand(pageId, index, nestingLevel) {
     let subItemsIds = [];
 
     itemSubItemsPropertyValue?.map((subItemPointer) => {
-        console.log(subItemPointer)
         if(subItemPointer[0] === '‣') {
             subItemsIds.push(subItemPointer[1][0][1]);
         }

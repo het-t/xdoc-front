@@ -61,7 +61,7 @@
                     
                     <template #item>Sub-items</template>
 
-                    <template #itemMeta>Off</template>
+                    <template #itemMeta>{{ subItemsStatus ? "on" : "off" }}</template>
                 </base-collection-side-menu-item-col-3>
             </div>
         </template>
@@ -81,6 +81,10 @@ const props = defineProps({
     collectionViewId: {
         type: String,
         required: true
+    },
+    collectionId: {
+        type: String,
+        required: true
     }
 })
 
@@ -91,18 +95,30 @@ function setCurrentComponent(componentName) {
 }
 
 let totalPropertiesVisible = -1;
+let subItemsStatus = false;
 
 onBeforeMount(() => {
     const recordsValueStore = useRecordValuesStore();
 
+    const collectionViewRecordValueInStore = recordsValueStore.getRecordValue({
+        id: props.collectionViewId,
+        table: "collection_view",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    });
+
+    const collectionRecordValueInStore = recordsValueStore.getRecordValue({
+        id: props.collectionId,
+        table: "collection",
+        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+    });
+
     totalPropertiesVisible = CollectionView.prototype.getProperties.call(
-        recordsValueStore.getRecordValue({
-            id: props.collectionViewId,
-            table: "collection_view",
-            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-        })
-    ).length;
+        collectionViewRecordValueInStore
+    )?.length;
 
     if (isNaN(totalPropertiesVisible)) totalPropertiesVisible = 0;
+
+    subItemsStatus = collectionRecordValueInStore?.format?.subitem_property;
+
 })
 </script>
