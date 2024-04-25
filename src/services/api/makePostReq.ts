@@ -1,7 +1,7 @@
-import axios from 'axios'
+import { _ } from ".";
 
 export default function makePostReq (url: string, args: any) {
-    return axios.post(url, args, {
+    return _.post(url, args, {
         withCredentials: true,
     })
 }

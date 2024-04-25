@@ -35,7 +35,6 @@ const app = createApp(App);
 
 app.config.globalProperties.openMenu = openMenu;
 app.config.globalProperties.closeMenu = closeMenu;
-console.log(process.env);
 
 app.use(
     createAuth0({
