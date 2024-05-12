@@ -76,13 +76,18 @@
         </div>
 
         <div
-            style="background: rgba(0, 0, 0, 0.75); position: absolute; top: 0; display: flex; height: 100%; width: 100%; display: flex; justify-content: center; align-items: center;"
+            style="background: rgba(0, 0, 0, 0.75); position: fixed; top: 0; display: flex; height: 100%; width: 100%; display: flex; justify-content: center; align-items: center;"
             v-if="visiblePopUp !== ''"
-            @click.stop="visiblePopUp = ''"
+            @click.self.stop="visiblePopUp = ''"
         >
             <home-page-request-demo
                 style="background: white; height: 75%; width: 50%; max-width: 450px;"
                 v-if="visiblePopUp === 'signup'"
+            />
+
+            <home-page-sign-in 
+                style="background: white; width: 50%; max-width: 450px;"
+                v-if="visiblePopUp === 'signin'"
             />
         </div>
     </div>
@@ -92,6 +97,7 @@
 import { ref } from 'vue';
 import BaseButton from '../components/BaseButton.vue';
 import HomePageRequestDemo from "../components/HomePageRequestDemo.vue";
+import HomePageSignIn from '../components/HomePageSignIn.vue';
 
 const visiblePopUp = ref("");
 
