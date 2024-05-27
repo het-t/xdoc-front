@@ -11,24 +11,26 @@ const router = createRouter({
     {
       path: '/',
       component: () => import("../views/MainView.vue"),
-      name: "main-page"
-    },
-    {
-      path: '/:blockId',
-      name: 'render-page',
-      components: {
-        default: () => import('../components/RenderMain.vue'),
-      },
-      props: {
-        default: (route) => {
-          const blockId: string | null = transformToStandardUUIDFormat(route.params.blockId as string);
-
-          return {
-            blockId
+      name: "main-page",
+      children: [
+        {
+          path: '/:blockId',
+          name: 'render-page',
+          components: {
+            default: () => import('../components/RenderMain.vue'),
+          },
+          props: {
+            default: (route) => {
+              const blockId: string | null = transformToStandardUUIDFormat(route.params.blockId as string);
+    
+              return {
+                blockId
+              }
+            }
           }
         }
-      }
-    }
+      ]
+    },
   ]
 })
 export default router

@@ -26,6 +26,7 @@
             <div id="id_1"
                 style="display: block;"
                 role="tree"
+                @click="handleTreeItemClick"
             >
                 <div>
                     <slot></slot>
@@ -38,6 +39,7 @@
 <script setup>
 import { defineProps } from 'vue';
 import BaseButton from './BaseButton.vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     cssClass: {
@@ -45,4 +47,26 @@ const props = defineProps({
         required: true
     }
 });
+
+const router = useRouter();
+
+function handleTreeItemClick(e) {
+    const target = e.target;
+    let parent = target.parentElement;
+
+    while(parent) {
+        
+        if(parent.role !== "treeitem") {
+            parent = parent.parentElement;
+            continue;
+        }
+        
+        const blockId = parent.parentElement.getAttribute("data-block-id");
+        router.push({ 
+            name: "render-page", 
+            params: { blockId: blockId.replaceAll("-", "") }
+        });
+        break;
+    }
+}
 </script>

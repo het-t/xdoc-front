@@ -1,7 +1,7 @@
 <template>
     <div>
         <div 
-            @click.self="handleClickOutside"
+            @click.self="closeDialog"
             style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;"
         ></div>
 
@@ -41,14 +41,14 @@ watch(
     () => props.show,
     (value) => {
         if(value === false) {
-            handleClickOutside();
+            closeDialog();
         }
     }
 )
 
 const generalStore = useGeneralStore();
 
-function handleClickOutside() {
+function closeDialog() {
     generalStore.dialog = {};
     generalStore.setCurrentComponentInDefaultOverlay(null, {});
 }

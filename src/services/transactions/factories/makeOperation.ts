@@ -5,6 +5,7 @@ import { set } from "../ui-usecases/set";
 import { update } from "../ui-usecases/update";
 import { listAfter } from "../ui-usecases/listAfter";
 import { setParent } from "../ui-usecases/setParent";
+import { setPermissionItem } from "../ui-usecases/setPermissionItem";
 import { keyedObjectListBefore } from "../ui-usecases/keyedObjectListBefore";
 import { keyedObjectListRemove } from "../ui-usecases/keyedObjectListRemove";
 import { keyedObjectListUpdate } from "../ui-usecases/keyedObjectListUpdate";
@@ -16,6 +17,7 @@ export function makeOperation(
         | "listBefore" 
         | "listAfter" 
         | "setParent" 
+        | "setPermissionItem"
         | "keyedObjectListBefore"
         | "keyedObjectListAfter"
         | "keyedObjectListRemove"
@@ -33,6 +35,9 @@ export function makeOperation(
             break;
         case "setParent":
             setParent(args, path, pointer);
+            break;
+        case "setPermissionItem":
+            setPermissionItem(args, path, pointer);
             break;
         case "listBefore":
             listBefore(args, path, pointer);

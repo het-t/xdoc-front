@@ -18,7 +18,7 @@
 <script setup>
 import { defineProps } from "vue";
 import BaseMenuPageNavigation from "./BaseMenuPageNavigation.vue";
-import MenuPageNavigationPageLink from "./MenuPageNavigationPageLink";
+import MenuPageNavigationPageLink from "./MenuPageNavigationPageLink.vue";
 
 const props = defineProps({
     pageIds: {
@@ -27,3 +27,9 @@ const props = defineProps({
     }
 });
 </script>
+
+<style>
+div.xdoc-selectable a[role="treeitem"]:hover {
+    background: rgba(55, 53, 47, 0.08);
+}
+</style>

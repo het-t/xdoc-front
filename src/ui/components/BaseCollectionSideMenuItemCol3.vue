@@ -1,5 +1,7 @@
 <template>
-    <base-button style="color: rgb(55, 53, 47); fill: rgba(55, 53, 47, 0.85); margin-right: 4px; margin-left: 4px; width: calc(100% - 8px);">
+    <base-button 
+        style="color: rgb(55, 53, 47); fill: rgba(55, 53, 47, 0.85); margin-right: 4px; margin-left: 4px; width: calc(100% - 8px);"
+    >
         <div style="display: flex; align-items: center; min-height: 28px; font-size: 14px; line-height: 120%; user-select: none; width: 100%;">
             <div v-if="props.graphic !== false" style="margin-left: 10px; margin-right: 4px; display: flex; justify-content: center; align-items: center;">
                 <slot name="graphic"></slot>

@@ -91,6 +91,7 @@ const propertyType = Collection.prototype.getPropertyById.call(
 ).type;
 
 const showDialogView = ref(true);
+
 function handlePropertyValueChange({value, dialogShow=true}) {
     const operations = [
         makeOperation(
