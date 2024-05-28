@@ -1,5 +1,5 @@
 <template>
-    <base-collection-side-menu-item-col-2
+    <base-collection-side-menu-item
         style="line-height: 120%;"
         :hover-style="{ color: 'rgb(235, 87, 87) !important', background: 'rgba(55, 53, 47, 0.08)'}"
         @click.stop="emits('propertyDelete')"
@@ -13,11 +13,11 @@
         <template #item>
             Delete property
         </template>
-    </base-collection-side-menu-item-col-2>
+    </base-collection-side-menu-item>
 </template>
 
 <script setup>
-import BaseCollectionSideMenuItemCol2 from './BaseCollectionSideMenuItemCol2.vue';
+import BaseCollectionSideMenuItem from './BaseCollectionSideMenuItem.vue';
 import { defineEmits } from 'vue';
 
 const emits = defineEmits([

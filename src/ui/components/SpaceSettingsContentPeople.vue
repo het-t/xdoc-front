@@ -26,6 +26,7 @@
                     <div>
                         <div style="display: inline-flex; position: relative; flex: 0 1 0%; border-radius: 4px; overflow: hidden; height: 28px;">
                             <base-button style="padding-right: 8px; padding-left: 8px; color: white; font-weight: 600;"
+                                @click.stop="showAddMemberDialog"
                                 :hover-style="{ background : 'rgb(0, 119, 212)' }"
                                 :default-style="{ background: 'rgb(35, 121, 226)' }"
                             >
@@ -42,7 +43,12 @@
 </template>
 
 <script setup>
+import { useGeneralStore } from '@/stores/general';
 import BaseButton from './BaseButton.vue';
 import SpaceSettingsContentHeader from "./SpaceSettingsContentHeading.vue";
 import SpaceSettingsTable from "./SpaceSettingsTable.vue";
+
+function showAddMemberDialog() {
+    useGeneralStore().setCurrentComponentInDefaultOverlay("space_settings_add_member", {});
+}
 </script>

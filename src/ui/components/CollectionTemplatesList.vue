@@ -309,6 +309,6 @@ function handleTemplateSelect(templatePageId) {
 const generalStore = useGeneralStore();
 
 function handleCloseTemplatesList() {
-    generalStore.setCurrentComponentInDefaultOverlay(null, null);
+    generalStore.hideCurrentComponent();
 }
 </script>

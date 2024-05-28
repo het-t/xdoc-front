@@ -469,11 +469,14 @@ function handleClickNew() {
 function handleDisplayTemplatesList(e) {
     const generalStore = useGeneralStore();
 
-    generalStore.setCurrentComponentInDefaultOverlay("collection_templates_list", {
-        collectionId,
-        collectionViewId: currentCollectionViewId,
-        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    });
+    generalStore.setCurrentComponentInDefaultOverlay(
+        "collection_templates_list", 
+        {
+            collectionId,
+            collectionViewId: currentCollectionViewId,
+            spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+        }
+    );
 
     const measures = e.target.getBoundingClientRect();
 

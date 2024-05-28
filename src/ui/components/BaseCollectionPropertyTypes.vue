@@ -1,5 +1,5 @@
 <template>
-    <base-collection-side-menu-item-col-2
+    <base-collection-side-menu-item
         v-for="propertyType in propertyTypes" :key="propertyType"
         @click.stop="handleUserSelectType(propertyType)"
     >
@@ -10,12 +10,12 @@
         <template #item>
             {{ propertyType.label }}
         </template>
-    </base-collection-side-menu-item-col-2>
+    </base-collection-side-menu-item>
 </template>
 
 <script setup>
 import { useCollectionsStore } from '@/stores/collections';
-import BaseCollectionSideMenuItemCol2 from './BaseCollectionSideMenuItemCol2.vue';
+import BaseCollectionSideMenuItem from './BaseCollectionSideMenuItem.vue';
 import { computed, defineProps, defineEmits } from 'vue';
 
 const collectionsStore = useCollectionsStore();

@@ -8,14 +8,16 @@ export const handlePropertyValueOverlay = function(
 ) {
     const generalStore = useGeneralStore();
 
-    generalStore.setCurrentComponentInDefaultOverlay(
-        propertyId ? "page_property_value_edit" : null,
-        {
-            collectionId,
-            propertyId,
-            pageId
-        }
-    );
+    if(propertyId) {
+        generalStore.setCurrentComponentInDefaultOverlay(
+            "page_property_value_edit",
+            {
+                collectionId,
+                propertyId,
+                pageId
+            }
+        );
+    }
 
     generalStore.dialog.width = measures?.width;
     generalStore.dialog.top = measures?.top;

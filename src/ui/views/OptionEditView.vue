@@ -108,7 +108,7 @@ function handleOptionDelete() {
         })
     );
 
-    generalStore.setCurrentComponentInDefaultOverlay(null, {});
+    generalStore.hideCurrentComponent();
 }
 
 function handleStyleSelect(color) {

@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { Ref, ref } from "vue";
 
+interface Component {
+    name: string,
+    props: object
+}
+
 export const useGeneralStore = defineStore("generalStore", () => {
     const dialog: Ref<{}> = ref({
         width: 276,
@@ -8,7 +13,7 @@ export const useGeneralStore = defineStore("generalStore", () => {
         left: 500
     })
 
-    const component = ref("");
+    const components: Ref<Component[]> = ref([]);
     const props = ref(Object());
 
     const propertyValueDialog = ref({
@@ -17,25 +22,29 @@ export const useGeneralStore = defineStore("generalStore", () => {
     });
 
     function setCurrentComponentInDefaultOverlay(
-        _component: string, 
-        _props: object
+        name: string, 
+        props: object
     ): void {
-        component.value = _component;
-        props.value = _props; 
+        components.value.push({
+            name,
+            props
+        });
     }
 
     function getCurrentComponentAndProps() {
-        return {
-            component,
-            props
-        }
+        return components.value[components.value.length - 1];
+    }
+
+    function hideCurrentComponent() {
+        if(components.value.length) components.value.pop();
     }
 
     return {
-        component,
+        components,
         props,
         setCurrentComponentInDefaultOverlay,
         getCurrentComponentAndProps,
+        hideCurrentComponent,
         dialog,
         propertyValueDialog
     }

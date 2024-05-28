@@ -101,12 +101,15 @@ function handleOptionEdit(e, optionId) {
     generalStore.dialog.top = measures.top;
     generalStore.dialog.left = measures.left;
 
-    generalStore.setCurrentComponentInDefaultOverlay('page_property_option_edit', {
-        optionId,
-        propertyId: props.propertyId,
-        collectionId: props.collectionId,
-        spaceId: props.spaceId
-    });
+    generalStore.setCurrentComponentInDefaultOverlay(
+        'page_property_option_edit', 
+        {
+            optionId,
+            propertyId: props.propertyId,
+            collectionId: props.collectionId,
+            spaceId: props.spaceId
+        }
+    );
 }
 
 function handleCreateNewOption(e) {

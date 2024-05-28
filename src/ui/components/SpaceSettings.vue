@@ -74,7 +74,7 @@ const state = reactive({
 
 function closeSpaceSettings() {
     const generalStore = useGeneralStore();
-    generalStore.setCurrentComponentInDefaultOverlay(null, null);
+    generalStore.hideCurrentComponent();
 }
 
 const menuItems = [
