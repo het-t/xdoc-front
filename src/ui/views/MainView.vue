@@ -42,7 +42,13 @@
       >
         <div style="position: relative; z-index: 0;"></div>
 
-        <div data-overlay="true" style="position: relative; z-index: 0; pointer-events: auto;">
+        <div 
+          v-for="(component, index) in components"
+          :key="component.name"
+          data-overlay="true" 
+          style="position: relative; pointer-events: auto;"
+          :style="{ zIndex: index }"
+        >
           <page-peek-side 
             v-if="state.peekBlockId !== null && state.peekMode === 'c'"
             :block-id="transformToStandardUUIDFormat(state.peekBlockId)"
@@ -50,29 +56,33 @@
           />
 
           <dialog-page-property
-            v-if="currentComponent === 'page_property_value_edit'"
-            :property-id="currentComponentProps.propertyId"
-            :page-id="currentComponentProps.pageId"
-            :collection-id="currentComponentProps.collectionId"
+            v-if="component.name === 'page_property_value_edit'"
+            :property-id="component.props.propertyId"
+            :page-id="component.props.pageId"
+            :collection-id="component.props.collectionId"
           />
 
           <option-edit-view 
-            v-if="currentComponent === 'page_property_option_edit'"
-            :option-id="currentComponentProps.optionId"
-            :collection-id="currentComponentProps.collectionId"
-            :property-id="currentComponentProps.propertyId"
-            :space-id="currentComponentProps.spaceId"
+            v-if="component.name === 'page_property_option_edit'"
+            :option-id="component.props.optionId"
+            :collection-id="component.props.collectionId"
+            :property-id="component.props.propertyId"
+            :space-id="component.props.spaceId"
           />
 
           <collection-templates-list 
-            v-if="currentComponent === 'collection_templates_list'"
-            :collection-id="currentComponentProps.collectionId"
-            :collection-view-id="currentComponentProps.collectionViewId"
-            :space-id="currentComponentProps.spaceId"
+            v-if="component.name === 'collection_templates_list'"
+            :collection-id="component.props.collectionId"
+            :collection-view-id="component.props.collectionViewId"
+            :space-id="component.props.spaceId"
           />
 
           <space-settings 
-            v-if="currentComponent === 'space_settings'"
+            v-if="component.name === 'space_settings'"
+          />
+
+          <space-settings-content-people-add-member
+            v-if="component.name === 'space_settings_add_member'"
           />
         </div>
       
@@ -108,6 +118,7 @@ import { transformToStandardUUIDFormat } from '@/ui/helpers/router/transformToSt
 import { useGeneralStore } from '@/stores/general';
 import OptionEditView from '@/ui/views/OptionEditView.vue';
 import CollectionTemplatesList from '@/ui/components/CollectionTemplatesList.vue';
+import SpaceSettingsContentPeopleAddMember from '../components/SpaceSettingsContentPeopleAddMember.vue';
 
 const spaceId = "f2cf1fd1-8789-4ddd-9190-49f41966c446";
 const spaceViewId = "dbf9ee2d-ded5-4b35-b63d-de778f9dc19a";
@@ -197,8 +208,7 @@ function inputHandler(e) {
 
 /** collection-record-porperty-value-overlay */
 const generalStore = useGeneralStore();
-const currentComponent = computed(() => generalStore.getCurrentComponentAndProps().component.value);
-const currentComponentProps = computed(() => generalStore.getCurrentComponentAndProps()?.props.value);
+const components = computed(() => generalStore.components);
 
 onMounted(
   async () => {
