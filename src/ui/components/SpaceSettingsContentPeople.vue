@@ -1,7 +1,7 @@
 <template>
     <space-settings-content-header>People</space-settings-content-header>
 
-    <div style="display: flex; overflow: auto visible; width: 100%; position: relative; box-shadow: rgba(55, 53, 47, 0.09) 0px -1px 0px inset; font-size: 14px; padding-left: 0; padding-right: 0; z-index: 1; margin-top: -6px;"
+    <div style="display: flex; overflow: auto visible; width: 100%; position: relative; font-size: 14px; padding-left: 0; padding-right: 0; z-index: 1; margin-top: -6px;"
         class="hide-scrollbar"
     >
         <div style="padding-top: 6px; padding-bottom: 6px; white-space: nowrap; min-width: 0; flex-shrink: 0; color: rgb(55, 53, 47); position: relative;">
@@ -39,7 +39,13 @@
         </div>
     </div>
 
-    <space-settings-table></space-settings-table>
+    <space-settings-table
+        :data="visibleUsers"
+        :columns="columns"
+        :show-action-btn="true"
+        action-btn-component="dialog_space_setting_people_remove"
+        :freez="true"
+    />
 </template>
 
 <script setup>
@@ -47,8 +53,16 @@ import { useGeneralStore } from '@/stores/general';
 import BaseButton from './BaseButton.vue';
 import SpaceSettingsContentHeader from "./SpaceSettingsContentHeading.vue";
 import SpaceSettingsTable from "./SpaceSettingsTable.vue";
+import { useVisibleUsers } from "../composables/useVisibleUsers";
 
 function showAddMemberDialog() {
     useGeneralStore().setCurrentComponentInDefaultOverlay("space_settings_add_member", {});
 }
+
+const columns = [
+    { name: "User", type: "user", width: "219px" },
+    { name: "Role", type: "select", component: "dialog_space_setting_people_select_role", width: "118.5px" }
+];
+
+const { visibleUsers } = useVisibleUsers({});
 </script>

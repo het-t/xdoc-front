@@ -6,7 +6,7 @@
             @click.stop="closeSpaceSettings"
         ></div>
 
-        <div style="box-shadow: rgba(15, 15, 15, 0.05) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 5px 10px, rgba(15, 15, 15, 0.2) 0 15px 40px; background: white; position: relative; z-index: 1; border-radius: 12px; width: 1150px; height: calc(100vh - 100px); max-height: 715px; max-width: calc(100vw - 100px);">
+        <div style="overflow: hidden; box-shadow: rgba(15, 15, 15, 0.05) 0 0 0 1px, rgba(15, 15, 15, 0.1) 0 5px 10px, rgba(15, 15, 15, 0.2) 0 15px 40px; background: white; position: relative; z-index: 1; border-radius: 12px; width: 1150px; height: calc(100vh - 100px); max-height: 715px; max-width: calc(100vw - 100px);">
             <div style="height: 100%; display: flex; flex-direction: row;">
                 <!-- menu -->
                 <div style="width: 240px; overflow: hidden auto; flex-shrink: 0;">

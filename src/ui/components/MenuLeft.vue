@@ -333,7 +333,7 @@ onBeforeMount(async () => {
     width: 220px;
     height: 100vh;
     box-shadow: rgba(0, 0, 0, 0.024) -1px 0 0 0 inset;
-    background-color: rgb(251, 251, 250);
+    background-color: rgb(247, 247, 245);
     flex-grow: 0;
     flex-shrink: 0;
     position: relative;

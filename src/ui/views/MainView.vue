@@ -56,14 +56,14 @@
           />
 
           <dialog-page-property
-            v-if="component.name === 'page_property_value_edit'"
+            v-else-if="component.name === 'page_property_value_edit'"
             :property-id="component.props.propertyId"
             :page-id="component.props.pageId"
             :collection-id="component.props.collectionId"
           />
 
           <option-edit-view 
-            v-if="component.name === 'page_property_option_edit'"
+            v-else-if="component.name === 'page_property_option_edit'"
             :option-id="component.props.optionId"
             :collection-id="component.props.collectionId"
             :property-id="component.props.propertyId"
@@ -71,18 +71,24 @@
           />
 
           <collection-templates-list 
-            v-if="component.name === 'collection_templates_list'"
+            v-else-if="component.name === 'collection_templates_list'"
             :collection-id="component.props.collectionId"
             :collection-view-id="component.props.collectionViewId"
             :space-id="component.props.spaceId"
           />
 
           <space-settings 
-            v-if="component.name === 'space_settings'"
+            v-else-if="component.name === 'space_settings'"
           />
 
           <space-settings-content-people-add-member
-            v-if="component.name === 'space_settings_add_member'"
+            v-else-if="component.name === 'space_settings_add_member'"
+          />
+
+          <space-settings-dialog-people-remove 
+            v-else-if="component.name === 'dialog_space_setting_people_remove'"
+            :space-id="spaceId"
+            :user-id="component.props.userId"
           />
         </div>
       
@@ -119,6 +125,7 @@ import { useGeneralStore } from '@/stores/general';
 import OptionEditView from '@/ui/views/OptionEditView.vue';
 import CollectionTemplatesList from '@/ui/components/CollectionTemplatesList.vue';
 import SpaceSettingsContentPeopleAddMember from '../components/SpaceSettingsContentPeopleAddMember.vue';
+import SpaceSettingsDialogPeopleRemove from '../components/SpaceSettingsDialogPeopleRemove.vue';
 
 const spaceId = "f2cf1fd1-8789-4ddd-9190-49f41966c446";
 const spaceViewId = "dbf9ee2d-ded5-4b35-b63d-de778f9dc19a";

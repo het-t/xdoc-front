@@ -64,6 +64,7 @@ import { ref } from 'vue';
 import { findUserByEmail } from '@/services/api/findUserByEmail';
 import { useGeneralStore } from '@/stores/general';
 import { createUserByEmail } from '@/services/api/createUserByEmail';
+import { useVisibleUsers } from '../composables/useVisibleUsers';
 
 const inviteesEmails = ref("");
 
@@ -77,12 +78,13 @@ const inviterUserId = transformToStandardUUIDFormat(uuid());
 function enqueueSpaceUserAddTransaction(spaceId, inviteeUserId, inviterUserId) {
     const membershipType = "owner";
     const inviteId = transformToStandardUUIDFormat(uuid());
+    const spaceUserId = inviteeUserId + "|" + spaceId;
 
     const operations = [
         makeOperation(  
-            "set",      
+            "update",      
             {
-                id: transformToStandardUUIDFormat(uuid()),
+                id: inviteId,
                 flow_id: "0bb4ed52-a596-430f-a0e1-aa24677580d2",
                 space_id: spaceId,
                 target_id: spaceId,
@@ -111,17 +113,19 @@ function enqueueSpaceUserAddTransaction(spaceId, inviteeUserId, inviterUserId) {
             }
         ),
         makeOperation(
-            "setPermissionItem",
+            "update",
             {
-                type: "user_permission",
-                role: "editor",
+                id: spaceUserId,
                 user_id: inviteeUserId,
-                invite_id: inviteId
+                space_id: spaceId,
+                invite_id: inviteId,
+                membership_type: membershipType
             },
-            ["permissions"],
+            [],
             {
-                table: "xdoc_space",
-                id: spaceId
+                table: "space_user",
+                id: spaceUserId,
+                spaceId
             }
         )
     ];
@@ -157,4 +161,6 @@ async function spaceSettingsPeopleAdd() {
         inviteesEmails.value = "";
     }
 }
+
+useVisibleUsers({ mounted: false, unmounted: true});
 </script>

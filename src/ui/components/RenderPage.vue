@@ -187,11 +187,11 @@ const props = defineProps({
 
 const recordValuesStore = useRecordValuesStore();
 
-const pageRecordValue = recordValuesStore.getRecordValue(
-    props.blockId,
-    "block",
-    "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-)
+const pageRecordValue = recordValuesStore.getRecordValue({
+    id: props.blockId,
+    table: "block",
+    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+})
 
 const pageHeadingText = computed(()  => pageRecordValue?.properties?.title?.[0]?.[0]);
 
