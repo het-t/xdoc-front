@@ -2,21 +2,27 @@
     <base-menu-page-navigation
         css-class="bookmarks"
     >
-        <template #header><slot name="header"></slot></template>
+        <template #header>
+            <slot name="header"
+                :onClick="() => showPages = !showPages"
+            ></slot>
+        </template>
         
         <template #navigation-options>
             <slot name="navigation-options"></slot>
         </template>
 
-        <menu-page-navigation-page-link v-for="id in props.pageIds" 
-            :id="id" 
-            :key="id"
-        >{{ id }}</menu-page-navigation-page-link>
+        <template v-if="showPages">
+            <menu-page-navigation-page-link v-for="id in props.pageIds" 
+                :id="id" 
+                :key="id"
+            >{{ id }}</menu-page-navigation-page-link>
+        </template>
     </base-menu-page-navigation>
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
 import BaseMenuPageNavigation from "./BaseMenuPageNavigation.vue";
 import MenuPageNavigationPageLink from "./MenuPageNavigationPageLink.vue";
 
@@ -26,6 +32,8 @@ const props = defineProps({
         required: true
     }
 });
+
+const showPages = ref(true);
 </script>
 
 <style>
