@@ -4,7 +4,7 @@
         :class="getMenuMode !== 'full' ? 'translate-menu-left' : ''"
         style="z-index: 111;"
     >
-        <div style="height: 100%;">    
+        <div style="height: 100%; font-weight: 500; color: rgb(95, 94, 91);">    
             <div style="width: 0; position: absolute; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; overflow: visible; z-index: 9;">
                 <div 
                     id="menu-left-wrapper" 
@@ -41,7 +41,7 @@
                             <!-- settings -->
                             <div
                                 class="button-wrapper hvr-bg ptr"
-                                @click.prevent.stop="openSettings"
+                                @click.prevent.stop="setCurrentComponentInDefaultOverlay('space_settings', {})"
                             >
                                 <div
                                     class="button-icon"
@@ -78,24 +78,35 @@
                         </div>
             
                         <div class="xdoc-scroller vertical"
-                            style="padding-top: 6px; padding-bottom: 20px; overflow: hidden auto;"
+                            style="padding-top: 6px; padding-right: 8px; padding-left: 8px; padding-bottom: 20px; overflow: hidden auto;"
                         >
-                            <div style="margin: 0px;">
+                            <div style="margin: 0px; display: flex; flex-direction: column; gap: 4px;">
                                 <menu-page-navigation-space-view
+                                    header="favorites"
                                     :pageIds="favoritesPagesIds"
+                                />
+                                
+                                <menu-page-navigation-space-view
+                                    header="teamspaces"
+                                    :pageIds="teamIds"
+                                    table="team"
                                 >
-                                    <template v-slot:header="{ onClick }">
-                                        <span @click.stop="onClick">Favorites</span>
+                                    <template #navigation-options>
+                                        <div style="display: flex; align-items: center;">
+                                            <base-button 
+                                                @click.stop="setCurrentComponentInDefaultOverlay('dialog_teamspace_create')"
+                                                style="height: 20px; width: 20px; display: flex; align-items: center; margin-left: 4px;"
+                                            >
+                                                <svg role="graphics-symbol" viewBox="0 0 13 3" class="dots" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><g><path d="M3,1.5A1.5,1.5,0,1,1,1.5,0,1.5,1.5,0,0,1,3,1.5Z"></path><path d="M8,1.5A1.5,1.5,0,1,1,6.5,0,1.5,1.5,0,0,1,8,1.5Z"></path><path d="M13,1.5A1.5,1.5,0,1,1,11.5,0,1.5,1.5,0,0,1,13,1.5Z"></path></g></svg>
+                                            </base-button>
+                                        </div>
                                     </template>
                                 </menu-page-navigation-space-view>
 
                                 <menu-page-navigation-space-view
+                                    header="private"
                                     :pageIds="privatePagesIds"
                                 >
-                                    <template v-slot:header="{ onClick }">
-                                        <span @click.stop="onClick">Private</span>
-                                    </template>
-
                                     <template #navigation-options>
                                         <div style="display: flex; align-items: center;">
                                             <base-button 
@@ -105,14 +116,6 @@
                                                 <svg role="graphics-symbol" viewBox="0 0 14 14" class="plusThick" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><path d="M2 7.16357C2 7.59692 2.36011 7.95093 2.78735 7.95093H6.37622V11.5398C6.37622 11.9731 6.73022 12.3271 7.16357 12.3271C7.59692 12.3271 7.95093 11.9731 7.95093 11.5398V7.95093H11.5398C11.9731 7.95093 12.3271 7.59692 12.3271 7.16357C12.3271 6.73022 11.9731 6.37622 11.5398 6.37622H7.95093V2.78735C7.95093 2.36011 7.59692 2 7.16357 2C6.73022 2 6.37622 2.36011 6.37622 2.78735V6.37622H2.78735C2.36011 6.37622 2 6.73022 2 7.16357Z"></path></svg>
                                             </base-button>
                                         </div>
-                                    </template>
-                                </menu-page-navigation-space-view>
-
-                                <menu-page-navigation-space-view
-                                    :pageIds="[1, 2]"
-                                >
-                                    <template v-slot:header="{ onClick }">
-                                        <span @click.stop="onClick">Teamspaces</span>
                                     </template>
                                 </menu-page-navigation-space-view>
                             </div>
@@ -145,12 +148,16 @@ import { useGeneralStore } from "@/stores/general";
 import { makeOperation } from "@/services/transactions/factories/makeOperation";
 import { makeTransaction } from "@/services/transactions/factories/makeTransaction";
 import { useTransactionsQueue } from "@/stores/transactionsQueue";
+import { getTeams } from "@/services/api/getTeams";
+import { useTeamsStore } from "@/stores/teams";
+import { syncRecordValueFromApi } from "@/helpers/globals/SyncRecordValueFromApi";
 
 const route = useRoute();
 const router = useRouter();
 
 const menuLeftStore = useMenuLeftStore();
 const recordValuesStore = useRecordValuesStore();
+const teamsStore = useTeamsStore();
 
 const props = defineProps({
     spaceId: {
@@ -163,12 +170,15 @@ const props = defineProps({
     }
 })
 
-const favoritesPagesIds = ref([]), 
-    privatePagesIds = ref([]);
+const favoritesPagesIds = ref([]), privatePagesIds = ref([]);
 
 const getMenuMode = computed(function () {
     return menuLeftStore.menuLeftMode;
-})
+});
+
+const teamIds = computed(function() {
+    return teamsStore.getVisibleTeamIds( "f2cf1fd1-8789-4ddd-9190-49f41966c446");
+});
 
 async function createNewPage() {
 
@@ -269,43 +279,56 @@ function setMenuLeftMode() {
     menuLeftStore.setMenuLeftMode(null);
 }
 
-const generalStore = useGeneralStore();
 
-function openSettings() {
-    generalStore.setCurrentComponentInDefaultOverlay(
-        "space_settings",
-        {}
-    )
+function setCurrentComponentInDefaultOverlay(component:string, args = {}) {
+    const generalStore = useGeneralStore();
+    generalStore.setCurrentComponentInDefaultOverlay(component, args)
 }
 
 onBeforeMount(async () => {
-  try{
-    const userSpaces = await getSpaces();
+    const setRecordValuesFromRecordMap = useTransactionsQueue().setRecordValuesFromRecordMap;
+ 
+    try{
+        const userSpaces = await getSpaces();
+        const spaceViews = userSpaces.data.space_view;
 
-    const spaceViews = userSpaces.data.space_view;
-  
-    for(const id in spaceViews) {
-      const { spaceId, value: { value } } = spaceViews[id];
-  
-      recordValuesStore.setRecordValue({
-        id,
-        table: "space_view",
-        record: value,
-        spaceId
-      });
+        for(const id in spaceViews) {
+            const { spaceId, value: { value } } = spaceViews[id];
+        
+            recordValuesStore.setRecordValue({
+                id,
+                table: "space_view",
+                record: value,
+                spaceId
+            });
+
+            const { data: { recordMap: teams, teamIds } } = await getTeams({spaceId});
+            setRecordValuesFromRecordMap(teams);
+            teamsStore.setVisibleTeamIds(spaceId, teamIds);
+
+            for(const id in teams.team) {
+                const teamPages = teams.team[id].value.value.team_pages;
+                teamPages.forEach((id: string) => {
+                    syncRecordValueFromApi("block", id, "f2cf1fd1-8789-4ddd-9190-49f41966c446")
+                });
+            }
+        }
+        
+        const { bookmarked_pages, private_pages } = recordValuesStore.getRecordValue({
+            id: props.spaceViewId,
+            table: "space_view",
+            spaceId: props.spaceId
+        });
+
+        [...bookmarked_pages, ...private_pages].forEach((id) => {
+            syncRecordValueFromApi("block", id, "f2cf1fd1-8789-4ddd-9190-49f41966c446");
+        });
+
+        privatePagesIds.value = private_pages;
+        favoritesPagesIds.value = bookmarked_pages;
+    } catch(e) {
+        console.log(e);
     }
-
-    const { bookmarked_pages, private_pages } = recordValuesStore.getRecordValue({
-        id: props.spaceViewId,
-        table: "space_view",
-        spaceId: props.spaceId
-    });
-
-    privatePagesIds.value = private_pages;
-    favoritesPagesIds.value = bookmarked_pages;
-  } catch(e) {
-    console.log(e);
-  }
 })
 </script>
 

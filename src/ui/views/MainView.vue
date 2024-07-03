@@ -90,6 +90,10 @@
             :space-id="spaceId"
             :user-id="component.props.userId"
           />
+
+          <div v-else-if="component.name === 'dialog_teamspace_create'">
+            Create teamspace
+          </div>
         </div>
       
         <base-slash-menu :pos=slashMenuPosition v-if="showSlashMenu === true"></base-slash-menu>
