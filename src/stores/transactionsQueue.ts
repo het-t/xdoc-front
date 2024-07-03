@@ -184,6 +184,7 @@ export const useTransactionsQueue = defineStore('q', () => {
         setDelayDefault,
         enqueue,
         performQueryCollection,
-        performSearch
+        performSearch,
+        setRecordValuesFromRecordMap
     }
 })
