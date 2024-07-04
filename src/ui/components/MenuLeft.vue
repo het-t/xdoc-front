@@ -87,6 +87,7 @@
                                 />
                                 
                                 <menu-page-navigation-space-view
+                                    v-if="teamIds !== undefined"
                                     header="teamspaces"
                                     :pageIds="teamIds"
                                     table="team"
@@ -127,7 +128,6 @@
                     </div>
                     
                     <div v-show="getMenuMode === 'full'" style="position: absolute; right: 0; top: 0; height: 100%; width: 8px; cursor: col-resize;"></div>
-                    
                 </div>
             </div>
         </div>
@@ -309,8 +309,8 @@ onBeforeMount(async () => {
             for(const id in teams.team) {
                 const teamPages = teams.team[id].value.value.team_pages;
                 teamPages.forEach((id: string) => {
-                    syncRecordValueFromApi("block", id, "f2cf1fd1-8789-4ddd-9190-49f41966c446")
-                });
+                    syncRecordValueFromApi("block", id, "f2cf1fd1-8789-4ddd-9190-49f41966c446");
+                })
             }
         }
         
@@ -320,9 +320,13 @@ onBeforeMount(async () => {
             spaceId: props.spaceId
         });
 
-        [...bookmarked_pages, ...private_pages].forEach((id) => {
+        const pages = [
+            ...bookmarked_pages, 
+            ...private_pages
+        ];
+        pages.forEach((id) => {
             syncRecordValueFromApi("block", id, "f2cf1fd1-8789-4ddd-9190-49f41966c446");
-        });
+        })
 
         privatePagesIds.value = private_pages;
         favoritesPagesIds.value = bookmarked_pages;

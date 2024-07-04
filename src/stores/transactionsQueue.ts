@@ -27,7 +27,10 @@ export const useTransactionsQueue = defineStore('q', () => {
     const BATCH_SIZE: Ref<number> = ref(BATCH_SIZE_DEFAULT);
     const CURRENT_SET_TIMEOUTS: Ref<number> = ref(0);
     const REQUEST_TIME_OUT_MS: Ref<number> = ref(0);
-    
+    const recordsStatuses: Ref<Record<string, {
+        status: -1 | 0 | 1,
+        message?: string
+    }>> = ref({});
     const transactionsQueue: Array<Transaction | SyncRecordValue> = [];
 
     function setDelay(tms: number): void {
@@ -82,6 +85,8 @@ export const useTransactionsQueue = defineStore('q', () => {
     }
 
     async function dequeue() {
+        const syncRecordIds: string[] = [];
+
         try {
             if (REQUEST_TIME_OUT_MS.value) {
                 console.log("timeout")
@@ -98,6 +103,9 @@ export const useTransactionsQueue = defineStore('q', () => {
                 batch.forEach((t) => {
                     if((t as SyncRecordValue).pointer !== undefined) {
                         syncRecordValues.push(t as SyncRecordValue);
+                        const recordId = (t as SyncRecordValue).pointer.id;
+                        syncRecordIds.push(recordId);
+                        recordsStatuses.value[recordId] = { status: 0 };
                     }
                     else {
                         transactions.push(t as Transaction);
@@ -106,16 +114,24 @@ export const useTransactionsQueue = defineStore('q', () => {
 
                 if (transactions.length) {
                     const res: TransactionResponse = await TransactionApi.execute(transactions);
-                    
                 }
                 if (syncRecordValues.length) {
                     const recordValuesResponse: SyncRecordResponse = await SyncrecordValuesApi.execute(syncRecordValues);
                     setRecordValuesFromRecordMap(recordValuesResponse.data.recordMap);
                 }
+
+                syncRecordIds.forEach(id => {
+                    recordsStatuses.value[id] = { status: 1 }
+                });
             }
         } 
         catch (error: any) {
-            console.log(error);
+            syncRecordIds.forEach(id => {
+                recordsStatuses.value[id] = {
+                    status: -1,
+                    message: error
+                }
+            });
         }
         finally {            
             transactionsQueue.length >= BATCH_SIZE.value 
@@ -185,6 +201,7 @@ export const useTransactionsQueue = defineStore('q', () => {
         enqueue,
         performQueryCollection,
         performSearch,
-        setRecordValuesFromRecordMap
+        setRecordValuesFromRecordMap,
+        recordsStatus: (id: string) => recordsStatuses.value[id]
     }
 })

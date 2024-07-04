@@ -1,6 +1,7 @@
 <template>
     <div :class="`xdoc-outliner-${props.header}-header-container`"
         style="display: flex; flex-direction: column; gap: 1px; margin-bottom: 12px;"
+        v-if="existance || props.table === 'team'"
     >
         <base-button :class="`xdoc-outliner-${props.header}-header`"
             @click.stop="showPages = !showPages"
@@ -45,9 +46,10 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, ref, toRef } from "vue";
 import MenuTreeItem from "./MenuTreeItem.vue";
 import BaseButton from "./BaseButton.vue";
+import { useDataExistanceCheck } from "../composables/useDataExistanceCheck";
 
 const props = defineProps({
     pageIds: {
@@ -63,6 +65,8 @@ const props = defineProps({
         required: true
     }
 });
+
+const { existance } = useDataExistanceCheck(toRef(() => props.pageIds));
 
 const showPages = ref(true);
 const showActions = ref(false);

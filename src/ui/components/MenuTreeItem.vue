@@ -31,7 +31,7 @@
                     :style="{ paddingLeft: 8*(props.nestingLevel + 1)+'px' }"
                 >                                       
                     <div style="flex: 1 1 auto; white-space: nowrap; min-width: 0; overflow: visible; text-overflow: clip;">
-                        <div id=":r2j:" class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
+                        <div id=":r2j:" class="notranslate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgba(55, 53, 47, 0.5);"
                         >No pages inside</div>
                     </div>
                 </div>
