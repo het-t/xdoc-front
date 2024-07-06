@@ -16,7 +16,7 @@
                 <div style="position: relative; top: 100%; pointer-events: auto;">
                     <div style="display: flex; align-items: center; position: relative; flex-direction: column-reverse; transform-origin: 100% top; opacity: 1; transition-property: opacity, transform; transition-duration: 270ms; transition-timing-function: ease;">
                         <div ref="dialog" role="dialog" 
-                            style="border-radius: 6px; background: white; backdrop-filter: none; position: relative; max-width: calc(-24px + 100vw); box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: hidden;"
+                            style="border-radius: 5px; background: white; backdrop-filter: none; position: relative; max-width: calc(-24px + 100vw); box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px; overflow: hidden;"
                             :style="{ width: `${props.width}` }"
                         >
                             
@@ -46,6 +46,12 @@ const props = defineProps({
     }
 })
 
+/**
+ * check whether this wathcer is really needed
+ * skeptical 
+ * reason:
+ *      change in props will re-render the component so no need to watch for changes
+ */
 watch(
     () => props.show,
     (value) => {

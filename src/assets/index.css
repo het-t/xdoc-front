@@ -80,6 +80,12 @@ body, textarea, input[type="date"] {
 }
 
 
+button, textarea, input, select {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
 [contenteditable=true]:empty::after {
   content: attr(placeholder);
 }
