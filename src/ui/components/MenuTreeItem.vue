@@ -58,6 +58,7 @@
 import { useRecordValuesStore } from '@/stores/recordValues';
 import BaseButton from './BaseButton.vue';
 import { ref, defineProps, computed } from 'vue';
+import { useDataExistanceCheck } from '../composables/useDataExistanceCheck';
 
 const props = defineProps({
     pointer: {
@@ -73,6 +74,7 @@ const props = defineProps({
 const linkExpand = ref(false);
 const linkInFocus = ref(false);
 const nestedItemPointers = ref([]);
+const { existance: nestedItemsAvailable } = useDataExistanceCheck(nestedItemPointers);
 
 const record = computed(() => useRecordValuesStore().getRecordValue(props.pointer));
 
@@ -89,6 +91,8 @@ function handleLinkExpand() {
                 spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
             }
         });
+
+        console.log(nestedItemsAvailable.value)
     }
 }
 
