@@ -42,7 +42,7 @@
       >
         <div style="position: relative; z-index: 0;"></div>
 
-        <div 
+        <div
           v-for="(component, index) in components"
           :key="component.name"
           data-overlay="true" 
@@ -91,8 +91,8 @@
             :user-id="component.props.userId"
           />
 
-          <dialog-teamspace-create v-else-if="component.name === 'dialog_teamspace_create'"
-          
+          <teamspace-create 
+            v-else-if="component.name === 'dialog_teamspace_create'"
           />
         </div>
       
@@ -106,8 +106,8 @@
         <div style="position: relative; z-index: 0;"></div>
       </div>
     </div>
+    {{ routeQuery }}
   </div>
-  {{ routeQuery }}
 </template>
 
 
@@ -130,7 +130,8 @@ import OptionEditView from '@/ui/views/OptionEditView.vue';
 import CollectionTemplatesList from '@/ui/components/CollectionTemplatesList.vue';
 import SpaceSettingsContentPeopleAddMember from '../components/SpaceSettingsContentPeopleAddMember.vue';
 import SpaceSettingsDialogPeopleRemove from '../components/SpaceSettingsDialogPeopleRemove.vue';
-import DialogTeamspaceCreate from "../components/DialogTeamspaceCreate.vue";
+import TeamspaceCreate from './TeamspaceCreate.vue';
+
 const spaceId = "f2cf1fd1-8789-4ddd-9190-49f41966c446";
 const spaceViewId = "dbf9ee2d-ded5-4b35-b63d-de778f9dc19a";
 

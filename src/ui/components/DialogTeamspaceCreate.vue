@@ -47,14 +47,15 @@
                             >Permissions</label>
 
                             <base-button
+                                @click.stop="handleTeamspaceTypesDisplay"
                                 style="min-height: 45px; width: 100%; padding: 4px 0; box-shadow: rgba(15, 15, 15, 0.1) 0 0 0 1px inset;"
                             >
-                                <div style="display: flex; line-height: 120%; width: 100%; user-select: none; padding-top: 4px; padding-bottom: 4px;">
+                                <div ref="typeBtn" style="display: flex; line-height: 120%; width: 100%; user-select: none; padding-top: 4px; padding-bottom: 4px;">
                                     <div style="margin-left: 10px; margin-right: 6px;">
-                                        <div>Open</div>
+                                        <div>{{ props.type.type }}</div>
 
                                         <div style="margin-top: 2px; font-size: 12px; color: rgb(120, 119, 116);"
-                                        >Anyone can see and join this teamspace</div>
+                                        >{{ props.type.description }}</div>
                                     </div>
                                 </div>
                             </base-button>
@@ -63,7 +64,7 @@
                                 <div style="display: inline-flex;">
                                     <base-button style="height: 32px; padding: 0 12px; white-space: nowrap; border-radius: 4px; color: white; font-weight: 500;"
                                         :style="state.name === '' ? { opacity: 0.4, cursor: 'default' } : { cursor: 'pointer' }"
-                                        @click.stop="handleCreateTeamspace"
+                                        @click.stop="state.name && handleCreateTeamspace()"
                                         :hover-style="{background: 'rgb(0, 119, 212)'}"
                                         :default-style="{background: 'rgb(35, 131, 226)'}"
                                     >Create teamspace</base-button>
@@ -80,18 +81,40 @@
 <script setup>
 import { useGeneralStore } from '@/stores/general';
 import BaseButton from './BaseButton.vue';
-import { reactive } from 'vue';
+import { reactive, ref, defineProps } from 'vue';
+
+const props = defineProps({
+    type: {
+        type: Object,
+        required: true
+    }
+});
 
 const state = reactive({
     name: "",
     description: ""
 });
 
+const typeBtn = ref(null);
+
+const generalStore = useGeneralStore();
+
+function handleTeamspaceTypesDisplay() {
+    const { top, width, left, height } = typeBtn.value.getBoundingClientRect();
+    generalStore.setCurrentComponentInDefaultOverlay("dialog_teamspace_types", {
+        top,
+        left,
+        height,
+        width
+    });
+}
+
 function handleClose() {
-    useGeneralStore().hideCurrentComponent();
+    generalStore.hideCurrentComponent();
 }
 
 function handleCreateTeamspace() {
-    console.log(state.name, state.description);
+    console.log(state.name, state.description, props.type);
+    handleClose();
 }
 </script>
