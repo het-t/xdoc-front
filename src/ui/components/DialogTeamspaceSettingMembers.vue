@@ -33,7 +33,7 @@
 
                     <span>
                         <base-button style="padding: 0 8px; height: 28px;"
-                        >Full access</base-button>
+                        >{{ getMemberTypeAccessLevel("explicit_team_owner_permission") }}</base-button>
                     </span>
                 </div>
 
@@ -44,7 +44,7 @@
 
                     <span>
                         <base-button style="padding: 0 8px; height: 28px;"
-                        >Full access</base-button>
+                        >{{ getMemberTypeAccessLevel("explicit_team_permission") }}</base-button>
                     </span>
                 </div>
 
@@ -55,7 +55,7 @@
 
                     <span>
                         <base-button style="padding: 0 8px; height: 28px;"
-                        >Full access</base-button>
+                        >{{ getMemberTypeAccessLevel("space_permission") }}</base-button>
                     </span>
                 </div>
             </div>
@@ -115,9 +115,7 @@
                     }}</span>
                 </base-button>
             </div>    
-
         </div>
-
     </div>
 </template>
 
@@ -159,7 +157,7 @@ function handleTeamspaceTypesDisplay() {
 
 const recordValuesStore = useRecordValuesStore();
 
-const { memberships } = recordValuesStore.getRecordValue({
+const { memberships, permissions } = recordValuesStore.getRecordValue({
     id: props.teamId,
     table: "team",
     spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
@@ -172,4 +170,14 @@ memberships.map(({ user_id: id }) => syncRecordValueFromApi(
     id, 
     "f2cf1fd1-8789-4ddd-9190-49f41966c446"
 ));
+
+function getMemberTypeAccessLevel(memberType) {
+    switch(permissions.find(({ type }) => type === memberType)?.role) {
+        case "editor": return "Full access";
+        case "edit_only": return "Edit";
+        case "comment_only": return "Comment";
+        case "view_only": return "View";
+        default: return "Unknown"
+    }
+}
 </script>

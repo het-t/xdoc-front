@@ -11,7 +11,8 @@
                 <div style="height: 100%; user-select: none;">
                     <div style="display: flex; padding-top: 20px; flex-direction: column; height: 100%; width: 100%;">
                         <div style="display: flex; margin: 0 36px; flex-shrink: 0; align-items: center;">
-                            <div style="font-weight: 600; font-size: 16px;">XDoc</div>
+                            <div style="font-weight: 600; font-size: 16px;"
+                            >{{ teamName }}</div>
                             <div style="flex-grow: 1"></div>
                             <base-button style="padding: 0 16px; border-radius: 13px; font-weight: 600; font-size: 13px; height: 26px;"
                                 :hover-style="{ backgroundColor: 'rgba(55, 53, 47, 0.16)' }"
@@ -93,6 +94,7 @@ import DialogTeamspaceSettingMembers from '../components/DialogTeamspaceSettingM
 import DialogTeamspaceSettingMemberships from '../components/DialogTeamspaceSettingMemberships.vue';
 import DialogTeamspaceTypes from '../components/DialogTeamspaceTypes.vue';
 import { reactive, defineProps, computed } from 'vue';
+import { useRecordValuesStore } from '@/stores/recordValues';
 
 const props = defineProps({
     teamId: {
@@ -100,6 +102,12 @@ const props = defineProps({
         required: true
     }
 });
+
+const teamName = useRecordValuesStore().getRecordValue({
+    id: props.teamId,
+    table: "team",
+    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+}).name;
 
 const generalStore = useGeneralStore();
 
