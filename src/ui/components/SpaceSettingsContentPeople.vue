@@ -29,9 +29,7 @@
                                 @click.stop="showAddMemberDialog"
                                 :hover-style="{ background : 'rgb(0, 119, 212)' }"
                                 :default-style="{ background: 'rgb(35, 121, 226)' }"
-                            >
-                                Add members
-                            </base-button>
+                            >Add members</base-button>
                         </div>
                     </div>
                 </div>
@@ -40,6 +38,7 @@
     </div>
 
     <space-settings-table
+        v-if="renderTable === true"
         :data="visibleUsers"
         :columns="columns"
         :show-action-btn="true"
@@ -54,6 +53,8 @@ import BaseButton from './BaseButton.vue';
 import SpaceSettingsContentHeader from "./SpaceSettingsContentHeading.vue";
 import SpaceSettingsTable from "./SpaceSettingsTable.vue";
 import { useVisibleUsers } from "../composables/useVisibleUsers";
+import { useDataExistanceCheck } from '../composables/useDataExistanceCheck';
+import { computed, ref } from 'vue';
 
 function showAddMemberDialog() {
     useGeneralStore().setCurrentComponentInDefaultOverlay("space_settings_add_member", {});
@@ -64,5 +65,9 @@ const columns = [
     { name: "Role", type: "select", component: "dialog_space_setting_people_select_role", width: "118.5px" }
 ];
 
-const { visibleUsers } = useVisibleUsers({});
+const { visibleUsers } = useVisibleUsers({beforeMount: true, mounted: false});
+
+const mappedVisibleUsers = computed(() => visibleUsers.value.map(user => user.userId));
+const existance = computed(() => useDataExistanceCheck(ref(mappedVisibleUsers.value)).existance.value);
+const renderTable = computed(() => (mappedVisibleUsers.value.length > 0) && (existance.value == true));
 </script>

@@ -94,6 +94,11 @@
           <teamspace-create 
             v-else-if="component.name === 'dialog_teamspace_create'"
           />
+
+          <teamspace-setting 
+            v-else-if="component.name === 'dialog_teamspace_setting'"
+            :team-id="component.props.id"
+          />
         </div>
       
         <base-slash-menu :pos=slashMenuPosition v-if="showSlashMenu === true"></base-slash-menu>
@@ -131,6 +136,7 @@ import CollectionTemplatesList from '@/ui/components/CollectionTemplatesList.vue
 import SpaceSettingsContentPeopleAddMember from '../components/SpaceSettingsContentPeopleAddMember.vue';
 import SpaceSettingsDialogPeopleRemove from '../components/SpaceSettingsDialogPeopleRemove.vue';
 import TeamspaceCreate from './TeamspaceCreate.vue';
+import TeamspaceSetting from './TeamspaceSetting.vue';
 
 const spaceId = "f2cf1fd1-8789-4ddd-9190-49f41966c446";
 const spaceViewId = "dbf9ee2d-ded5-4b35-b63d-de778f9dc19a";

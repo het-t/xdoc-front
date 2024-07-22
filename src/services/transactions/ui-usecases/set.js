@@ -30,7 +30,11 @@ export function set(args, path, pointer) {
 
     targetNode[path[i]] = (
         typeof args === 'object' 
-        ? Object.assign({}, args) 
+        ? (
+            args?.length >= 0
+            ?  [...args]
+            : Object.assign({}, args)
+        )
         : args
     );
 }

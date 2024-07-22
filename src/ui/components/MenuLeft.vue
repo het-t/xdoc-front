@@ -84,6 +84,7 @@
                                 <menu-page-navigation-space-view
                                     header="favorites"
                                     :pageIds="favoritesPagesIds"
+                                    :on-action-btn-click="() => {}"
                                 />
                                 
                                 <menu-page-navigation-space-view
@@ -91,6 +92,7 @@
                                     header="teamspaces"
                                     :pageIds="teamIds"
                                     table="team"
+                                    :on-action-btn-click="(id: string) => { setCurrentComponentInDefaultOverlay('dialog_teamspace_setting', { id }) }"
                                 >
                                     <template #navigation-options>
                                         <div style="display: flex; align-items: center;">
@@ -98,7 +100,7 @@
                                                 @click.stop="setCurrentComponentInDefaultOverlay('dialog_teamspace_create')"
                                                 style="height: 20px; width: 20px; display: flex; align-items: center; margin-left: 4px;"
                                             >
-                                                <svg role="graphics-symbol" viewBox="0 0 13 3" class="dots" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><g><path d="M3,1.5A1.5,1.5,0,1,1,1.5,0,1.5,1.5,0,0,1,3,1.5Z"></path><path d="M8,1.5A1.5,1.5,0,1,1,6.5,0,1.5,1.5,0,0,1,8,1.5Z"></path><path d="M13,1.5A1.5,1.5,0,1,1,11.5,0,1.5,1.5,0,0,1,13,1.5Z"></path></g></svg>
+                                                <svg role="graphics-symbol" viewBox="0 0 14 14" class="plusThick" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><path d="M2 7.16357C2 7.59692 2.36011 7.95093 2.78735 7.95093H6.37622V11.5398C6.37622 11.9731 6.73022 12.3271 7.16357 12.3271C7.59692 12.3271 7.95093 11.9731 7.95093 11.5398V7.95093H11.5398C11.9731 7.95093 12.3271 7.59692 12.3271 7.16357C12.3271 6.73022 11.9731 6.37622 11.5398 6.37622H7.95093V2.78735C7.95093 2.36011 7.59692 2 7.16357 2C6.73022 2 6.37622 2.36011 6.37622 2.78735V6.37622H2.78735C2.36011 6.37622 2 6.73022 2 7.16357Z"></path></svg>                                            
                                             </base-button>
                                         </div>
                                     </template>
@@ -107,6 +109,7 @@
                                 <menu-page-navigation-space-view
                                     header="private"
                                     :pageIds="privatePagesIds"
+                                    :on-action-btn-click="() => {}"
                                 >
                                     <template #navigation-options>
                                         <div style="display: flex; align-items: center;">
@@ -324,6 +327,7 @@ onBeforeMount(async () => {
             ...bookmarked_pages, 
             ...private_pages
         ];
+
         pages.forEach((id) => {
             syncRecordValueFromApi("block", id, "f2cf1fd1-8789-4ddd-9190-49f41966c446");
         })

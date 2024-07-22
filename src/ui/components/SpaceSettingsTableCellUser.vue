@@ -19,7 +19,7 @@
 
 <script setup>
 import { useRecordValuesStore } from '@/stores/recordValues';
-import { computed, defineProps } from 'vue';
+import { defineProps } from 'vue';
 
 const props = defineProps({
     userId: {
@@ -30,11 +30,10 @@ const props = defineProps({
 
 const recordValueStore = useRecordValuesStore();
 
-const user = computed(function() {
-    return recordValueStore.getRecordValue({
-        id: props.userId,
-        table: "xdoc_user",
-        spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
-    })
-})
+const user = recordValueStore.getRecordValue({
+    id: props.userId,
+    table: "xdoc_user",
+    spaceId: "f2cf1fd1-8789-4ddd-9190-49f41966c446"
+});
+
 </script>

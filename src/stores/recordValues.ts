@@ -28,9 +28,7 @@ export const useRecordValuesStore = defineStore('recordValues', () => {
     
     function addSpaceIfNotPresent(id: string): void {
         if(checkSpacePresenceById(id)) return;
-
         setSpace(id);
-
     }
 
     function setSpace(id: string) {

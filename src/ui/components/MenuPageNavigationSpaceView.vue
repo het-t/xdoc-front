@@ -33,7 +33,9 @@
                             :pointer="{ id, table: props.table, spaceId: 'f2cf1fd1-8789-4ddd-9190-49f41966c446'}"
                         >
                             <template #actions>
-                                <base-button class="xdoc-template-picker-item-action-menu xdoc-fadein" style="border-radius: 4px; width: 20px; height: 20px; padding: 4px; margin-left: 4px;">
+                                <base-button class="xdoc-action-menu xdoc-fadein" style="border-radius: 4px; width: 20px; height: 20px; padding: 4px; margin-left: 4px;"
+                                    @click.stop="props.onActionBtnClick(id)"
+                                >
                                     <svg role="graphics-symbol" viewBox="0 0 13 3" class="dots" style="width: 14px; height: 14px; display: block; fill: rgba(55, 53, 47, 0.45); flex-shrink: 0;"><g><path d="M3,1.5A1.5,1.5,0,1,1,1.5,0,1.5,1.5,0,0,1,3,1.5Z"></path><path d="M8,1.5A1.5,1.5,0,1,1,6.5,0,1.5,1.5,0,0,1,8,1.5Z"></path><path d="M13,1.5A1.5,1.5,0,1,1,11.5,0,1.5,1.5,0,0,1,13,1.5Z"></path></g></svg>
                                 </base-button> 
                             </template>
@@ -62,6 +64,10 @@ const props = defineProps({
     },
     header: {
         type: String,
+        required: true
+    },
+    onActionBtnClick: {
+        type: Function,
         required: true
     }
 });

@@ -63,14 +63,14 @@ export const useTransactionsQueue = defineStore('q', () => {
                 table, 
                 record: recordValue, 
                 spaceId
-            })
+            });
         }
         else {
             recordValueStore.setRecordValue({
                 id: pointerId, 
                 table, 
                 record: recordValue
-            })
+            });
         }
     }
 
@@ -118,11 +118,12 @@ export const useTransactionsQueue = defineStore('q', () => {
                 if (syncRecordValues.length) {
                     const recordValuesResponse: SyncRecordResponse = await SyncrecordValuesApi.execute(syncRecordValues);
                     setRecordValuesFromRecordMap(recordValuesResponse.data.recordMap);
+                    
+                    syncRecordIds.forEach(id => {
+                        recordsStatuses.value[id] = { status: 1 }
+                    });
                 }
 
-                syncRecordIds.forEach(id => {
-                    recordsStatuses.value[id] = { status: 1 }
-                });
             }
         } 
         catch (error: any) {

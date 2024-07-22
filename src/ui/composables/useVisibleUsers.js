@@ -1,11 +1,12 @@
-import { computed, onMounted, onUnmounted } from 'vue';
+import { computed, onBeforeMount, onMounted, onUnmounted } from 'vue';
 import { syncRecordValueFromApi } from "@/helpers/globals/SyncRecordValueFromApi";
 import { useSpaceSettingsStore } from '@/stores/spaceSettings';
 import { getVisibleUsers } from '@/services/api/getVisibleUsers';
 
 export const useVisibleUsers = function({
     mounted = true, 
-    unmounted = true
+    unmounted = true,
+    beforeMount = false
 }) {
     const spaceSettingsStore = useSpaceSettingsStore();
 
@@ -29,10 +30,11 @@ export const useVisibleUsers = function({
                 )
             });
         } catch(err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
+    if(beforeMount) onBeforeMount(populateVisibleUsers);
     if(mounted) onMounted(populateVisibleUsers);
     if(unmounted) onUnmounted(populateVisibleUsers);
 
